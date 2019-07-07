@@ -1,24 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
-using Loterias.Contract.Inteface;
+using Loterias.Domain.Interfaces;
 
-namespace Loterias.Contract.Abstract
+namespace Loterias.Domain.Abstract
 {
-    public class AConcursoModel : IModel, IComparer<AConcursoModel>, IComparable
+    public abstract class AConcursoModel : IEntity, IComparer<AConcursoModel>, IComparable
     {
+        [DisplayName("Id")]
         public long Id { get; set; }
+
+        [DisplayName("Número do concurso")]
         public int Concurso { get; set; }
+
+        [DisplayName("Data do concurso")]
         public DateTime Data { get; set; }
+
+        [DisplayName("Acumulado ?")]
         public bool Acumulado { get; set; }
+
+        [DisplayName("Resultado")]
         public string Resultado { get; set; }
+
+        [DisplayName("Quantidade de ganhadores")]
         public int Ganhadores { get; set; }
+
+        [DisplayName("Ganhadores")]
+        public virtual ICollection<AGanhadoresModel> GanhadoresModel { get; set; }
 
         /// <summary>
         /// Retorna uma coleção com os resultados ordenados
         /// </summary>
         /// <value>Uma coleção com os resultados ordenados</value>
+        [DisplayName("Resultado ordenado")]
         public ICollection<int> ResultadoOrdenado
         {
             get
@@ -36,6 +52,7 @@ namespace Loterias.Contract.Abstract
         /// Retorna uma string com os resultados ordenados
         /// </summary>
         /// <value>Uma string com os resultados ordenados</value>
+        [DisplayName("Resultado ordenado")]
         public string ResultadoOrdenadoString
         {
             get
@@ -52,22 +69,21 @@ namespace Loterias.Contract.Abstract
 
         #region Overrides
 
-
         /// <summary>
-        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Loterias.Contract.Abstract.AConcursoModel"/>.
+        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Loterias.Domain.Abstract.AConcursoModel"/>.
         /// </summary>
-        /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:Loterias.Contract.Abstract.AConcursoModel"/>.</returns>
+        /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:Loterias.Domain.Abstract.AConcursoModel"/>.</returns>
         public override string ToString()
         {
             return $"Concurso número: {this.Concurso}, realizado na data: {this.Data}";
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="object"/> is equal to the current <see cref="T:Loterias.Contract.Abstract.AConcursoModel"/>.
+        /// Determines whether the specified <see cref="object"/> is equal to the current <see cref="T:Loterias.Domain.Abstract.AConcursoModel"/>.
         /// </summary>
-        /// <param name="obj">The <see cref="object"/> to compare with the current <see cref="T:Loterias.Contract.Abstract.AConcursoModel"/>.</param>
+        /// <param name="obj">The <see cref="object"/> to compare with the current <see cref="T:Loterias.Domain.Abstract.AConcursoModel"/>.</param>
         /// <returns><c>true</c> if the specified <see cref="object"/> is equal to the current
-        /// <see cref="T:Loterias.Contract.Abstract.AConcursoModel"/>; otherwise, <c>false</c>.</returns>
+        /// <see cref="T:Loterias.Domain.Abstract.AConcursoModel"/>; otherwise, <c>false</c>.</returns>
         public override bool Equals(object obj)
         {
             AConcursoModel outro = obj as AConcursoModel;
@@ -79,7 +95,7 @@ namespace Loterias.Contract.Abstract
         }
 
         /// <summary>
-        /// Serves as a hash function for a <see cref="T:Loterias.Contract.Abstract.AConcursoModel"/> object.
+        /// Serves as a hash function for a <see cref="T:Loterias.Domain.Abstract.AConcursoModel"/> object.
         /// </summary>
         /// <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a
         /// hash table.</returns>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Loterias.Repositories
+namespace Loterias.Application
 {
     public class Class1
     {
