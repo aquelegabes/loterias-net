@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 
 namespace Loterias.Domain.Interfaces.Repositories 
 {
-    public interface IRepositoryBase<IEntity>
-            where IEntity : class
+    public interface IRepositoryBase<TEntity>
+            where TEntity : class
     {
-        Task<IEntity> GetById(int id);
-        Task<IEnumerable<IEntity>> GetAll();
-        Task Add(IEntity model);
-        Task Update(IEntity model);
-        Task Remove(IEntity model);
+        Task<TEntity> GetById(int id);
+        Task<IEnumerable<TEntity>> GetAll();
+        Task Add(TEntity model);
+        Task Update(TEntity model);
+        Task Remove(TEntity model);
         void Dispose();
     }
 }

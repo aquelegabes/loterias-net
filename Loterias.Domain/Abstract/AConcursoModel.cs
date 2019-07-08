@@ -7,7 +7,7 @@ using Loterias.Domain.Interfaces;
 
 namespace Loterias.Domain.Abstract
 {
-    public abstract class AConcursoModel : IEntity, IComparer<AConcursoModel>, IComparable
+    public abstract class AConcursoModel : IComparer<AConcursoModel>, IComparable
     {
         [DisplayName("Id")]
         public long Id { get; set; }

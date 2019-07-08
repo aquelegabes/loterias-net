@@ -8,8 +8,8 @@ using System.Data.Common;
 
 namespace Loterias.Data.Repositories
 {
-    public abstract class RepositoryBase<IEntity> : IDisposable, IRepositoryBase<IEntity>
-            where IEntity : class
+    public abstract class RepositoryBase<TEntity> : IDisposable, IRepositoryBase<TEntity>
+            where TEntity : class
     {
         private readonly LoteriasContext _context;
 
@@ -23,7 +23,7 @@ namespace Loterias.Data.Repositories
         /// </summary>
         /// <typeparam name="IEntity"></typeparam>
         /// <returns></returns>
-        public async Task<IEnumerable<IEntity>> GetAll() => await _context.Set<IEntity>().ToListAsync();
+        public async Task<IEnumerable<TEntity>> GetAll() => await _context.Set<TEntity>().ToListAsync();
 
         /// <summary>
         /// Search for a entity based on id
@@ -32,12 +32,12 @@ namespace Loterias.Data.Repositories
         /// <typeparam name="IEntity"></typeparam>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public async Task<IEntity> GetById(int id) 
+        public async Task<TEntity> GetById(int id) 
         { 
             if (id <= 0)
                 throw new ArgumentException(nameof(id), "Id cannot be zero or lower.");
 
-            return await _context.Set<IEntity>().FindAsync(id);
+            return await _context.Set<TEntity>().FindAsync(id);
         }
 
         /// <summary>
@@ -49,14 +49,14 @@ namespace Loterias.Data.Repositories
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
         
-        public async Task Add(IEntity model)
+        public async Task Add(TEntity model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model), "Cannot add a null reference");
 
             try 
             {
-                await _context.Set<IEntity>().AddAsync(model);
+                await _context.Set<TEntity>().AddAsync(model);
                 await _context.SaveChangesAsync();
             }
             catch (DbException)
@@ -78,14 +78,14 @@ namespace Loterias.Data.Repositories
         /// <exception cref="DbUpdateException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task Update(IEntity model)
+        public async Task Update(TEntity model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model), "Cannot update a null reference");
             
             try 
             {
-                _context.Set<IEntity>().Update(model);
+                _context.Set<TEntity>().Update(model);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
@@ -110,14 +110,14 @@ namespace Loterias.Data.Repositories
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task Remove(IEntity model)
+        public async Task Remove(TEntity model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model), "Cannot remove a null object");
             
             try 
             {
-                _context.Set<IEntity>().Remove(model);
+                _context.Set<TEntity>().Remove(model);
                 await _context.SaveChangesAsync();
             }
             catch (DbException)

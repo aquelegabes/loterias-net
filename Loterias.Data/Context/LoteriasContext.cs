@@ -7,14 +7,14 @@ using Loterias.Domain.Entities.Sena;
 using Loterias.Domain.Entities.Quina;
 using Loterias.Domain.Entities.Lotofacil;
 using Loterias.Data.Configurations;
+using System.Configuration;
 
 namespace Loterias.Data.Context 
 {
     public class LoteriasContext : DbContext
     {
-        public LoteriasContext(DbContextOptions<LoteriasContext> options)
-                : base (options) { }
-        
+        protected LoteriasContext(DbContextOptions options) : base (options) { }
+
         public DbSet<ConcursoSena> ConcursosSena { get;set; }
         public DbSet<ConcursoQuina> ConcursosQuina { get; set; }
         public DbSet<ConcursoLotofacil> ConcursosLotofacil { get; set; }
@@ -24,6 +24,8 @@ namespace Loterias.Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema(ConfigurationManager.AppSettings["Sqlite"]);
+
             modelBuilder.ApplyConfiguration(new ConcursoSenaConfigurations());
             modelBuilder.ApplyConfiguration(new GanhadoresSenaConfiguration());
             modelBuilder.ApplyConfiguration(new ConcursoQuinaConfiguration());

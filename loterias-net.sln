@@ -1,29 +1,34 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loterias.API", "Loterias.API\Loterias.API.csproj", "{FDB8AA14-AD34-4EEB-838E-A349E8626D00}"
+VisualStudioVersion = 15.0.28307.329
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loterias.API", "Loterias.API\Loterias.API.csproj", "{FDB8AA14-AD34-4EEB-838E-A349E8626D00}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - APP", "1 - APP", "{EF1E1534-2C18-4CC5-BEEC-D91C0CDBC108}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Domain", "3 - Domain", "{AA6CDD7C-D21E-4F03-959A-AC3AB36E614A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Data", "4 - Data", "{1D08A6A2-DF7A-4C7D-9AC8-0BC34EF89A31}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Data", "5 - Data", "{1D08A6A2-DF7A-4C7D-9AC8-0BC34EF89A31}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6 - Tests", "6 - Tests", "{A929079B-45C7-4807-B8F9-08BD5ADBB700}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7 - Tests", "7 - Tests", "{A929079B-45C7-4807-B8F9-08BD5ADBB700}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loterias.Domain", "Loterias.Domain\Loterias.Domain.csproj", "{14CB8397-813A-4BE5-90F5-92241943CA79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loterias.Domain", "Loterias.Domain\Loterias.Domain.csproj", "{14CB8397-813A-4BE5-90F5-92241943CA79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loterias.Tests", "Loterias.Tests\Loterias.Tests.csproj", "{1D3B8428-98BA-4D24-8887-6490AD2969C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loterias.Tests", "Loterias.Tests\Loterias.Tests.csproj", "{1D3B8428-98BA-4D24-8887-6490AD2969C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loterias.Data", "Loterias.Data\Loterias.Data.csproj", "{C795CA0B-90C4-4E90-9B48-5FB225353E07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loterias.Data", "Loterias.Data\Loterias.Data.csproj", "{C795CA0B-90C4-4E90-9B48-5FB225353E07}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Common", "5 - Common", "{B8864035-4C27-412A-87CB-6A209A35A939}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6 - Common", "6 - Common", "{B8864035-4C27-412A-87CB-6A209A35A939}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loterias.Common", "Loterias.Common\Loterias.Common.csproj", "{B60947C0-A173-4E10-8575-C3F96BDDB67C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loterias.Common", "Loterias.Common\Loterias.Common.csproj", "{B60947C0-A173-4E10-8575-C3F96BDDB67C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Application", "2 - Application", "{AAB7C5E8-B926-40F1-8A6E-10FF97E94B90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loterias.Application", "Loterias.Application\Loterias.Application.csproj", "{620E7796-1943-4FD4-B39F-4CCEA40FB00B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loterias.Application", "Loterias.Application\Loterias.Application.csproj", "{620E7796-1943-4FD4-B39F-4CCEA40FB00B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infra", "4 - Infra", "{D23E1E4A-EC3D-44F5-8802-150BCF812700}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loterias.Infra", "Loterias.Infra\Loterias.Infra.csproj", "{555D6B14-0F7E-45E8-8DA2-738A64D65697}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +60,13 @@ Global
 		{620E7796-1943-4FD4-B39F-4CCEA40FB00B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{620E7796-1943-4FD4-B39F-4CCEA40FB00B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{620E7796-1943-4FD4-B39F-4CCEA40FB00B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{555D6B14-0F7E-45E8-8DA2-738A64D65697}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{555D6B14-0F7E-45E8-8DA2-738A64D65697}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{555D6B14-0F7E-45E8-8DA2-738A64D65697}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{555D6B14-0F7E-45E8-8DA2-738A64D65697}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FDB8AA14-AD34-4EEB-838E-A349E8626D00} = {EF1E1534-2C18-4CC5-BEEC-D91C0CDBC108}
@@ -63,5 +75,9 @@ Global
 		{C795CA0B-90C4-4E90-9B48-5FB225353E07} = {1D08A6A2-DF7A-4C7D-9AC8-0BC34EF89A31}
 		{B60947C0-A173-4E10-8575-C3F96BDDB67C} = {B8864035-4C27-412A-87CB-6A209A35A939}
 		{620E7796-1943-4FD4-B39F-4CCEA40FB00B} = {AAB7C5E8-B926-40F1-8A6E-10FF97E94B90}
+		{555D6B14-0F7E-45E8-8DA2-738A64D65697} = {D23E1E4A-EC3D-44F5-8802-150BCF812700}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {458C6245-5F0B-4030-B352-E0AF66A7ED14}
 	EndGlobalSection
 EndGlobal

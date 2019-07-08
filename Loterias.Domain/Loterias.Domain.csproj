@@ -14,7 +14,6 @@
     <Folder Include="Entities\Quina\" />
     <Folder Include="Entities\Sena\" />
     <Folder Include="Abstract\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
   <ItemGroup>

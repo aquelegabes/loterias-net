@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace Loterias.Domain.Abstract
 {
-    public class AGanhadoresModel : IEntity
+    public class AGanhadoresModel
     {
         [DisplayName("Id")]
         public long Id { get; set; }
