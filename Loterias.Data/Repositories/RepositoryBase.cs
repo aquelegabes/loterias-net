@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Loterias.Data.Context;
 using Loterias.Domain.Interfaces.Repositories;
 using System.Data.Common;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace Loterias.Data.Repositories
 {
@@ -26,6 +28,67 @@ namespace Loterias.Data.Repositories
         public async Task<IEnumerable<TEntity>> GetAll() => await _context.Set<TEntity>().ToListAsync();
 
         /// <summary>
+        /// Returns the first entity that satisfies the condition or default value if no such is found.
+        /// </summary>
+        /// <param name="where"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="DbException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task<TEntity> FirstOrDefault(Expression<Func<TEntity, bool>> where)
+        {
+            if (where == null)
+                throw new ArgumentNullException(nameof(where));
+            try
+            {
+                return await _context.Set<TEntity>().FirstOrDefaultAsync(where);
+            }
+            catch (DbException)
+            {
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Filters a sequence of values based on a predicate
+        /// </summary>
+        /// <param name="where"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="DbException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task<IEnumerable<TEntity>> Where(Expression<Func<TEntity, bool>> where)
+        {
+            if (where == null)
+                throw new ArgumentNullException(nameof(where));
+
+            try
+            {
+                return await _context.Set<TEntity>().Where(where).ToListAsync();
+            }
+            catch (DbException)
+            {
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Search for a entity based on id
         /// </summary>
         /// <param name="id"></param>
@@ -33,7 +96,7 @@ namespace Loterias.Data.Repositories
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
         public async Task<TEntity> GetById(int id) 
-        { 
+        {
             if (id <= 0)
                 throw new ArgumentException(nameof(id), "Id cannot be zero or lower.");
 

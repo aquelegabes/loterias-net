@@ -13,7 +13,7 @@ namespace Loterias.Data.Context
 {
     public class LoteriasContext : DbContext
     {
-        protected LoteriasContext(DbContextOptions options) : base (options) { }
+        public LoteriasContext(DbContextOptions options) : base(options) { }
 
         public DbSet<ConcursoSena> ConcursosSena { get;set; }
         public DbSet<ConcursoQuina> ConcursosQuina { get; set; }
