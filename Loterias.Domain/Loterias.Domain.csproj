@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Repositories\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <None Remove="Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Class1.cs" />
     <Compile Remove="Sena\Sena.cs" />
   </ItemGroup>
@@ -14,7 +20,6 @@
     <Folder Include="Entities\Quina\" />
     <Folder Include="Entities\Sena\" />
     <Folder Include="Abstract\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Loterias.Common\Loterias.Common.csproj" />
