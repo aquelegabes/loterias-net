@@ -17,6 +17,16 @@ namespace Loterias.Domain.Abstract
         [Column("sguf")]
         public Estados Estado { get; set; }
 
+        [DisplayName("Estado")]
+        [NotMapped]
+        public string EstadoCompleto 
+        {
+            get
+            {
+                return Estado.GetDescription();
+            }
+        }
+
         [DisplayName("Localização")]
         [Column("location")]
         public string Localizacao { get; set; }
@@ -24,6 +34,10 @@ namespace Loterias.Domain.Abstract
         [DisplayName("Quantidade de ganhadores por estado")]
         [Column("ganhadores_uf")]
         public int Ganhadores { get; set; }
+
+        [DisplayName("Concurso")]
+        [Column("concurso_id")]
+        public int ConcursoId { get;set; }
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Loterias.Domain.Abstract.GanhadoresModel"/>.

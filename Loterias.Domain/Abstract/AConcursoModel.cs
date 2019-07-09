@@ -28,6 +28,10 @@ namespace Loterias.Domain.Abstract
         [Column("resultado")]
         public string Resultado { get; set; }
 
+        [DisplayName("Valor do prêmio")]
+        [Column("valor")]
+        public decimal Valor { get;set; }
+
         [DisplayName("Quantidade de ganhadores")]
         [Column("ganhadores_concurso")]
         public int Ganhadores { get; set; }
@@ -67,7 +71,7 @@ namespace Loterias.Domain.Abstract
                 {
                     result += num < 10 ? $"0{num} " : num.ToString() + " ";
                 }
-                return result.Trim();
+                return result.Trim().Replace(' ','-');
             }
         }
 

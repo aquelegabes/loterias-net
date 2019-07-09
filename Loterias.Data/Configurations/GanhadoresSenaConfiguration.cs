@@ -10,6 +10,9 @@ namespace Loterias.Data.Configurations
         {
             base.Configure(builder);
             builder.ToTable("sena_ganhadoressena").HasKey(k => k.Id);
+            builder.HasOne(o => o.Concurso)
+                .WithMany(m => m.GanhadoresModel)
+                .HasForeignKey(fk => fk.ConcursoId);
         }
     }
 }

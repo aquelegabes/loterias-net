@@ -1,13 +1,10 @@
 ﻿﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
+using Loterias.Application.Interfaces;
 using Loterias.Domain.Entities.Sena;
-using Loterias.Domain.Interfaces.Repositories;
-using Microsoft.AspNetCore.Http;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Loterias.Application.ViewModels;
 
 namespace Loterias.API.Controllers
 {
@@ -18,15 +15,17 @@ namespace Loterias.API.Controllers
     [ApiController]
     public class SenaController : ControllerBase
     {
-        private readonly IRepositoryConcursoSena _concursoSena;
+        private readonly ISenaService _senaService;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// controller
         /// </summary>
-        /// <param name="concursoSena"></param>
-        public SenaController(IRepositoryConcursoSena concursoSena)
+        /// <param name="senaService"></param>
+        public SenaController(ISenaService senaService, IMapper mapper)
         {
-            _concursoSena = concursoSena;
+            _senaService = senaService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -40,8 +39,8 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                var concurso = await _concursoSena.GetById(id);
-                return Ok(concurso);
+                var concurso = await _senaService.GetById(id);
+                return Ok(_mapper.Map<ConcursoSenaVm>(concurso));
             }
             catch (Exception ex)
             {

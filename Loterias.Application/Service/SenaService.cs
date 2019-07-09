@@ -5,6 +5,7 @@ using Loterias.Domain.Entities.Sena;
 using Loterias.Domain.Interfaces.Repositories;
 using Loterias.Application.Interfaces;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace Loterias.Application.Service
 {
@@ -20,32 +21,22 @@ namespace Loterias.Application.Service
         }
 
         /// <summary>
-        /// Get a list of ConcursoSena with a func clause
+        /// Get a list of ConcursoSena with a func where clause
         /// </summary>
         /// <param name="@where"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Task<IEnumerable<ConcursoSena>> GetWhen(Func<ConcursoSena, bool> @where)
-        {
-            if (@where == null)
-                throw new ArgumentNullException(nameof(@where), "Where clause cannot be null");
-            
-            throw new NotImplementedException();
-        }
+        public Task<IEnumerable<ConcursoSena>> GetWhen(Expression<Func<ConcursoSena, bool>> @where)
+            => _sena.Where(where);
 
         /// <summary>
-        /// Find first model with a func model
+        /// Find first model with a func where clause
         /// </summary>
         /// <param name="@where"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Task<ConcursoSena> FindWhen(Func<ConcursoSena, bool> @where)
-        {
-            if (@where == null)
-                throw new ArgumentNullException(nameof(@where), "Where clause cannot be null");
-            
-            throw new NotImplementedException();
-        }
+        public Task<ConcursoSena> FindWhen(Expression<Func<ConcursoSena, bool>> @where)
+            => _sena.FirstOrDefault(where);
 
         /// <summary>
         /// Get a ConcursoSena by id

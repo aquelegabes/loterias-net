@@ -15,6 +15,7 @@ namespace Loterias.Data.Configurations
             builder.Property(p => p.Acumulado).HasDefaultValue(false);
             builder.Property(p => p.Resultado).HasMaxLength(150);
             builder.Property(p => p.Ganhadores).HasDefaultValue(0);
+            builder.Property(p => p.Valor);
             #endregion From abstract
         }
     }

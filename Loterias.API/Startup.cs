@@ -1,4 +1,6 @@
-﻿using Loterias.Application.Interfaces;
+﻿using AutoMapper;
+using Loterias.Application.AutoMapper;
+using Loterias.Application.Interfaces;
 using Loterias.Application.Service;
 using Loterias.Data.Context;
 using Loterias.Data.Repositories;
@@ -24,17 +26,34 @@ namespace Loterias.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region DbContext
             services.AddDbContext<LoteriasContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
+            #endregion
 
+            #region Repositories
             services.AddScoped(typeof(IRepositoryConcursoSena), typeof(RepositoryConcursoSena));
             services.AddScoped(typeof(IRepositoryConcursoLotofacil), typeof(RepositoryConcursoLotofacil));
             services.AddScoped(typeof(IRepositoryConcursoQuina), typeof(RepositoryConcursoQuina));
             services.AddScoped(typeof(IRepositoryGanhadoresFacil), typeof(RepositoryGanhadoresFacil));
             services.AddScoped(typeof(IRepositoryGanhadoresQuina), typeof(RepositoryGanhadoresQuina));
             services.AddScoped(typeof(IRepositoryGanhadoresSena), typeof(RepositoryGanhadoresSena));
+            #endregion
 
-            services.AddSingleton<ISenaService, SenaService>();
+            #region Services
+            services.AddScoped(typeof(ISenaService), typeof(SenaService));
+            #endregion
+
+            #region AutoMapper
+            var config = new MapperConfiguration(cfg =>
+            {
+               cfg.AddProfile(new AutoMapperProfile());
+            });
+
+            var mapper = config.CreateMapper();
+
+            services.AddSingleton(mapper);
+            #endregion
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 

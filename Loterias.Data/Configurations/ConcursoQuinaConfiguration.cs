@@ -18,7 +18,11 @@ namespace Loterias.Data.Configurations
             builder.Property(p => p.ValorQuadra);
             builder.Property(p => p.ValorRateioDuque);
             builder.Property(p => p.ValorTerno);
-            builder.HasMany(m => m.GanhadoresModel);
+            builder.HasMany(m => m.GanhadoresModel)
+                .WithOne(o => o.Concurso)
+                .HasForeignKey(fk => fk.ConcursoId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

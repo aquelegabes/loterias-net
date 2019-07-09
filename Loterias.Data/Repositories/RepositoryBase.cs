@@ -13,7 +13,7 @@ namespace Loterias.Data.Repositories
     public abstract class RepositoryBase<TEntity> : IDisposable, IRepositoryBase<TEntity>
             where TEntity : class
     {
-        private readonly LoteriasContext _context;
+        protected readonly LoteriasContext _context;
 
         public RepositoryBase(LoteriasContext context)
         {
@@ -25,7 +25,7 @@ namespace Loterias.Data.Repositories
         /// </summary>
         /// <typeparam name="IEntity"></typeparam>
         /// <returns></returns>
-        public async Task<IEnumerable<TEntity>> GetAll() => await _context.Set<TEntity>().ToListAsync();
+        public virtual async Task<IEnumerable<TEntity>> GetAll() => await _context.Set<TEntity>().ToListAsync();
 
         /// <summary>
         /// Returns the first entity that satisfies the condition or default value if no such is found.
@@ -35,7 +35,7 @@ namespace Loterias.Data.Repositories
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task<TEntity> FirstOrDefault(Expression<Func<TEntity, bool>> where)
+        public virtual async Task<TEntity> FirstOrDefault(Expression<Func<TEntity, bool>> where)
         {
             if (where == null)
                 throw new ArgumentNullException(nameof(where));
@@ -65,7 +65,7 @@ namespace Loterias.Data.Repositories
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task<IEnumerable<TEntity>> Where(Expression<Func<TEntity, bool>> where)
+        public virtual async Task<IEnumerable<TEntity>> Where(Expression<Func<TEntity, bool>> where)
         {
             if (where == null)
                 throw new ArgumentNullException(nameof(where));
@@ -95,10 +95,10 @@ namespace Loterias.Data.Repositories
         /// <typeparam name="IEntity"></typeparam>
         /// <exception cref="ArgumentException"></exception>
         /// <returns></returns>
-        public async Task<TEntity> GetById(int id) 
+        public virtual async Task<TEntity> GetById(int id) 
         {
             if (id <= 0)
-                throw new ArgumentException(nameof(id), "Id cannot be zero or lower.");
+                throw new ArgumentException("Id cannot be zero or lower.", nameof(id));
 
             return await _context.Set<TEntity>().FindAsync(id);
         }
@@ -112,10 +112,10 @@ namespace Loterias.Data.Repositories
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
         
-        public async Task Add(TEntity model)
+        public virtual async Task Add(TEntity model)
         {
             if (model == null)
-                throw new ArgumentNullException(nameof(model), "Cannot add a null reference");
+                throw new ArgumentNullException("Cannot add a null reference",nameof(model));
 
             try 
             {
@@ -141,7 +141,7 @@ namespace Loterias.Data.Repositories
         /// <exception cref="DbUpdateException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task Update(TEntity model)
+        public virtual async Task Update(TEntity model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model), "Cannot update a null reference");
@@ -173,7 +173,7 @@ namespace Loterias.Data.Repositories
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task Remove(TEntity model)
+        public virtual async Task Remove(TEntity model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model), "Cannot remove a null object");
