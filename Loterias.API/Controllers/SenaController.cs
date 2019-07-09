@@ -2,14 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Loterias.Application.Interfaces;
+using Loterias.Domain.Entities.Sena;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Loterias.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class SenaController : ControllerBase
     {
+        private readonly ISenaService _senaService;
+        
+        public SenaController(ISenaService _senaService)
+        {
+            this._senaService = _senaService;
+        }
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
@@ -17,26 +26,30 @@ namespace Loterias.API.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5
+        // GET api/sena/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        [ProducesResponseType(typeof(ConcursoSena),StatusCodes.Status200OK)]
+        public async Task<ActionResult<ConcursoSena>> Get(int id)
         {
-            return "value";
+            if (id <= 0)
+                return BadRequest(id);
+            
+            return await _senaService.GetById(id);
         }
 
-        // POST api/values
+        // POST sena/values
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/values/5
+        // PUT sena/values/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/values/5
+        // DELETE sena/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

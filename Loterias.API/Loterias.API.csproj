@@ -8,6 +8,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameWorkCore.Sqlite" Version="2.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Loterias.Application\Loterias.Application.csproj" />
+    <ProjectReference Include="..\Loterias.Data\Loterias.Data.csproj" />
   </ItemGroup>
 
 </Project>
