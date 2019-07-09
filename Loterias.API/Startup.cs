@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Loterias.Application.Interfaces;
+using Loterias.Application.Service;
 using Loterias.Data.Context;
 using Loterias.Data.Repositories;
 using Loterias.Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Loterias.API
 {
@@ -29,12 +24,21 @@ namespace Loterias.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            services.AddDbContext<LoteriasContext>(options
-                => options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
+            services.AddDbContext<LoteriasContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
 
             services.AddScoped(typeof(IRepositoryConcursoSena), typeof(RepositoryConcursoSena));
+            services.AddScoped(typeof(IRepositoryConcursoLotofacil), typeof(RepositoryConcursoLotofacil));
+            services.AddScoped(typeof(IRepositoryConcursoQuina), typeof(RepositoryConcursoQuina));
+            services.AddScoped(typeof(IRepositoryGanhadoresFacil), typeof(RepositoryGanhadoresFacil));
+            services.AddScoped(typeof(IRepositoryGanhadoresQuina), typeof(RepositoryGanhadoresQuina));
+            services.AddScoped(typeof(IRepositoryGanhadoresSena), typeof(RepositoryGanhadoresSena));
+
+            services.AddSingleton<ISenaService, SenaService>();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

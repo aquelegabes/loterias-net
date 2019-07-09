@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 using Loterias.Domain.Interfaces;
@@ -10,21 +11,27 @@ namespace Loterias.Domain.Abstract
     public abstract class AConcursoModel : IComparer<AConcursoModel>, IComparable
     {
         [DisplayName("Id")]
+        [Column("id")]
         public long Id { get; set; }
 
         [DisplayName("Número do concurso")]
+        [Column("concurso")]
         public int Concurso { get; set; }
 
         [DisplayName("Data do concurso")]
+        [Column("date")]
         public DateTime Data { get; set; }
 
         [DisplayName("Acumulado ?")]
+        [Column("acumulado")]
         public bool Acumulado { get; set; }
 
         [DisplayName("Resultado")]
+        [Column("resultado")]
         public string Resultado { get; set; }
 
         [DisplayName("Quantidade de ganhadores")]
+        [Column("ganhadores_concurso")]
         public int Ganhadores { get; set; }
 
         [DisplayName("Ganhadores")]
@@ -35,6 +42,7 @@ namespace Loterias.Domain.Abstract
         /// </summary>
         /// <value>Uma coleção com os resultados ordenados</value>
         [DisplayName("Resultado ordenado")]
+        [NotMapped]
         public ICollection<int> ResultadoOrdenado
         {
             get
@@ -53,6 +61,7 @@ namespace Loterias.Domain.Abstract
         /// </summary>
         /// <value>Uma string com os resultados ordenados</value>
         [DisplayName("Resultado ordenado")]
+        [NotMapped]
         public string ResultadoOrdenadoString
         {
             get

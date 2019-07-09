@@ -8,6 +8,8 @@ namespace Loterias.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ConcursoLotofacil> builder)
         {
+            builder.ToTable("lotofacil_concursofacil");
+
             #region From abstract
             builder.HasKey(k => k.Id);
             builder.Property(p => p.Concurso);

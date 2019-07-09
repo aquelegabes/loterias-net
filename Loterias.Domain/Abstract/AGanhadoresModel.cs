@@ -3,22 +3,30 @@ using Loterias.Domain.Interfaces;
 using Loterias.Common.Enums;
 using Loterias.Common.Extensions;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Loterias.Domain.Abstract
 {
-    public class AGanhadoresModel
+    public abstract class AGanhadoresModel
     {
         [DisplayName("Id")]
+        [Column("id")]
         public long Id { get; set; }
 
         [DisplayName("Estado")]
+        [Column("sguf")]
         public Estados Estado { get; set; }
 
         [DisplayName("Localização")]
+        [Column("location")]
         public string Localizacao { get; set; }
 
         [DisplayName("Quantidade de ganhadores por estado")]
+        [Column("ganhadores_uf")]
         public int Ganhadores { get; set; }
+
+        [DisplayName("Concurso")]
+        public virtual AConcursoModel ConcursoModel { get;set; }
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Loterias.Domain.Abstract.GanhadoresModel"/>.
