@@ -1,15 +1,11 @@
-using System;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using SQLitePCL;
-using Microsoft.EntityFrameworkCore.Sqlite;
 using Loterias.Domain.Entities.Sena;
 using Loterias.Domain.Entities.Quina;
 using Loterias.Domain.Entities.Lotofacil;
 using Loterias.Data.Configurations;
 using System.Configuration;
 
-namespace Loterias.Data.Context 
+namespace Loterias.Data.Context
 {
     public class LoteriasContext : DbContext
     {

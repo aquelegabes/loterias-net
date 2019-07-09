@@ -4,21 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Loterias.Data.Configurations
 {
-    public class ConcursoQuinaConfiguration : IEntityTypeConfiguration<ConcursoQuina>
+    public class ConcursoQuinaConfiguration : ConcursoConfiguration<ConcursoQuina>
     {
-        public void Configure(EntityTypeBuilder<ConcursoQuina> builder)
+        public override void Configure(EntityTypeBuilder<ConcursoQuina> builder)
         {
             builder.ToTable("quina_concursoquina");
-            #region From abstract
-            builder.HasKey(k => k.Id);
-            builder.Property(p => p.Concurso);
-            builder.Property(p => p.Data);
-            builder.Property(p => p.Acumulado).HasDefaultValue(false);
-            builder.Property(p => p.Resultado).HasMaxLength(150);
-            builder.Property(p => p.Ganhadores).HasDefaultValue(0);
-            builder.HasMany(m => m.GanhadoresModel);
-            #endregion From abstract
-
+            base.Configure(builder);
             builder.Property(p => p.Duque).HasMaxLength(50);
             builder.Property(p => p.GanhadoresDuque);
             builder.Property(p => p.GanhadoresQuadra);

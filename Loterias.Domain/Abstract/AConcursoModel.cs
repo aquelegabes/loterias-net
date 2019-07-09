@@ -4,15 +4,13 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-using Loterias.Domain.Interfaces;
-
 namespace Loterias.Domain.Abstract
 {
     public abstract class AConcursoModel : IComparer<AConcursoModel>, IComparable
     {
         [DisplayName("Id")]
         [Column("id")]
-        public long Id { get; set; }
+        public virtual long Id { get; set; }
 
         [DisplayName("Número do concurso")]
         [Column("concurso")]
@@ -43,7 +41,7 @@ namespace Loterias.Domain.Abstract
         /// <value>Uma coleção com os resultados ordenados</value>
         [DisplayName("Resultado ordenado")]
         [NotMapped]
-        public ICollection<int> ResultadoOrdenado
+        public virtual ICollection<int> ResultadoOrdenado
         {
             get
             {
@@ -62,7 +60,7 @@ namespace Loterias.Domain.Abstract
         /// <value>Uma string com os resultados ordenados</value>
         [DisplayName("Resultado ordenado")]
         [NotMapped]
-        public string ResultadoOrdenadoString
+        public virtual string ResultadoOrdenadoString
         {
             get
             {

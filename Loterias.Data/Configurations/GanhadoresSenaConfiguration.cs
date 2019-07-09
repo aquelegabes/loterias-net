@@ -4,18 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Loterias.Data.Configurations
 {
-    public class GanhadoresSenaConfiguration : IEntityTypeConfiguration<GanhadoresSena>
+    public class GanhadoresSenaConfiguration : GanhadoresConfiguration<GanhadoresSena>
     {
-        public void Configure(EntityTypeBuilder<GanhadoresSena> builder)
+        public override void Configure(EntityTypeBuilder<GanhadoresSena> builder)
         {
             builder.ToTable("sena_ganhadoressena");
-            #region From abstract
-            builder.HasKey(p => p.Id);
-            builder.Property(p => p.Estado).HasMaxLength(5);
-            builder.Property(p => p.Ganhadores).HasDefaultValue(0);
-            builder.Property(p => p.Localizacao).HasMaxLength(100);
-            builder.OwnsOne(o => o.Concurso);
-            #endregion From abstract
+            base.Configure(builder);
         }
     }
 }

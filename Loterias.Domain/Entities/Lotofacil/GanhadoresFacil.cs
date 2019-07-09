@@ -8,8 +8,6 @@ namespace Loterias.Domain.Entities.Lotofacil
     [Table("lotofacil_ganhadoresfacil")]
     public class GanhadoresFacil : AGanhadoresModel
     {
-        [DisplayName("Concurso")]
-        [Column("concurso_id")]
-        public virtual ConcursoLotofacil Concurso { get; set; }
+        
     }
 }

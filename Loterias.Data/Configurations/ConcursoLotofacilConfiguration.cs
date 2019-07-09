@@ -1,25 +1,16 @@
 using Loterias.Domain.Entities.Lotofacil;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Loterias.Data.Configurations;
 
 namespace Loterias.Data.Configurations
 {
-    public class ConcursoLotofacilConfiguration : IEntityTypeConfiguration<ConcursoLotofacil>
+    public class ConcursoLotofacilConfiguration : ConcursoConfiguration<ConcursoLotofacil>
     {
-        public void Configure(EntityTypeBuilder<ConcursoLotofacil> builder)
+        public override void Configure(EntityTypeBuilder<ConcursoLotofacil> builder)
         {
             builder.ToTable("lotofacil_concursofacil");
-
-            #region From abstract
-            builder.HasKey(k => k.Id);
-            builder.Property(p => p.Concurso);
-            builder.Property(p => p.Data);
-            builder.Property(p => p.Acumulado).HasDefaultValue(false);
-            builder.Property(p => p.Resultado).HasMaxLength(150);
-            builder.Property(p => p.Ganhadores).HasDefaultValue(0);
-            builder.HasMany(m => m.GanhadoresModel);
-            #endregion From abstract
-
+            base.Configure(builder);
             builder.Property(p => p.ConcursoEspecial).HasDefaultValue(false);
             builder.Property(p => p.CatorzeAcertos);
             builder.Property(p => p.TrezeAcertos);
