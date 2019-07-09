@@ -26,7 +26,9 @@ namespace Loterias.Application.Service
         /// <param name="@where"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Task<IEnumerable<ConcursoSena>> GetWhen(Expression<Func<ConcursoSena, bool>> @where)
+        /// <exception cref="DbException"></exception>
+        /// <exception cref="Exception"></exception>
+        public Task<IEnumerable<ConcursoSena>> Where(Expression<Func<ConcursoSena, bool>> @where)
             => _sena.Where(where);
 
         /// <summary>
@@ -35,7 +37,9 @@ namespace Loterias.Application.Service
         /// <param name="@where"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Task<ConcursoSena> FindWhen(Expression<Func<ConcursoSena, bool>> @where)
+        /// <exception cref="DbException"></exception>
+        /// <exception cref="Exception"></exception>
+        public Task<ConcursoSena> FirstOrDefault(Expression<Func<ConcursoSena, bool>> @where)
             => _sena.FirstOrDefault(where);
 
         /// <summary>
@@ -43,6 +47,7 @@ namespace Loterias.Application.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public Task<ConcursoSena> GetById(int id) => _sena.GetById(id);
     }
 }
