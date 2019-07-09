@@ -10,8 +10,8 @@ namespace Loterias.Domain.Abstract
     {
         [DisplayName("Id")]
         [Column("id")]
-        public virtual long Id { get; set; }
-
+        public virtual int Id { get; set; }
+        
         [DisplayName("Número do concurso")]
         [Column("concurso")]
         public int Concurso { get; set; }
@@ -31,9 +31,6 @@ namespace Loterias.Domain.Abstract
         [DisplayName("Quantidade de ganhadores")]
         [Column("ganhadores_concurso")]
         public int Ganhadores { get; set; }
-
-        [DisplayName("Ganhadores")]
-        public virtual ICollection<AGanhadoresModel> GanhadoresModel { get; set; }
 
         /// <summary>
         /// Retorna uma coleção com os resultados ordenados
@@ -68,9 +65,9 @@ namespace Loterias.Domain.Abstract
                 string result = string.Empty;
                 foreach (var num in resultOrdered)
                 {
-                    result += num < 10 ? $"0{num}" : num.ToString();
+                    result += num < 10 ? $"0{num} " : num.ToString() + " ";
                 }
-                return result;
+                return result.Trim();
             }
         }
 

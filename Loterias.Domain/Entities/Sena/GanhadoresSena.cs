@@ -9,6 +9,11 @@ namespace Loterias.Domain.Entities.Sena
     [Table("sena_ganhadoressena")]
     public class GanhadoresSena : AGanhadoresModel
     {
+        [DisplayName("Id")]
+        [Column("id")]
+        public override int Id { get; set; }
         
+        [DisplayName("Concurso")]
+        public ConcursoSena Concurso { get; set; }
     }
 }

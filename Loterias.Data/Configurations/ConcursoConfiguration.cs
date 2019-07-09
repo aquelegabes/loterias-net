@@ -10,13 +10,11 @@ namespace Loterias.Data.Configurations
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
             #region From abstract
-            builder.HasKey(k => k.Id);
             builder.Property(p => p.Concurso);
             builder.Property(p => p.Data);
             builder.Property(p => p.Acumulado).HasDefaultValue(false);
             builder.Property(p => p.Resultado).HasMaxLength(150);
             builder.Property(p => p.Ganhadores).HasDefaultValue(0);
-            builder.HasMany(m => m.GanhadoresModel);
             #endregion From abstract
         }
     }

@@ -8,8 +8,8 @@ namespace Loterias.Data.Configurations
     {
         public override void Configure(EntityTypeBuilder<GanhadoresQuina> builder)
         {
-            builder.ToTable("quina_ganhadoresquina");
             base.Configure(builder);
+            builder.ToTable("quina_ganhadoresquina").HasKey(k => k.Id);
         }
     }
 }

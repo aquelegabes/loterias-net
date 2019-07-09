@@ -11,8 +11,8 @@ namespace Loterias.Domain.Abstract
     {
         [DisplayName("Id")]
         [Column("id")]
-        public long Id { get; set; }
-
+        public virtual int Id { get; set; }
+        
         [DisplayName("Estado")]
         [Column("sguf")]
         public Estados Estado { get; set; }
@@ -24,9 +24,6 @@ namespace Loterias.Domain.Abstract
         [DisplayName("Quantidade de ganhadores por estado")]
         [Column("ganhadores_uf")]
         public int Ganhadores { get; set; }
-
-        [DisplayName("Concurso")]
-        public virtual AConcursoModel ConcursoModel { get;set; }
 
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Loterias.Domain.Abstract.GanhadoresModel"/>.

@@ -9,8 +9,8 @@ namespace Loterias.Data.Configurations
     {
         public override void Configure(EntityTypeBuilder<ConcursoLotofacil> builder)
         {
-            builder.ToTable("lotofacil_concursofacil");
             base.Configure(builder);
+            builder.ToTable("lotofacil_concursofacil").HasKey(k => k.Id);
             builder.Property(p => p.ConcursoEspecial).HasDefaultValue(false);
             builder.Property(p => p.CatorzeAcertos);
             builder.Property(p => p.TrezeAcertos);
@@ -21,6 +21,7 @@ namespace Loterias.Data.Configurations
             builder.Property(p => p.ValorDoze);
             builder.Property(p => p.ValorOnze);
             builder.Property(p => p.ValorTreze);
+            builder.HasMany(m => m.GanhadoresModel);
         }
     }
 }

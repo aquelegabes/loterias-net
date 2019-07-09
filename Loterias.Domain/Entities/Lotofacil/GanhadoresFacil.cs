@@ -8,6 +8,11 @@ namespace Loterias.Domain.Entities.Lotofacil
     [Table("lotofacil_ganhadoresfacil")]
     public class GanhadoresFacil : AGanhadoresModel
     {
-        
+        [DisplayName("Id")]
+        [Column("id")]
+        public override int Id { get; set; }
+
+        [DisplayName("Concurso")]
+        public ConcursoLotofacil Concurso { get;set; }
     }
 }

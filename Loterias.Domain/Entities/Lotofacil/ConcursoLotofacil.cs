@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using Loterias.Domain.Abstract;
@@ -9,6 +10,13 @@ namespace Loterias.Domain.Entities.Lotofacil
     [Table("lotofacil_concursofacil")]
     public class ConcursoLotofacil : AConcursoModel
     {
+        [DisplayName("Ganhadores")]
+        public ICollection<GanhadoresFacil> GanhadoresModel { get;set; }
+
+        [DisplayName("Id")]
+        [Column("id")]
+        public override int Id { get; set; }
+        
         [DisplayName("Concurso especial?")]
         [Column("concurso_especial")]
         public bool ConcursoEspecial { get; set; }

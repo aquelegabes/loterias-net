@@ -8,8 +8,8 @@ namespace Loterias.Data.Configurations
     {
         public override void Configure(EntityTypeBuilder<ConcursoQuina> builder)
         {
-            builder.ToTable("quina_concursoquina");
             base.Configure(builder);
+            builder.ToTable("quina_concursoquina").HasKey(k => k.Id);
             builder.Property(p => p.Duque).HasMaxLength(50);
             builder.Property(p => p.GanhadoresDuque);
             builder.Property(p => p.GanhadoresQuadra);
@@ -18,7 +18,7 @@ namespace Loterias.Data.Configurations
             builder.Property(p => p.ValorQuadra);
             builder.Property(p => p.ValorRateioDuque);
             builder.Property(p => p.ValorTerno);
+            builder.HasMany(m => m.GanhadoresModel);
         }
-        
     }
 }
