@@ -45,10 +45,7 @@ namespace Loterias.API
             #endregion
 
             #region AutoMapper
-            var config = new MapperConfiguration(cfg =>
-            {
-               cfg.AddProfile(new AutoMapperProfile());
-            });
+            var config = new MapperConfiguration(cfg => cfg.AddProfile(new AutoMapperProfile()));
 
             var mapper = config.CreateMapper();
 
@@ -56,8 +53,6 @@ namespace Loterias.API
             #endregion
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

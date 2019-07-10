@@ -19,7 +19,6 @@ namespace Loterias.Data.Configurations
             builder.HasMany(m => m.GanhadoresModel)
                 .WithOne(o => o.Concurso)
                 .HasForeignKey(fk => fk.ConcursoId)
-                .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

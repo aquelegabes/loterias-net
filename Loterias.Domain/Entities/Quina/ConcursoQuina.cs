@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using Loterias.Domain.Abstract;
 
-namespace Loterias.Domain.Entities.Quina 
+namespace Loterias.Domain.Entities.Quina
 {
     [DisplayName("Concurso Quina")]
     [Table("quina_concursoquina")]
@@ -16,7 +15,7 @@ namespace Loterias.Domain.Entities.Quina
         [DisplayName("Id")]
         [Column("id")]
         public override int Id { get; set; }
-        
+
         [DisplayName("Duque")]
         [Column("duque")]
         public string Duque { get; set; }

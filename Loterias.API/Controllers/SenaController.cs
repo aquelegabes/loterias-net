@@ -1,7 +1,6 @@
 ﻿﻿using System;
 using System.Threading.Tasks;
 using Loterias.Application.Interfaces;
-using Loterias.Domain.Entities.Sena;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Loterias.Application.ViewModels;
@@ -32,9 +31,9 @@ namespace Loterias.API.Controllers
         /// Gets the result from an Id
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns><see cref="ConcursoSenaVm"/></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(200, StatusCode = 200,Type = typeof(ConcursoSena))]
+        [ProducesResponseType(200, StatusCode = 200,Type = typeof(ConcursoSenaVm))]
         public async Task<IActionResult> Get(int id)
         {
             try

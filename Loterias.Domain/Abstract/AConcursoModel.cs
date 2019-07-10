@@ -11,7 +11,7 @@ namespace Loterias.Domain.Abstract
         [DisplayName("Id")]
         [Column("id")]
         public virtual int Id { get; set; }
-        
+
         [DisplayName("Número do concurso")]
         [Column("concurso")]
         public int Concurso { get; set; }

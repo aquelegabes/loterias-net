@@ -8,30 +8,32 @@ namespace Loterias.Application.Interfaces
 {
     public interface ISenaService
     {
-         /// <summary>
-        /// Get a list of ConcursoSena with a func where clause
+        /// <summary>
+        /// Filters a sequence of values based on a predicate
         /// </summary>
-        /// <param name="@where"></param>
-        /// <returns></returns>
+        /// <param name="where"><see cref="Expression{Func{TEntity,bool}}" /></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
+        /// <returns><see cref="IEnumerable{TEntity}"/></returns>
         Task<IEnumerable<ConcursoSena>> Where(Expression<Func<ConcursoSena, bool>> @where);
+
         /// <summary>
-        /// Find first model with a func where clause
+        /// Returns the first entity that satisfies the condition or default value if no such is found.
         /// </summary>
-        /// <param name="@where"></param>
-        /// <returns></returns>
+        /// <param name="where"><see cref="Expression{Func{TEntity,bool}}" /></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
+        /// <returns><see cref="TEntity"/></returns>
         Task<ConcursoSena> FirstOrDefault(Expression<Func<ConcursoSena,bool>> @where);
+
         /// <summary>
-        /// Get a ConcursoSena by id
+        /// Search for a entity based on id
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
+        /// <returns><see cref="TEntity"/></returns>
         Task<ConcursoSena> GetById(int id);
     }
 }

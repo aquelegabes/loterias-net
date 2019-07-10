@@ -51,6 +51,7 @@ namespace Loterias.Common.Extensions
         /// </example>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="EncoderFallbackException"></exception>
+        /// <returns>The string as byte[]</returns>
         public static byte[] ToByteArray(this string str, Encoding encoding)
         {
             if (string.IsNullOrWhiteSpace(str))

@@ -16,7 +16,7 @@ namespace Loterias.Domain.Entities.Sena
         [DisplayName("Id")]
         [Column("id")]
         public override int Id { get; set; }
-        
+
         [DisplayName("Ganhadores quadra")]
         [Column("ganhadores_quadra")]
         public int? GanhadoresQuadra { get; set; }

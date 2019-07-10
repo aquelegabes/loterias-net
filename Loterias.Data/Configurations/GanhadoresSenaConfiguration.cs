@@ -12,6 +12,7 @@ namespace Loterias.Data.Configurations
             builder.ToTable("sena_ganhadoressena").HasKey(k => k.Id);
             builder.HasOne(o => o.Concurso)
                 .WithMany(m => m.GanhadoresModel)
+                .IsRequired()
                 .HasForeignKey(fk => fk.ConcursoId);
         }
     }
