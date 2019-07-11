@@ -13,15 +13,15 @@ namespace Loterias.Domain.Abstract
 
         [DisplayName("Estado")]
         [Column("sguf")]
-        public Estados Estado { get; set; }
+        public string EstadoUF { get; set; }
 
         [DisplayName("Estado")]
         [NotMapped]
-        public string EstadoCompleto
+        public Estados Estado
         {
             get
             {
-                return Estado.GetDescription();
+                return EstadoUF.ToEnum<Estados>();
             }
         }
 
@@ -43,7 +43,7 @@ namespace Loterias.Domain.Abstract
         /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:Loterias.Domain.Abstract.GanhadoresModel"/>.</returns>
         public override string ToString()
         {
-            return $@"Para o estado de {this.EstadoCompleto}, houveram {Ganhadores} ganhador(es).
+            return $@"Para o estado de {this.Estado.GetDescription()}, houveram {Ganhadores} ganhador(es).
                     com a localização de {Localizacao}";
         }
     }

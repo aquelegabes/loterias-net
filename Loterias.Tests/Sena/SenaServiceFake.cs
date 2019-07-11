@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Loterias.Application.Interfaces;
 using Loterias.Common.Enums;
+using Loterias.Common.Extensions;
 using Loterias.Domain.Entities.Sena;
 
 namespace Loterias.Tests.Sena
@@ -73,7 +74,7 @@ namespace Loterias.Tests.Sena
                     ConcursoId = 996,
                     Id = 236,
                     Ganhadores = 1,
-                    Estado = Estados.SP,
+                    EstadoUF = Estados.SP.GetDescription(),
                     Localizacao = null,
                 },
                 new GanhadoresSena
@@ -81,7 +82,7 @@ namespace Loterias.Tests.Sena
                     ConcursoId = 996,
                     Id = 237,
                     Ganhadores = 1,
-                    Estado = Estados.SC,
+                    EstadoUF = Estados.SC.GetDescription(),
                     Localizacao = null,
                 }
             };

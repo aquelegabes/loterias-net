@@ -13,6 +13,6 @@ namespace Loterias.Domain.Entities.Quina
         public override int Id { get; set; }
 
         [DisplayName("Concurso")]
-        public ConcursoQuina Concurso { get;set; }
+        public virtual ConcursoQuina Concurso { get;set; }
     }
 }

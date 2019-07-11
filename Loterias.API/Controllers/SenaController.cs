@@ -39,15 +39,18 @@ namespace Loterias.API.Controllers
             try
             {
                 var concurso = await _senaService.GetById(id);
+                if (concurso == null)
+                    return NoContent();
+                    
                 return Ok(_mapper.Map<ConcursoSenaVm>(concurso));
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { errorMessage = $"Argument {nameof(id)} cannot be zero or lower"});
+                return BadRequest(new { errorMessage = ex.Message});
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "internal server error");
+                return StatusCode(500, new {error = "internal server error", errorMessage = ex.Message});
             }
         }
     }

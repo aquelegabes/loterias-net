@@ -11,7 +11,7 @@ namespace Loterias.Domain.Entities.Lotofacil
     public class ConcursoLotofacil : AConcursoModel
     {
         [DisplayName("Ganhadores")]
-        public ICollection<GanhadoresFacil> GanhadoresModel { get;set; }
+        public virtual ICollection<GanhadoresFacil> GanhadoresModel { get;set; }
 
         [DisplayName("Id")]
         [Column("id")]

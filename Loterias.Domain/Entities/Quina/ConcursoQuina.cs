@@ -10,7 +10,7 @@ namespace Loterias.Domain.Entities.Quina
     public class ConcursoQuina : AConcursoModel
     {
         [DisplayName("Ganhadores")]
-        public ICollection<GanhadoresQuina> GanhadoresModel { get;set; }
+        public virtual ICollection<GanhadoresQuina> GanhadoresModel { get;set; }
 
         [DisplayName("Id")]
         [Column("id")]

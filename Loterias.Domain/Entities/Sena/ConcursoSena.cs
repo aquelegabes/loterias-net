@@ -11,7 +11,7 @@ namespace Loterias.Domain.Entities.Sena
     public class ConcursoSena : AConcursoModel
     {
         [DisplayName("Ganhadores")]
-        public ICollection<GanhadoresSena> GanhadoresModel { get;set; }
+        public virtual ICollection<GanhadoresSena> GanhadoresModel { get;set; }
 
         [DisplayName("Id")]
         [Column("id")]
