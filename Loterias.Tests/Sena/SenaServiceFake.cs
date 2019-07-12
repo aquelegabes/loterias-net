@@ -16,12 +16,12 @@ namespace Loterias.Tests.Sena
 
         private readonly List<GanhadoresSena> _senasWinners;
 
-        public SenaServiceFake() 
+        public SenaServiceFake()
         {
             _senas = new List<ConcursoSena>
             {
-                new ConcursoSena 
-                { 
+                new ConcursoSena
+                {
                     Id = 994, 
                     Concurso = 994, 
                     Data = new DateTime(day: 09, month: 08, year: 2008),
@@ -35,10 +35,10 @@ namespace Loterias.Tests.Sena
                     ValorQuadra = 389.25m,
                     ValorQuina = 31_786.28m,
                 },
-                new ConcursoSena 
-                { 
-                    Id = 995, 
-                    Concurso = 995, 
+                new ConcursoSena
+                {
+                    Id = 995,
+                    Concurso = 995,
                     Data = new DateTime(day: 13, month: 08, year: 2008),
                     Acumulado = true,
                     Valor = 0m,
@@ -50,10 +50,10 @@ namespace Loterias.Tests.Sena
                     ValorQuadra = 279.73m,
                     ValorQuina = 24_991.48m,
                 },
-                new ConcursoSena 
-                { 
-                    Id = 996, 
-                    Concurso = 996, 
+                new ConcursoSena
+                {
+                    Id = 996,
+                    Concurso = 996,
                     Data = new DateTime(day: 16, month: 08, year: 2008),
                     Acumulado = false,
                     Valor = 14_458_257.67m,
@@ -74,7 +74,7 @@ namespace Loterias.Tests.Sena
                     ConcursoId = 996,
                     Id = 236,
                     Ganhadores = 1,
-                    EstadoUF = Estados.SP.GetDescription(),
+                    EstadoUF = nameof(Estados.SP),
                     Localizacao = null,
                 },
                 new GanhadoresSena
@@ -82,7 +82,7 @@ namespace Loterias.Tests.Sena
                     ConcursoId = 996,
                     Id = 237,
                     Ganhadores = 1,
-                    EstadoUF = Estados.SC.GetDescription(),
+                    EstadoUF = nameof(Estados.SC),
                     Localizacao = null,
                 }
             };
@@ -123,7 +123,7 @@ namespace Loterias.Tests.Sena
         {
             if (where == null)
                 throw new ArgumentNullException(nameof(@where), "Expression where cannot be null");
-                
+
             Func<ConcursoSena,bool> func = where.Compile();
             var findList = _senas.Where(func).ToList();
             IEnumerable<ConcursoSena> result ;

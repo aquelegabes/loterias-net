@@ -4,6 +4,7 @@ using Loterias.Application.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Loterias.Application.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace Loterias.API.Controllers
 {
@@ -33,15 +34,16 @@ namespace Loterias.API.Controllers
         /// <param name="id"></param>
         /// <returns><see cref="ConcursoSenaVm"/></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(200, StatusCode = 200,Type = typeof(ConcursoSenaVm))]
+        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id)
         {
             try
             {
                 var concurso = await _senaService.GetById(id);
-                if (concurso == null)
-                    return NoContent();
-                    
+
                 return Ok(_mapper.Map<ConcursoSenaVm>(concurso));
             }
             catch (ArgumentException ex)
@@ -50,6 +52,9 @@ namespace Loterias.API.Controllers
             }
             catch (Exception ex)
             {
+                if (ex.Message.Contains("no matching"))
+                    return NoContent();
+
                 return StatusCode(500, new {error = "internal server error", errorMessage = ex.Message});
             }
         }

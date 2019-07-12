@@ -30,7 +30,7 @@ namespace Loterias.Common.Extensions
             enu = default(T);
             if (string.IsNullOrWhiteSpace(val))
                 throw new ArgumentNullException(nameof(val), $"String cannot be null to cast as {typeof(T)}");
-                
+
             var tr = Enum.TryParse(typeof(T), val, true, out object result);
             if (result is T)
             {

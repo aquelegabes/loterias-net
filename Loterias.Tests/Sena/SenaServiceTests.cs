@@ -1,11 +1,11 @@
-using Loterias.Domain.Entities.Sena;
 using Loterias.Application.Interfaces;
 using Xunit;
 using Loterias.API.Controllers;
 using Loterias.Application.AutoMapper;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using System.Threading.Tasks;
+using Loterias.Application.ViewModels;
 
 namespace Loterias.Tests.Sena
 {
@@ -24,19 +24,44 @@ namespace Loterias.Tests.Sena
         }
 
         [Fact]
-        public void Get_WhenCalled_ReturnsOkResult()
+        public async Task Get_WhenCalled_ReturnsOkResult()
         {
-            var okResult = _controller.Get(994);
+            var okResult = await _controller.Get(994);
 
-            Assert.IsType<OkObjectResult>(okResult.Result);
+            Assert.IsType<OkObjectResult>(okResult);
         }
 
         [Fact]
-        public void Get_WhenCalled_ReturnsBadRequest()
+        public async Task Get_WhenCalled_ReturnsBadRequest()
         {
-            var badResult = _controller.Get(0);
+            var badResult = await _controller.Get(0);
 
-            Assert.IsType<BadRequestObjectResult>(badResult.Result);
+            Assert.IsType<BadRequestObjectResult>(badResult);
+        }
+
+        [Fact]
+        public async Task Get_WhenCalled_ReturnsNoResponse()
+        {
+            var noResponse = await _controller.Get(3);
+
+            Assert.IsType<NoContentResult>(noResponse);
+        }
+
+        [Fact]
+        public async Task Get_WhenCalled_HasWinners()
+        {
+            //act
+            var hasWinners = await _controller.Get(996);
+
+            //Assert
+            Assert.IsType<OkObjectResult>(hasWinners);
+
+            var okObjectResult = hasWinners as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+
+            var model = okObjectResult.Value as ConcursoSenaVm;
+            Assert.NotNull(model);
+            Assert.NotEmpty(model.GanhadoresModel);
         }
     }
 }
