@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Data.Common;
 
 namespace Loterias.Domain.Interfaces.Repositories
 {
@@ -50,7 +51,7 @@ namespace Loterias.Domain.Interfaces.Repositories
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns><see cref="bool"/></returns>
-        Task<bool> Add(TEntity model);
+        Task<TEntity> Add(TEntity model);
 
         /// <summary>
         /// Update the entity
@@ -61,7 +62,7 @@ namespace Loterias.Domain.Interfaces.Repositories
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns><see cref="bool"/></returns>
-        Task<bool> Update(TEntity model);
+        Task<TEntity> Update(TEntity model);
 
         /// <summary>
         /// Remove the entity
@@ -72,6 +73,16 @@ namespace Loterias.Domain.Interfaces.Repositories
         /// <exception cref="Exception"></exception>
         /// <returns><see cref="bool"/></returns>
         Task<bool> Remove(TEntity model);
+
+        /// <summary>
+        /// Releases all resource used by the <see cref="T:Loterias.Domain.Interfaces.Repositories.IRepositoryBase`1"/> object.
+        /// </summary>
+        /// <remarks>Call <see cref="Dispose"/> when you are finished using the
+        /// <see cref="T:Loterias.Domain.Interfaces.Repositories.IRepositoryBase`1"/>. The <see cref="Dispose"/> method
+        /// leaves the <see cref="T:Loterias.Domain.Interfaces.Repositories.IRepositoryBase`1"/> in an unusable state.
+        /// After calling <see cref="Dispose"/>, you must release all references to the
+        /// <see cref="T:Loterias.Domain.Interfaces.Repositories.IRepositoryBase`1"/> so the garbage collector can
+        /// reclaim the memory that the <see cref="T:Loterias.Domain.Interfaces.Repositories.IRepositoryBase`1"/> was occupying.</remarks>
         void Dispose();
     }
 }

@@ -28,8 +28,8 @@ namespace Loterias.Application.Service
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns><see cref="IEnumerable{TEntity}"/></returns>
-        public Task<IEnumerable<ConcursoSena>> Where(Expression<Func<ConcursoSena, bool>> @where)
-            => _sena.Where(where);
+        public async Task<IEnumerable<ConcursoSena>> Where(Expression<Func<ConcursoSena, bool>> @where)
+            => await _sena.Where(where);
 
         /// <summary>
         /// Returns the first entity that satisfies the condition or default value if no such is found.
@@ -39,8 +39,8 @@ namespace Loterias.Application.Service
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns><see cref="TEntity"/></returns>
-        public Task<ConcursoSena> FirstOrDefault(Expression<Func<ConcursoSena, bool>> @where)
-            => _sena.FirstOrDefault(where);
+        public async Task<ConcursoSena> FirstOrDefault(Expression<Func<ConcursoSena, bool>> @where)
+            => await _sena.FirstOrDefault(where);
 
         /// <summary>
         /// Search for a entity based on id
@@ -48,6 +48,15 @@ namespace Loterias.Application.Service
         /// <param name="id"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <returns><see cref="TEntity"/></returns>
-        public Task<ConcursoSena> GetById(int id) => _sena.GetById(id);
+        public async Task<ConcursoSena> GetById(int id) => await _sena.GetById(id);
+
+        /// <summary>
+        /// Add a new model to the database
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="DbException"></exception>
+        /// <returns><see cref="ConcursoSena" />Returns the model</returns>
+        public async Task<ConcursoSena> Add(ConcursoSena model) => await _sena.Add(model);
     }
 }

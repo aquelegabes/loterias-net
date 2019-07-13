@@ -10,9 +10,9 @@ namespace Loterias.Data.Configurations
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
             #region From abstract
-            builder.Property(p => p.EstadoUF).HasMaxLength(5);
-            builder.Property(p => p.Ganhadores).HasDefaultValue(0);
-            builder.Property(p => p.Localizacao).HasMaxLength(100);
+            builder.Property(p => p.EstadoUF).IsRequired().HasMaxLength(5);
+            builder.Property(p => p.Ganhadores).HasDefaultValue(1);
+            builder.Property(p => p.Localizacao).HasDefaultValue(null).HasMaxLength(100);
             #endregion From abstract
         }
     }

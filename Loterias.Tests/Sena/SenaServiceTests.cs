@@ -6,6 +6,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Loterias.Application.ViewModels;
+using Loterias.Domain.Entities.Sena;
+using System;
 
 namespace Loterias.Tests.Sena
 {
@@ -22,6 +24,8 @@ namespace Loterias.Tests.Sena
             _service = new SenaServiceFake();
             _controller = new SenaController(_service, mapper);
         }
+
+        #region Get
 
         [Fact]
         public async Task Get_WhenCalled_ReturnsOkResult()
@@ -63,5 +67,51 @@ namespace Loterias.Tests.Sena
             Assert.NotNull(model);
             Assert.NotEmpty(model.GanhadoresModel);
         }
+        #endregion Get
+
+        #region Add/Update/Remove
+
+        [Fact]
+        public async Task Add_WhenPost_Success()
+        {
+            // arrange
+            var modelAdd = new ConcursoSena
+            {
+                Concurso = 1,
+                Data = new DateTime(day: 11, month: 03, year: 1996),
+                Resultado = "41-05-04-52-30-33",
+                GanhadoresQuadra = 2016,
+                GanhadoresQuina = 17,
+                ValorAcumulado = 1_714_650.23m,
+                ValorQuadra = 330.21m,
+                ValorQuina = 39_158.92m,
+            };
+
+           // act
+            var result = await _controller.Add(modelAdd);
+
+            // assert
+            Assert.IsType<OkObjectResult>(result);
+
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+
+            var modelVm = okObjectResult.Value as ConcursoSenaVm;
+            Assert.IsType<ConcursoSenaVm>(modelVm);
+        }
+
+        [Fact]
+        public async Task Add_WhenPost_ReturnsBadRequest()
+        {
+            // arrange 
+            ConcursoSena model = null;
+
+            // act
+            var result = await _controller.Add(model);
+
+            // assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+        #endregion Add/Update/Remove
     }
 }

@@ -12,15 +12,15 @@ namespace Loterias.Data.Configurations
             base.Configure(builder);
             builder.ToTable("lotofacil_concursofacil").HasKey(k => k.Id);
             builder.Property(p => p.ConcursoEspecial).HasDefaultValue(false);
-            builder.Property(p => p.CatorzeAcertos);
-            builder.Property(p => p.TrezeAcertos);
-            builder.Property(p => p.DozeAcertos);
-            builder.Property(p => p.OnzeAcertos);
-            builder.Property(p => p.ValorAcumuladoEspecial);
-            builder.Property(p => p.ValorCatorze);
-            builder.Property(p => p.ValorDoze);
-            builder.Property(p => p.ValorOnze);
-            builder.Property(p => p.ValorTreze);
+            builder.Property(p => p.CatorzeAcertos).HasDefaultValue(0);
+            builder.Property(p => p.TrezeAcertos).HasDefaultValue(0);
+            builder.Property(p => p.DozeAcertos).HasDefaultValue(0);
+            builder.Property(p => p.OnzeAcertos).HasDefaultValue(0);
+            builder.Property(p => p.ValorAcumuladoEspecial).HasDefaultValue(0m);
+            builder.Property(p => p.ValorCatorze).HasDefaultValue(0m);
+            builder.Property(p => p.ValorDoze).HasDefaultValue(0m);
+            builder.Property(p => p.ValorOnze).HasDefaultValue(0m);
+            builder.Property(p => p.ValorTreze).HasDefaultValue(0m);
             builder.HasMany(m => m.GanhadoresModel)
                 .WithOne(o => o.Concurso)
                 .HasForeignKey(fk => fk.ConcursoId)

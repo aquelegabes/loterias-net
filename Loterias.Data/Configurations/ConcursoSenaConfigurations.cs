@@ -9,17 +9,17 @@ namespace Loterias.Data.Configurations
         public override void Configure(EntityTypeBuilder<ConcursoSena> builder)
         {
             base.Configure(builder);
-            builder.ToTable("sena_concursosena").HasKey(k => k.Id);
-            builder.Property(p => p.Acumulado).HasDefaultValue(false);
-            builder.Property(p => p.GanhadoresQuadra);
-            builder.Property(p => p.GanhadoresQuina);
-            builder.Property(p => p.ValorAcumulado);
-            builder.Property(p => p.ValorQuadra);
-            builder.Property(p => p.ValorQuina);
+            builder.Property(p => p.GanhadoresQuadra).HasDefaultValue(0);
+            builder.Property(p => p.GanhadoresQuina).HasDefaultValue(0);
+            builder.Property(p => p.ValorAcumulado).HasDefaultValue(0m);
+            builder.Property(p => p.ValorQuadra).HasDefaultValue(0m);
+            builder.Property(p => p.ValorQuina).HasDefaultValue(0m);
             builder.HasMany(m => m.GanhadoresModel)
                 .WithOne(o => o.Concurso)
                 .HasForeignKey(fk => fk.ConcursoId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.ToTable("sena_concursosena").HasKey(k => k.Id);
         }
     }
 }

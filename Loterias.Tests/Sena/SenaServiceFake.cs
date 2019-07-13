@@ -141,5 +141,21 @@ namespace Loterias.Tests.Sena
 
             return await Task.FromResult<List<ConcursoSena>>(null);
         }
+
+        public async Task<ConcursoSena> Add(ConcursoSena model)
+        {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model), "Cannot add a null reference");
+
+            try 
+            {
+                _senas.Add(model);
+                return await Task.FromResult(model);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

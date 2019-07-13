@@ -108,17 +108,17 @@ namespace Loterias.Data.Repositories
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        /// <returns><see cref="bool"/>Returns true if added, false if not</returns>
-        public virtual async Task<bool> Add(TEntity model)
+        /// <returns><see cref="bool"/>Returns the model</returns>
+        public virtual async Task<TEntity> Add(TEntity model)
         {
             if (model == null)
-                throw new ArgumentNullException("Cannot add a null reference",nameof(model));
+                throw new ArgumentNullException(nameof(model), "Cannot add a null reference");
 
             try
             {
                 await _context.Set<TEntity>().AddAsync(model);
                 await _context.SaveChangesAsync();
-                return true;
+                return model;
             }
             catch (DbException)
             {
@@ -138,8 +138,8 @@ namespace Loterias.Data.Repositories
         /// <exception cref="DbUpdateException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        /// <returns><see cref="bool"/>Returns true if updated, false if not</returns>
-        public virtual async Task<bool> Update(TEntity model)
+        /// <returns><see cref="bool"/>Returns the entity</returns>
+        public virtual async Task<TEntity> Update(TEntity model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model), "Cannot update a null reference");
@@ -148,7 +148,7 @@ namespace Loterias.Data.Repositories
             {
                 _context.Set<TEntity>().Update(model);
                 await _context.SaveChangesAsync();
-                return true;
+                return model;
             }
             catch (DbUpdateException)
             {
@@ -193,9 +193,19 @@ namespace Loterias.Data.Repositories
             }
         }
 
+        /// <summary>
+        /// Releases all resource used by the <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/> object.
+        /// </summary>
+        /// <remarks>Call <see cref="Dispose"/> when you are finished using the
+        /// <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/>. The <see cref="Dispose"/> method leaves the
+        /// <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/> in an unusable state. After calling
+        /// <see cref="Dispose"/>, you must release all references to the
+        /// <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/> so the garbage collector can reclaim the memory
+        /// that the <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/> was occupying.</remarks>
         public void Dispose()
         {
-            
+            if (_context != null)
+                _context.Dispose();
         }
     }
 }

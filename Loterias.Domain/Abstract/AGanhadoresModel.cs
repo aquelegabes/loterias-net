@@ -1,6 +1,7 @@
 ﻿using Loterias.Common.Enums;
 using Loterias.Common.Extensions;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Loterias.Domain.Abstract
@@ -13,6 +14,7 @@ namespace Loterias.Domain.Abstract
 
         [DisplayName("Estado")]
         [Column("sguf")]
+        [Required]
         public string EstadoUF { get; set; }
 
         [DisplayName("Estado")]

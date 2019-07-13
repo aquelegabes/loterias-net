@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
@@ -14,10 +15,12 @@ namespace Loterias.Domain.Abstract
 
         [DisplayName("Número do concurso")]
         [Column("concurso")]
+        [Required]
         public int Concurso { get; set; }
 
         [DisplayName("Data do concurso")]
         [Column("date")]
+        [Required]
         public DateTime Data { get; set; }
 
         [DisplayName("Acumulado ?")]
@@ -26,6 +29,7 @@ namespace Loterias.Domain.Abstract
 
         [DisplayName("Resultado")]
         [Column("resultado")]
+        [Required]
         public string Resultado { get; set; }
 
         [DisplayName("Valor do prêmio")]
