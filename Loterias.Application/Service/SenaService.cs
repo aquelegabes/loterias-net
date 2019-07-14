@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Data.Common;
 using Loterias.Domain.Entities.Sena;
 using Loterias.Domain.Interfaces.Repositories;
 using Loterias.Application.Interfaces;
@@ -27,7 +27,7 @@ namespace Loterias.Application.Service
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        /// <returns><see cref="IEnumerable{TEntity}"/></returns>
+        /// <returns><see cref="IEnumerable{ConcursoSena}"/></returns>
         public async Task<IEnumerable<ConcursoSena>> Where(Expression<Func<ConcursoSena, bool>> @where)
             => await _sena.Where(where);
 
@@ -38,7 +38,7 @@ namespace Loterias.Application.Service
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        /// <returns><see cref="TEntity"/></returns>
+        /// <returns><see cref="ConcursoSena"/></returns>
         public async Task<ConcursoSena> FirstOrDefault(Expression<Func<ConcursoSena, bool>> @where)
             => await _sena.FirstOrDefault(where);
 
@@ -47,8 +47,15 @@ namespace Loterias.Application.Service
         /// </summary>
         /// <param name="id"></param>
         /// <exception cref="ArgumentException"></exception>
-        /// <returns><see cref="TEntity"/></returns>
+        /// <returns><see cref="ConcursoSena"/></returns>
         public async Task<ConcursoSena> GetById(int id) => await _sena.GetById(id);
+
+        /// <summary>
+        /// Gets the by date.
+        /// </summary>
+        /// <returns>The by date.</returns>
+        /// <param name="date">Date.</param>
+        public async Task<ConcursoSena> GetByDate(DateTime date) => await _sena.FirstOrDefault(f => f.Data.Equals(date));
 
         /// <summary>
         /// Add a new model to the database
@@ -58,5 +65,16 @@ namespace Loterias.Application.Service
         /// <exception cref="DbException"></exception>
         /// <returns><see cref="ConcursoSena" />Returns the model</returns>
         public async Task<ConcursoSena> Add(ConcursoSena model) => await _sena.Add(model);
+
+        /// <summary>
+        /// Updates an existing model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="EntryPointNotFoundException"></exception>
+        /// <exception cref="DbUpdateException"></exception>
+        /// <exception cref="DbException"></exception>
+        /// <returns> <see cref="ConcursoSena" />Returns the model</returns>
+        public async Task<ConcursoSena> Update(ConcursoSena model) => await _sena.Update(model);
     }
 }

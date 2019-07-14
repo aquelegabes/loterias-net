@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Loterias.Application.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Loterias.Domain.Entities.Sena;
+using System.Globalization;
 
 namespace Loterias.API.Controllers
 {
@@ -66,6 +67,7 @@ namespace Loterias.API.Controllers
         /// <param name="model"></param>
         /// <returns><see cref="ConcursoSenaVm" /></returns>
         [HttpPut]
+        [Route("api/[controller]/add")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -84,6 +86,81 @@ namespace Loterias.API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError
                     , new { errorMessage = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Update the specified model.
+        /// </summary>
+        /// <returns>The updated model</returns>
+        /// <param name="model">Model.</param>
+        [HttpPost]
+        [Route("api/[controller]/update")]
+        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Update([FromBody] ConcursoSena model)
+        {
+            try 
+            {
+                var result = await _senaService.Update(model);
+                return Ok(_mapper.Map<ConcursoSenaVm>(model));
+            }
+            catch (EntryPointNotFoundException ex)
+            {
+                return NotFound(new { errorMessage = ex.Message });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { errorMessage = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { errorMessage = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Gets entity by date.
+        /// </summary>
+        /// <returns>The by date.</returns>
+        /// <param name="date">Date.</param>
+        /// <param name="culture">Culture.</param>
+        [HttpGet("{date:datetime}/string:culture")]
+        [Route("api/[controller]/getbydate")]
+        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByDate(string date, string culture)
+        {
+            try
+            {
+                var ci = CultureInfo.GetCultureInfo(culture);
+                DateTime dateSearch = Convert.ToDateTime(date, ci);
+                var result = await _senaService.GetByDate(dateSearch);
+                return Ok(_mapper.Map<ConcursoSenaVm>(result));
+            }
+            catch (ArgumentNullException)
+            {
+                return BadRequest(new { errorMessage = "Both parameters are required" });
+            }
+            catch (CultureNotFoundException)
+            {
+                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
+            }
+            catch (FormatException)
+            {
+                return BadRequest(new { errorMessage = "Wrong date format" });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("no matching"))
+                    return NoContent();
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

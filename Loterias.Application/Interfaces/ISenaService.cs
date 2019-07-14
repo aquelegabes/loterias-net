@@ -1,8 +1,10 @@
 using System;
+using System.Data.Common;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Loterias.Domain.Entities.Sena;
+using System.Globalization;
 
 namespace Loterias.Application.Interfaces
 {
@@ -37,6 +39,15 @@ namespace Loterias.Application.Interfaces
         Task<ConcursoSena> GetById(int id);
 
         /// <summary>
+        /// Gets the entity by date.
+        /// </summary>
+        /// <returns>The entity</returns>
+        /// <param name="date">Date.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="FormatException"></exception>
+        Task<ConcursoSena> GetByDate(DateTime date);
+
+        /// <summary>
         /// Add a new model to the database
         /// </summary>
         /// <param name="model"></param>
@@ -44,5 +55,16 @@ namespace Loterias.Application.Interfaces
         /// <exception cref="DbException"></exception>
         /// <returns><see cref="ConcursoSena" />Returns the model</returns>
         Task<ConcursoSena> Add(ConcursoSena model);
+
+        /// <summary>
+        /// Updates an existing model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="EntryPointNotFoundException" />
+        /// <exception cref="DbUpdateException" />
+        /// <exception cref="DbException" />
+        /// <returns> <see cref="ConcursoSena" />Returns the model</returns>
+        Task<ConcursoSena> Update(ConcursoSena model);
     }
 }

@@ -135,6 +135,7 @@ namespace Loterias.Data.Repositories
         /// </summary>
         /// <param name="model"><see cref="TEntity"/></param>
         /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="EntryPointNotFoundException" /></exception>
         /// <exception cref="DbUpdateException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
@@ -143,12 +144,15 @@ namespace Loterias.Data.Repositories
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model), "Cannot update a null reference");
-
             try
             {
                 _context.Set<TEntity>().Update(model);
                 await _context.SaveChangesAsync();
                 return model;
+            }
+            catch (EntryPointNotFoundException)
+            {
+                throw;
             }
             catch (DbUpdateException)
             {
