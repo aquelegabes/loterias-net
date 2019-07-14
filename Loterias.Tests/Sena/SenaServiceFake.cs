@@ -119,6 +119,14 @@ namespace Loterias.Tests.Sena
             return await Task.FromResult<ConcursoSena>(null);
         }
 
+        public async Task<ConcursoSena> GetByDate(DateTime date) 
+        {
+            var model = _senas.FirstOrDefault(w => w.Data.Equals(date));
+            if (model == null)
+                throw new Exception("Predicate found no matching objects");
+            return await Task.FromResult(model);
+        }
+
         public async Task<IEnumerable<ConcursoSena>> Where(Expression<Func<ConcursoSena, bool>> where)
         {
             if (where == null)
@@ -149,6 +157,27 @@ namespace Loterias.Tests.Sena
 
             try 
             {
+                _senas.Add(model);
+                return await Task.FromResult(model);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<ConcursoSena> Update(ConcursoSena model)
+        {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model), "Cannot update a null reference");
+
+            var find = _senas.Find(f => f.Id.Equals(model.Id));
+            if (find == null)
+                throw new EntryPointNotFoundException("Could not find an object on specified index.");
+
+            try 
+            {
+                _senas.Remove(find);
                 _senas.Add(model);
                 return await Task.FromResult(model);
             }

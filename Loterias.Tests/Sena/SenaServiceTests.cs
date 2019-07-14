@@ -1,13 +1,17 @@
-using Loterias.Application.Interfaces;
+using System;
+using System.Threading.Tasks;
 using Xunit;
-using Loterias.API.Controllers;
-using Loterias.Application.AutoMapper;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+
+using Loterias.Application.Interfaces;
+using Loterias.API.Controllers;
+using Loterias.Application.AutoMapper;
 using Loterias.Application.ViewModels;
 using Loterias.Domain.Entities.Sena;
-using System;
+
+
 
 namespace Loterias.Tests.Sena
 {
@@ -67,6 +71,47 @@ namespace Loterias.Tests.Sena
             Assert.NotNull(model);
             Assert.NotEmpty(model.GanhadoresModel);
         }
+
+        [Fact]
+        public async Task GetByDate_WhenCalled_ReturnsOk()
+        {
+            // act
+            var result = await _controller.GetByDate("16/08/2008","pt-BR");
+
+            // assert
+            Assert.IsType<OkObjectResult>(result);
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+
+            var modelVm = okObjectResult.Value as ConcursoSenaVm;
+            Assert.NotNull(modelVm);
+            Assert.IsType<ConcursoSenaVm>(modelVm);
+        }
+
+        [Fact]
+        public async Task GetByDate_WhenCalled_ReturnsBadRequest()
+        {
+            // act and asserts
+            var resultEmpty = await _controller.GetByDate("","");
+            Assert.IsType<BadRequestObjectResult>(resultEmpty);
+
+            var resultOneEmpty = await _controller.GetByDate("16/08/2008","");
+            Assert.IsType<BadRequestObjectResult>(resultOneEmpty);
+
+            resultOneEmpty = await _controller.GetByDate("", "pt-BR");
+            Assert.IsType<BadRequestObjectResult>(resultOneEmpty);
+        }
+
+        [Fact]
+        public async Task GetByDate_WhernCalled_ReturnsNoContent()
+        {
+            // act
+            var result = await _controller.GetByDate("01/01/1900", "pt-BR");
+            
+            // assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
         #endregion Get
 
         #region Add/Update/Remove
@@ -98,6 +143,7 @@ namespace Loterias.Tests.Sena
 
             var modelVm = okObjectResult.Value as ConcursoSenaVm;
             Assert.IsType<ConcursoSenaVm>(modelVm);
+            Assert.NotNull(modelVm);
         }
 
         [Fact]
@@ -111,6 +157,73 @@ namespace Loterias.Tests.Sena
 
             // assert
             Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task Update_WhenPost_ReturnsOk()
+        {
+            // arrange
+            var model = await _service.GetById(996);
+            
+            model.Resultado = "01-02-03-04-05-06";
+
+            // act
+            var result = await _controller.Update(model);
+
+            // assert
+            Assert.IsType<OkObjectResult>(result);
+
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+
+            var modelResult = okObjectResult.Value as ConcursoSenaVm;
+            Assert.IsType<ConcursoSenaVm>(modelResult);
+            Assert.NotNull(modelResult);
+        }
+
+        [Fact]
+        public async Task Update_WhenPost_ReturnsBadRequest()
+        {
+            // arrange
+            ConcursoSena model = null;
+
+            // act
+            var result = await _controller.Update(model);
+
+            // assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task Update_WhenPost_ReturnsNotFound()
+        {
+            // arrange
+            var model = await _service.GetById(996);
+            // need to instantiate a new ConcursoModel otherwise it will alter the object in the list
+            var modelUpdate = new ConcursoSena
+            {
+                Acumulado = model.Acumulado,
+                Concurso = -1,
+                Id = -1,
+                Data = model.Data,
+                Ganhadores = model.Ganhadores,
+                GanhadoresQuadra = model.GanhadoresQuadra,
+                GanhadoresQuina = model.GanhadoresQuina,
+                Resultado = model.Resultado,
+                Valor = model.Valor,
+                ValorAcumulado = model.ValorAcumulado,
+                ValorQuadra = model.ValorQuadra,
+                ValorQuina = model.ValorQuina
+            };
+
+            // act
+            var result = await _controller.Update(modelUpdate);
+
+            // assert
+            Assert.IsType<NotFoundObjectResult>(result);
+            var notFoundObject = result as NotFoundObjectResult;
+            var json = JsonConvert.SerializeObject(notFoundObject.Value);
+            Assert.Contains("Could not find an object on specified index.", json);
         }
         #endregion Add/Update/Remove
     }
