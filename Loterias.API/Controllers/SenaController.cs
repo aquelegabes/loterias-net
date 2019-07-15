@@ -171,9 +171,8 @@ namespace Loterias.API.Controllers
         /// <example>
         /// https://host/api/sena/betweendates?dates=["10/06/2019", "11/06/2019"]&culture=pt-BR
         /// </example>
-        /// <param name="date">Date 1.</param>
-        /// <param name="date2">Date 2.</param>
         /// <param name="culture">Culture.</param>
+        /// <param name="dates">Dates.</param>
         [HttpGet("indates")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -194,7 +193,7 @@ namespace Loterias.API.Controllers
                 if (result == null)
                     return NoContent();
 
-                return Ok(_mapper.Map<ConcursoSenaVm>(result));
+                return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
             }
             catch (ArgumentNullException)
             {

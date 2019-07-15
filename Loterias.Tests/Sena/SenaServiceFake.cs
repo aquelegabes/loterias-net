@@ -138,7 +138,7 @@ namespace Loterias.Tests.Sena
                 throw new ArgumentNullException("Specified dates cannot be null");
             
             var findList = _senas.Where(w => dates.Any(a => a.Date.Equals(w.Data))).ToList();
-            IEnumerable<ConcursoSena> result;
+            List<ConcursoSena> result;
             if (findList != null && findList.Count > 0)
             {
                 result = new List<ConcursoSena>();
@@ -146,7 +146,7 @@ namespace Loterias.Tests.Sena
                 {
                     var add = model;
                     add.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(model.Id)).ToList();
-                    result.Append(add);
+                    result.Add(add);
                 }
                 return await Task.FromResult(result);
             }
