@@ -1,4 +1,5 @@
 ﻿﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Loterias.Application.Interfaces;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Loterias.Application.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Loterias.Domain.Entities.Sena;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace Loterias.API.Controllers
 {
@@ -58,6 +60,160 @@ namespace Loterias.API.Controllers
                     return NoContent();
 
                 return StatusCode(500, new {error = "internal server error", errorMessage = ex.Message});
+            }
+        }
+        
+        /// <summary>
+        /// Gets entity by date.
+        /// </summary>
+        /// <returns>The by date.</returns>
+        /// <example>
+        /// https://host/api/sena/bydate?date=10/09/2019&culture=pt-BR
+        /// </example>
+        /// <param name="date">Date.</param>
+        /// <param name="culture">Culture.</param>
+        [HttpGet("bydate")]
+        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByDate(string date, string culture)
+        {
+            try
+            {
+                var ci = CultureInfo.GetCultureInfo(culture);
+                DateTime dateSearch = Convert.ToDateTime(date, ci);
+                var result = await _senaService.GetByDate(dateSearch);
+                if (result == null)
+                    return NoContent();
+
+                return Ok(_mapper.Map<ConcursoSenaVm>(result));
+            }
+            catch (ArgumentNullException)
+            {
+                return BadRequest(new { errorMessage = "Both parameters are required" });
+            }
+            catch (CultureNotFoundException)
+            {
+                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
+            }
+            catch (FormatException)
+            {
+                return BadRequest(new { errorMessage = "Wrong date format" });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("no matching"))
+                    return NoContent();
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets all entities between the specified dates.
+        /// </summary>
+        /// <returns>Entities</returns>
+        /// <example>
+        /// https://host/api/sena/betweendates?date1=10/06/2019&date2=10/07/2019&culture=pt-BR
+        /// </example>
+        /// <param name="date">Date 1.</param>
+        /// <param name="date2">Date 2.</param>
+        /// <param name="culture">Culture.</param>
+        [HttpGet("betweendates")]
+        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetBetweenDates(string date1, string date2, string culture)
+        {
+            try
+            {
+                var ci = CultureInfo.GetCultureInfo(culture);
+
+                if (ci.EnglishName.Contains("Invariant Language"))
+                    throw new CultureNotFoundException("Invariant language is unnaceptable.");
+
+                DateTime dateSearch1 = Convert.ToDateTime(date1, ci);
+                DateTime dateSearch2 = Convert.ToDateTime(date2, ci);
+                var result = await _senaService.GetBetweenDates(dateSearch1, dateSearch2);
+                if (result == null)
+                    return NoContent();
+
+                return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
+            }
+            catch (ArgumentNullException)
+            {
+                return BadRequest(new { errorMessage = "All parameters are required" });
+            }
+            catch (CultureNotFoundException)
+            {
+                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
+            }
+            catch (FormatException)
+            {
+                string[] parameters = new string[] {date1,date2};
+                return BadRequest(new { errorMessage = "Wrong date format", @params = parameters });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("no matching"))
+                    return NoContent();
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Gets all entities in the specified dates.
+        /// </summary>
+        /// <returns>Entities</returns>
+        /// <example>
+        /// https://host/api/sena/betweendates?dates=["10/06/2019", "11/06/2019"]&culture=pt-BR
+        /// </example>
+        /// <param name="date">Date 1.</param>
+        /// <param name="date2">Date 2.</param>
+        /// <param name="culture">Culture.</param>
+        [HttpGet("indates")]
+        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetInDates(string culture, params string[] dates)
+        {
+            try
+            {
+                var ci = CultureInfo.GetCultureInfo(culture);
+
+                if (ci.EnglishName.Contains("Invariant Language"))
+                    throw new CultureNotFoundException("Invariant language is unnaceptable.");
+
+                var listDates = dates.Select(s => Convert.ToDateTime(s,ci)).ToArray();
+
+                var result = await _senaService.GetInDates(listDates);
+                if (result == null)
+                    return NoContent();
+
+                return Ok(_mapper.Map<ConcursoSenaVm>(result));
+            }
+            catch (ArgumentNullException)
+            {
+                return BadRequest(new { errorMessage = "All parameters are required" });
+            }
+            catch (CultureNotFoundException)
+            {
+                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
+            }
+            catch (FormatException)
+            {
+                return BadRequest(new { errorMessage = "Wrong date format", @params = dates });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("no matching"))
+                    return NoContent();
+
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -119,47 +275,6 @@ namespace Loterias.API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new { errorMessage = ex.Message });
-            }
-        }
-
-        /// <summary>
-        /// Gets entity by date.
-        /// </summary>
-        /// <returns>The by date.</returns>
-        /// <param name="date">Date.</param>
-        /// <param name="culture">Culture.</param>
-        [HttpGet("date/{date}/{culture}")]
-        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByDate(string date, string culture)
-        {
-            try
-            {
-                var ci = CultureInfo.GetCultureInfo(culture);
-                DateTime dateSearch = Convert.ToDateTime(date, ci);
-                var result = await _senaService.GetByDate(dateSearch);
-                return Ok(_mapper.Map<ConcursoSenaVm>(result));
-            }
-            catch (ArgumentNullException)
-            {
-                return BadRequest(new { errorMessage = "Both parameters are required" });
-            }
-            catch (CultureNotFoundException)
-            {
-                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
-            }
-            catch (FormatException)
-            {
-                return BadRequest(new { errorMessage = "Wrong date format" });
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("no matching"))
-                    return NoContent();
-
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

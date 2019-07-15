@@ -88,22 +88,6 @@ namespace Loterias.Tests.Sena
             };
         }
 
-        public async Task<ConcursoSena> FirstOrDefault(Expression<Func<ConcursoSena, bool>> @where)
-        {
-            if (where == null)
-                throw new ArgumentNullException(nameof(@where), "Expression where cannot be null");
-
-            Func<ConcursoSena,bool> func = where.Compile();
-            var result = _senas.FirstOrDefault(func);
-            if (result != null)
-            {
-                result.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(result.Id)).ToList();
-                return await Task.FromResult(result);
-            }
-
-            return await Task.FromResult<ConcursoSena>(null);
-        }
-
         public async Task<ConcursoSena> GetById(int id)
         {
             if (id <= 0)
@@ -121,21 +105,20 @@ namespace Loterias.Tests.Sena
 
         public async Task<ConcursoSena> GetByDate(DateTime date) 
         {
-            var model = _senas.FirstOrDefault(w => w.Data.Equals(date));
+            var model = _senas.FirstOrDefault(w => w.Data.Date.Equals(date.Date));
             if (model == null)
                 throw new Exception("Predicate found no matching objects");
             return await Task.FromResult(model);
         }
 
-        public async Task<IEnumerable<ConcursoSena>> Where(Expression<Func<ConcursoSena, bool>> where)
+        public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2)
         {
-            if (where == null)
-                throw new ArgumentNullException(nameof(@where), "Expression where cannot be null");
-
-            Func<ConcursoSena,bool> func = where.Compile();
-            var findList = _senas.Where(func).ToList();
-            IEnumerable<ConcursoSena> result ;
-            if (findList != null)
+            if (date1 == null || date2 == null)
+                throw new ArgumentNullException($"{nameof(date1)} or {nameof(date2)}", "Dates cannot be null.");
+            
+            var findList = _senas.Where(w => w.Data.Date >= date1 && w.Data.Date <= date2).ToList();
+            IEnumerable<ConcursoSena> result;
+            if (findList != null && findList.Count > 0)
             {
                 result = new List<ConcursoSena>();
                 foreach (var model in findList)
@@ -146,7 +129,27 @@ namespace Loterias.Tests.Sena
                 }
                 return await Task.FromResult(result);
             }
+            return await Task.FromResult<List<ConcursoSena>>(null);
+        }
 
+        public async Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates)
+        {
+            if (dates.Any(a => a==null))
+                throw new ArgumentNullException("Specified dates cannot be null");
+            
+            var findList = _senas.Where(w => dates.Any(a => a.Date.Equals(w.Data))).ToList();
+            IEnumerable<ConcursoSena> result;
+            if (findList != null && findList.Count > 0)
+            {
+                result = new List<ConcursoSena>();
+                foreach (var model in findList)
+                {
+                    var add = model;
+                    add.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(model.Id)).ToList();
+                    result.Append(add);
+                }
+                return await Task.FromResult(result);
+            }
             return await Task.FromResult<List<ConcursoSena>>(null);
         }
 
@@ -186,5 +189,7 @@ namespace Loterias.Tests.Sena
                 throw;
             }
         }
+
+        
     }
 }

@@ -10,8 +10,7 @@ using Loterias.API.Controllers;
 using Loterias.Application.AutoMapper;
 using Loterias.Application.ViewModels;
 using Loterias.Domain.Entities.Sena;
-
-
+using System.Collections.Generic;
 
 namespace Loterias.Tests.Sena
 {
@@ -103,13 +102,87 @@ namespace Loterias.Tests.Sena
         }
 
         [Fact]
-        public async Task GetByDate_WhernCalled_ReturnsNoContent()
+        public async Task GetByDate_WhenCalled_ReturnsNoContent()
         {
             // act
             var result = await _controller.GetByDate("01/01/1900", "pt-BR");
             
             // assert
             Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task GetBetweenDates_WhenCalled_ReturnsOk()
+        {
+            // act
+            var result = await _controller.GetBetweenDates("09/08/2008","16/08/2008", "pt-BR");
+
+            // assert
+            Assert.IsType<OkObjectResult>(result);
+
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+
+            var model = okObjectResult.Value as List<ConcursoSenaVm>;
+            Assert.IsType<List<ConcursoSenaVm>>(model);
+            Assert.NotNull(model);
+        }
+
+        [Fact]
+        public async Task GetBetweenDates_WhenCalled_ReturnsNotFound()
+        {
+            // act
+            var result = await _controller.GetBetweenDates("01/01/1900", "01/01/1901", "pt-BR");
+
+            // assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task GetBetweenDates_WhenCalled_ReturnsBadRequest()
+        {
+            // act/arrange
+            // wrong parameters
+            var wrong1 = await _controller.GetBetweenDates("", "01/01/1901", "pt-BR");
+            var wrong2 = await _controller.GetBetweenDates("01/01/1901","","pt-BR");
+            var wrong3 = await _controller.GetBetweenDates("01/01/1901","01/01/1901","");
+
+            // bad date format
+            var wrong4 = await _controller.GetBetweenDates("1901/31/01", "01/01/1901", "pt-BR");
+
+            // wrong culture info
+            var wrong5 = await _controller.GetBetweenDates("01/01/1901", "01/01/1901", "ssfg");
+
+            // assert
+            Assert.IsType<BadRequestObjectResult>(wrong1);
+            Assert.IsType<BadRequestObjectResult>(wrong2);
+            Assert.IsType<BadRequestObjectResult>(wrong3);
+            Assert.IsType<BadRequestObjectResult>(wrong4);
+            Assert.IsType<BadRequestObjectResult>(wrong5);
+        }
+
+        [Fact]
+        public async Task GetInDates_WhenCalled_ReturnsOk()
+        {
+            // arrange
+            var dates = new string[] { "09/08/2008", "13/08/2008" };
+
+            // act
+            var result = await _controller.GetInDates("pt-BR", dates);
+
+            // assert
+            Assert.IsType<OkObjectResult>(result);
+
+            var okObjectResult = result as OkObjectResult;
+
+            Assert.NotNull(okObjectResult);
+            Assert.IsType<List<ConcursoSenaVm>>(okObjectResult.Value);
+
+            var model = okObjectResult.Value as List<ConcursoSenaVm>;
+
+            Assert.NotNull(model);
+            Assert.NotEmpty(model);
+            Assert.True(model.Count == 2);
         }
 
         #endregion Get

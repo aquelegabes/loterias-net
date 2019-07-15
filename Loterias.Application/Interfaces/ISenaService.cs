@@ -11,26 +11,6 @@ namespace Loterias.Application.Interfaces
     public interface ISenaService
     {
         /// <summary>
-        /// Filters a sequence of values based on a predicate
-        /// </summary>
-        /// <param name="where"><see cref="Expression{Func{ConcursoSena,bool}}" /></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="DbException"></exception>
-        /// <exception cref="Exception"></exception>
-        /// <returns><see cref="IEnumerable{ConcursoSena}"/></returns>
-        Task<IEnumerable<ConcursoSena>> Where(Expression<Func<ConcursoSena, bool>> @where);
-
-        /// <summary>
-        /// Returns the first entity that satisfies the condition or default value if no such is found.
-        /// </summary>
-        /// <param name="where"><see cref="Expression{Func{ConcursoSena,bool}}" /></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="DbException"></exception>
-        /// <exception cref="Exception"></exception>
-        /// <returns><see cref="ConcursoSena"/></returns>
-        Task<ConcursoSena> FirstOrDefault(Expression<Func<ConcursoSena,bool>> @where);
-
-        /// <summary>
         /// Search for a entity based on id
         /// </summary>
         /// <param name="id"></param>
@@ -44,9 +24,24 @@ namespace Loterias.Application.Interfaces
         /// <returns>The entity</returns>
         /// <param name="date">Date.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="FormatException"></exception>
         Task<ConcursoSena> GetByDate(DateTime date);
 
+        /// <summary>
+        /// Gets all the entities between the specified dates.
+        /// </summary>
+        /// <param name="date1">Date 1.</param>
+        /// <param name="date2">Date 2.</param>
+        /// <returns>Entities</returns>
+        /// <exception cref="ArgumentNullException" />
+        Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2);
+
+        /// <summary>
+        /// Get the entities with the specified dates
+        /// </summary>
+        /// <param name="dates"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException" />
+        Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates);
         /// <summary>
         /// Add a new model to the database
         /// </summary>

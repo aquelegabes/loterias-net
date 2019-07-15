@@ -6,6 +6,7 @@ using Loterias.Domain.Interfaces.Repositories;
 using Loterias.Application.Interfaces;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using System.Linq;
 
 namespace Loterias.Application.Service
 {
@@ -19,29 +20,6 @@ namespace Loterias.Application.Service
             _sena = sena;
             _ganhadoresSena = ganhadoresSena;
         }
-
-        /// <summary>
-        /// Filters a sequence of values based on a predicate
-        /// </summary>
-        /// <param name="where"><see cref="Expression{Func{TEntity,bool}}" /></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="DbException"></exception>
-        /// <exception cref="Exception"></exception>
-        /// <returns><see cref="IEnumerable{ConcursoSena}"/></returns>
-        public async Task<IEnumerable<ConcursoSena>> Where(Expression<Func<ConcursoSena, bool>> @where)
-            => await _sena.Where(where);
-
-        /// <summary>
-        /// Returns the first entity that satisfies the condition or default value if no such is found.
-        /// </summary>
-        /// <param name="where"><see cref="Expression{Func{TEntity,bool}}" /></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="DbException"></exception>
-        /// <exception cref="Exception"></exception>
-        /// <returns><see cref="ConcursoSena"/></returns>
-        public async Task<ConcursoSena> FirstOrDefault(Expression<Func<ConcursoSena, bool>> @where)
-            => await _sena.FirstOrDefault(where);
-
         /// <summary>
         /// Search for a entity based on id
         /// </summary>
@@ -55,7 +33,26 @@ namespace Loterias.Application.Service
         /// </summary>
         /// <returns>The by date.</returns>
         /// <param name="date">Date.</param>
-        public async Task<ConcursoSena> GetByDate(DateTime date) => await _sena.FirstOrDefault(f => f.Data.Equals(date));
+        public async Task<ConcursoSena> GetByDate(DateTime date) => 
+            await _sena.FirstOrDefault(f => f.Data.Date.Equals(date.Date));
+
+        /// <summary>
+        /// Get all the entities between the specified dates.
+        /// </summary>
+        /// <param name="date1"></param>
+        /// <param name="date2"></param>
+        /// <returns>Entities</returns>
+        public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2) =>
+            await _sena.Where(w => w.Data.Date >= date1 && w.Data.Date <= date2);
+
+        /// <summary>
+        /// Get all the entities in the specified dates.
+        /// </summary>
+        /// <param name="date1"></param>
+        /// <param name="date2"></param>
+        /// <returns>Entities</returns>
+        public async Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates)
+            => await _sena.Where(w => dates.Any(a => a.Date.Equals(w.Data)));
 
         /// <summary>
         /// Add a new model to the database
