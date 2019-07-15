@@ -35,7 +35,7 @@ namespace Loterias.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns><see cref="ConcursoSenaVm"/></returns>
-        [HttpGet("{id}")]
+        [HttpGet("id/{id}")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -67,7 +67,7 @@ namespace Loterias.API.Controllers
         /// <param name="model"></param>
         /// <returns><see cref="ConcursoSenaVm" /></returns>
         [HttpPut]
-        [Route("api/[controller]/add")]
+        [Route("add")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -95,7 +95,7 @@ namespace Loterias.API.Controllers
         /// <returns>The updated model</returns>
         /// <param name="model">Model.</param>
         [HttpPost]
-        [Route("api/[controller]/update")]
+        [Route("update")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -128,8 +128,7 @@ namespace Loterias.API.Controllers
         /// <returns>The by date.</returns>
         /// <param name="date">Date.</param>
         /// <param name="culture">Culture.</param>
-        [HttpGet("{date:datetime}/string:culture")]
-        [Route("api/[controller]/getbydate")]
+        [HttpGet("date/{date}/{culture}")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
