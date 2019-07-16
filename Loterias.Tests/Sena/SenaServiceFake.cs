@@ -153,6 +153,24 @@ namespace Loterias.Tests.Sena
             return await Task.FromResult<List<ConcursoSena>>(null);
         }
 
+        public async Task<IEnumerable<ConcursoSena>> GetByNumbers(int[] numbers)
+        {
+            var findList = _senas.Where(where => numbers.All(value => where.ResultadoOrdenado.Contains(value))).ToList();
+            List<ConcursoSena> result;
+            if (findList != null && findList.Count > 0)
+            {
+                result = new List<ConcursoSena>();
+                foreach (var model in findList)
+                {
+                    var add = model;
+                    add.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(model.Id)).ToList();
+                    result.Add(add);
+                }
+                return await Task.FromResult(result);
+            }
+            return await Task.FromResult<List<ConcursoSena>>(null);
+        }
+
         public async Task<ConcursoSena> Add(ConcursoSena model)
         {
             if (model == null)

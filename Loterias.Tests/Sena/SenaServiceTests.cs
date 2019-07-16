@@ -185,6 +185,58 @@ namespace Loterias.Tests.Sena
             Assert.True(model.Count == 2);
         }
 
+        [Fact]
+        public async Task GetInDates_WhenCalled_ReturnsBadRequest()
+        {
+            // act/arrange
+            // wrong/missing parameters
+            var wrong1 = await _controller.GetInDates("pt-BR", "01/01/1901", "");
+            var wrong2 = await _controller.GetInDates("", "01/01/1901");
+
+            // bad date format
+            var wrong3 = await _controller.GetInDates("pt-BR", "1901/30/01", "");
+
+            // wrong culture info
+            var wrong4 = await _controller.GetInDates("zulu", "01/01/1901", "");
+
+            // assert
+            Assert.IsType<BadRequestObjectResult>(wrong1);
+            Assert.IsType<BadRequestObjectResult>(wrong2);
+            Assert.IsType<BadRequestObjectResult>(wrong3);
+            Assert.IsType<BadRequestObjectResult>(wrong4);
+        }
+
+        [Fact]
+        public async Task GetInDates_WhenCalled_ReturnsNotFound()
+        {
+            // act
+            var result = await _controller.GetInDates("pt-BR", "01/01/1901");
+
+            // assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+
+        [Fact]
+        public async Task GetByNumbers_WhenCalled_ReturnsOkResult()
+        {
+            // act
+            var result = await _controller.GetByNumbers(new int[] { 4, 54, 16 });
+
+            // assert
+            Assert.IsType<OkObjectResult>(result);
+
+            var okObjectResult = result as OkObjectResult;
+
+            Assert.NotNull(okObjectResult);
+            Assert.IsType<List<ConcursoSenaVm>>(okObjectResult.Value);
+
+            var model = okObjectResult.Value as List<ConcursoSenaVm>;
+
+            Assert.NotNull(model);
+            Assert.NotEmpty(model);
+        }
+
         #endregion Get
 
         #region Add/Update/Remove

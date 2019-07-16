@@ -36,12 +36,21 @@ namespace Loterias.Application.Interfaces
         Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2);
 
         /// <summary>
-        /// Get the entities with the specified dates
+        /// Get the entities in the specified dates
         /// </summary>
         /// <param name="dates"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException" />
         Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates);
+
+        /// <summary>
+        /// Get all the entities within the sorted specified numbers
+        /// </summary>
+        /// <param name="numbers">Numbers</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException" />
+        Task<IEnumerable<ConcursoSena>> GetByNumbers(int[] numbers);
+
         /// <summary>
         /// Add a new model to the database
         /// </summary>

@@ -35,8 +35,12 @@ namespace Loterias.API.Controllers
         /// <summary>
         /// Gets the result from an Id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Id (integer)</param>
         /// <returns><see cref="ConcursoSenaVm"/></returns>
+        /// <response code="200">Returns the entity</response>
+        /// <response code="204">No entity found on id</response>
+        /// <response code="400">Id cannot be zero or lower</response>
+        /// <response code="500">Unexpected error</response>
         [HttpGet("id/{id}")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -62,16 +66,17 @@ namespace Loterias.API.Controllers
                 return StatusCode(500, new {error = "internal server error", errorMessage = ex.Message});
             }
         }
-        
+
         /// <summary>
         /// Gets entity by date.
         /// </summary>
         /// <returns>The by date.</returns>
-        /// <example>
-        /// https://host/api/sena/bydate?date=10/09/2019&culture=pt-BR
-        /// </example>
         /// <param name="date">Date.</param>
         /// <param name="culture">Culture.</param>
+        /// <response code="200">Returns the entity</response>
+        /// <response code="204">No entity found on date</response>
+        /// <response code="400">Bad date format, invalid culture, null parameters</response>
+        /// <response code="500">Unexpected error</response>
         [HttpGet("bydate")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -114,14 +119,15 @@ namespace Loterias.API.Controllers
         /// Gets all entities between the specified dates.
         /// </summary>
         /// <returns>Entities</returns>
-        /// <example>
-        /// https://host/api/sena/betweendates?date1=10/06/2019&date2=10/07/2019&culture=pt-BR
-        /// </example>
-        /// <param name="date">Date 1.</param>
+        /// <param name="date1">Date 1.</param>
         /// <param name="date2">Date 2.</param>
         /// <param name="culture">Culture.</param>
+        /// <response code="200">Returns the entities</response>
+        /// <response code="204">No entity found on date</response>
+        /// <response code="400">Bad date format, invalid culture, null parameters</response>
+        /// <response code="500">Unexpected error</response>
         [HttpGet("betweendates")]
-        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -168,13 +174,14 @@ namespace Loterias.API.Controllers
         /// Gets all entities in the specified dates.
         /// </summary>
         /// <returns>Entities</returns>
-        /// <example>
-        /// https://host/api/sena/betweendates?dates=["10/06/2019", "11/06/2019"]&culture=pt-BR
-        /// </example>
         /// <param name="culture">Culture.</param>
         /// <param name="dates">Dates.</param>
+        /// <response code="200">Returns the entity</response>
+        /// <response code="204">No entity found on dates</response>
+        /// <response code="400">Bad date format, invalid culture, null parameters</response>
+        /// <response code="500">Unexpected error</response>
         [HttpGet("indates")]
-        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -217,10 +224,49 @@ namespace Loterias.API.Controllers
         }
 
         /// <summary>
+        /// Gets all entities that contains the specified sorted numbers
+        /// </summary>
+        /// <param name="numbers">Numbers</param>
+        /// <returns>Entities</returns>
+        /// <response code="200">Returns the entities</response>
+        /// <response code="204">No entity found in specified numbers</response>
+        /// <response code="400">Bad date format, invalid culture, null parameters</response>
+        /// <response code="500">Unexpected error</response>
+        [HttpGet("bynumbers")]
+        [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByNumbers(int [] numbers)
+        {
+            try 
+            {
+                var result = await _senaService.GetByNumbers(numbers);
+
+                if (result == null || result.Count() == 0)
+                    return NoContent();
+
+                return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
+            }
+            catch  (ArgumentNullException)
+            {
+                return BadRequest(new { errorMessage = "Numbers cannot be null." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { error = "internal server error", errorMessage = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Add a new model to the database
         /// </summary>
         /// <param name="model"></param>
         /// <returns><see cref="ConcursoSenaVm" /></returns>
+        /// <response code="201">Returns the entities</response>
+        /// <response code="400">Invalid model</response>
+        /// <response code="500">Unexpected error</response>
         [HttpPut]
         [Route("add")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status201Created)]
@@ -249,6 +295,9 @@ namespace Loterias.API.Controllers
         /// </summary>
         /// <returns>The updated model</returns>
         /// <param name="model">Model.</param>
+        /// <response code="201">Returns the entities</response>
+        /// <response code="400">Invalid model</response>
+        /// <response code="500">Unexpected error</response>
         [HttpPost]
         [Route("update")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status202Accepted)]

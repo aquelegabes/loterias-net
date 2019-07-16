@@ -46,14 +46,23 @@ namespace Loterias.Application.Service
             await _sena.Where(w => w.Data.Date >= date1 && w.Data.Date <= date2);
 
         /// <summary>
-        /// Get all the entities in the specified dates.
+        /// Get the entities in the specified dates
         /// </summary>
-        /// <param name="date1"></param>
-        /// <param name="date2"></param>
-        /// <returns>Entities</returns>
+        /// <param name="dates"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException" />
         public async Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates)
             => await _sena.Where(w => dates.Any(a => a.Date.Equals(w.Data)));
 
+        /// <summary>
+        /// Get all the entities within the sorted specified numbers
+        /// </summary>
+        /// <param name="numbers">Numbers</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException" />
+        public async Task<IEnumerable<ConcursoSena>> GetByNumbers(int[] numbers)
+            => await _sena.Where(where => numbers.All(value => where.ResultadoOrdenado.Contains(value)));
+            
         /// <summary>
         /// Add a new model to the database
         /// </summary>
