@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Loterias.API.HerokuDevops;
 
 namespace Loterias.API
 {
@@ -21,6 +22,7 @@ namespace Loterias.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UsePort()
                 .UseStartup<Startup>();
     }
 }
