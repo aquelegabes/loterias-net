@@ -17,10 +17,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="db.sqlite3" />
     <None Remove="dockerfile" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="db.sqlite3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="dockerfile">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
