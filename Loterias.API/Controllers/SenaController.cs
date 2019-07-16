@@ -10,6 +10,7 @@ using Loterias.Domain.Entities.Sena;
 using System.Globalization;
 using System.Collections.Generic;
 
+#pragma warning disable RCS1090
 namespace Loterias.API.Controllers
 {
     /// <summary>
@@ -26,6 +27,7 @@ namespace Loterias.API.Controllers
         /// controller
         /// </summary>
         /// <param name="senaService"></param>
+        /// <param name="mapper" />
         public SenaController(ISenaService senaService, IMapper mapper)
         {
             _senaService = senaService;
@@ -89,6 +91,7 @@ namespace Loterias.API.Controllers
                 var ci = CultureInfo.GetCultureInfo(culture);
                 DateTime dateSearch = Convert.ToDateTime(date, ci);
                 var result = await _senaService.GetByDate(dateSearch);
+
                 if (result == null)
                     return NoContent();
 
@@ -143,7 +146,8 @@ namespace Loterias.API.Controllers
                 DateTime dateSearch1 = Convert.ToDateTime(date1, ci);
                 DateTime dateSearch2 = Convert.ToDateTime(date2, ci);
                 var result = await _senaService.GetBetweenDates(dateSearch1, dateSearch2);
-                if (result == null)
+
+                if (result?.Any() != true)
                     return NoContent();
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
@@ -197,7 +201,8 @@ namespace Loterias.API.Controllers
                 var listDates = dates.Select(s => Convert.ToDateTime(s,ci)).ToArray();
 
                 var result = await _senaService.GetInDates(listDates);
-                if (result == null)
+
+                if (result?.Any() != true)
                     return NoContent();
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
@@ -239,11 +244,11 @@ namespace Loterias.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByNumbers(int [] numbers)
         {
-            try 
+            try
             {
                 var result = await _senaService.GetByNumbers(numbers);
 
-                if (result == null || result.Count() == 0)
+                if (result?.Any() != true)
                     return NoContent();
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
@@ -272,6 +277,7 @@ namespace Loterias.API.Controllers
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Add([FromBody] ConcursoSena model)
         {
             try
@@ -304,9 +310,10 @@ namespace Loterias.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Update([FromBody] ConcursoSena model)
         {
-            try 
+            try
             {
                 var result = await _senaService.Update(model);
                 return Ok(_mapper.Map<ConcursoSenaVm>(model));
