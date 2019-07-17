@@ -10,6 +10,7 @@ using Loterias.Domain.Entities.Sena;
 using System.Globalization;
 using System.Collections.Generic;
 
+#pragma warning disable RCS1090
 namespace Loterias.API.Controllers
 {
     /// <summary>
@@ -89,6 +90,7 @@ namespace Loterias.API.Controllers
                 var ci = CultureInfo.GetCultureInfo(culture);
                 DateTime dateSearch = Convert.ToDateTime(date, ci);
                 var result = await _senaService.GetByDate(dateSearch);
+
                 if (result == null)
                     return NoContent();
 
@@ -143,7 +145,8 @@ namespace Loterias.API.Controllers
                 DateTime dateSearch1 = Convert.ToDateTime(date1, ci);
                 DateTime dateSearch2 = Convert.ToDateTime(date2, ci);
                 var result = await _senaService.GetBetweenDates(dateSearch1, dateSearch2);
-                if (result == null)
+
+                if (result?.Any() != true)
                     return NoContent();
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
@@ -180,12 +183,12 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found on dates</response>
         /// <response code="400">Bad date format, invalid culture, null parameters</response>
         /// <response code="500">Unexpected error</response>
-        [HttpGet("indates")]
+        [HttpPost("indates")]
         [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetInDates(string culture, params string[] dates)
+        public async Task<IActionResult> GetInDates(string culture, [FromBody]params string[] dates)
         {
             try
             {
@@ -197,7 +200,8 @@ namespace Loterias.API.Controllers
                 var listDates = dates.Select(s => Convert.ToDateTime(s,ci)).ToArray();
 
                 var result = await _senaService.GetInDates(listDates);
-                if (result == null)
+
+                if (result?.Any() != true)
                     return NoContent();
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
@@ -232,18 +236,18 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found in specified numbers</response>
         /// <response code="400">Bad date format, invalid culture, null parameters</response>
         /// <response code="500">Unexpected error</response>
-        [HttpGet("bynumbers")]
+        [HttpPost("bynumbers")]
         [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByNumbers(int [] numbers)
+        public async Task<IActionResult> GetByNumbers([FromBody]int [] numbers)
         {
-            try 
+            try
             {
                 var result = await _senaService.GetByNumbers(numbers);
 
-                if (result == null || result.Count() == 0)
+                if (result?.Any() != true)
                     return NoContent();
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
@@ -306,7 +310,7 @@ namespace Loterias.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update([FromBody] ConcursoSena model)
         {
-            try 
+            try
             {
                 var result = await _senaService.Update(model);
                 return Ok(_mapper.Map<ConcursoSenaVm>(model));

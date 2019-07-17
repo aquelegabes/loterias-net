@@ -98,8 +98,7 @@ namespace Loterias.Domain.Abstract
         /// <see cref="T:Loterias.Domain.Abstract.AConcursoModel"/>; otherwise, <c>false</c>.</returns>
         public override bool Equals(object obj)
         {
-            AConcursoModel outro = obj as AConcursoModel;
-            if (outro == null)
+            if (!(obj is AConcursoModel outro))
                 return false;
 
             return this.Id.Equals(outro.Id)
@@ -147,8 +146,7 @@ namespace Loterias.Domain.Abstract
             if (obj == null)
                 return 1;
 
-            AConcursoModel outro = obj as AConcursoModel;
-            if (outro == null)
+            if (!(obj is AConcursoModel outro))
                 throw new ArgumentException("Objeto não é um Concurso");
 
             int resultado = this.Id.CompareTo(outro.Id);

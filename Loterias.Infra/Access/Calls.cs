@@ -7,6 +7,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
+#pragma warning disable RCS1090, RCS1213
+
 namespace Loterias.Infra.Access
 {
     public class Calls : ServiceConfiguration
@@ -80,8 +82,10 @@ namespace Loterias.Infra.Access
         public Uri CreateRequestUri(string relativePath, string queryString = "")
         {
             var endpoint = new Uri(Endpoint, relativePath);
-            var uriBuilder = new UriBuilder(endpoint);
-            uriBuilder.Query = queryString;
+            var uriBuilder = new UriBuilder(endpoint)
+            {
+                Query = queryString
+            };
             return uriBuilder.Uri;
         }
 

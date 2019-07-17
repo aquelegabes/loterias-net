@@ -4,13 +4,14 @@ using Xunit;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-
 using Loterias.Application.Interfaces;
 using Loterias.API.Controllers;
 using Loterias.Application.AutoMapper;
 using Loterias.Application.ViewModels;
 using Loterias.Domain.Entities.Sena;
 using System.Collections.Generic;
+
+#pragma warning disable RCS1090, RCS1205
 
 namespace Loterias.Tests.Sena
 {
@@ -106,7 +107,7 @@ namespace Loterias.Tests.Sena
         {
             // act
             var result = await _controller.GetByDate("01/01/1900", "pt-BR");
-            
+
             // assert
             Assert.IsType<NoContentResult>(result);
         }
@@ -216,7 +217,6 @@ namespace Loterias.Tests.Sena
             Assert.IsType<NoContentResult>(result);
         }
 
-
         [Fact]
         public async Task GetByNumbers_WhenCalled_ReturnsOkResult()
         {
@@ -289,7 +289,7 @@ namespace Loterias.Tests.Sena
         {
             // arrange
             var model = await _service.GetById(996);
-            
+
             model.Resultado = "01-02-03-04-05-06";
 
             // act

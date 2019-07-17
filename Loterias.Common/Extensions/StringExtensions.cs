@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 
+#pragma warning disable RCS1220
+
 namespace Loterias.Common.Extensions
 {
     public static class StringExtensions
@@ -38,7 +40,9 @@ namespace Loterias.Common.Extensions
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
 
         /// <summary>

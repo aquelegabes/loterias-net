@@ -5,8 +5,9 @@ using Loterias.Domain.Entities.Sena;
 using Loterias.Domain.Interfaces.Repositories;
 using Loterias.Application.Interfaces;
 using System.Threading.Tasks;
-using System.Linq.Expressions;
 using System.Linq;
+
+#pragma warning disable RCS1090
 
 namespace Loterias.Application.Service
 {
@@ -20,6 +21,7 @@ namespace Loterias.Application.Service
             _sena = sena;
             _ganhadoresSena = ganhadoresSena;
         }
+
         /// <summary>
         /// Search for a entity based on id
         /// </summary>
@@ -33,7 +35,7 @@ namespace Loterias.Application.Service
         /// </summary>
         /// <returns>The by date.</returns>
         /// <param name="date">Date.</param>
-        public async Task<ConcursoSena> GetByDate(DateTime date) => 
+        public async Task<ConcursoSena> GetByDate(DateTime date) =>
             await _sena.FirstOrDefault(f => f.Data.Date.Equals(date.Date));
 
         /// <summary>
@@ -62,7 +64,7 @@ namespace Loterias.Application.Service
         /// <exception cref="ArgumentNullException" />
         public async Task<IEnumerable<ConcursoSena>> GetByNumbers(int[] numbers)
             => await _sena.Where(where => numbers.All(value => where.ResultadoOrdenado.Contains(value)));
-            
+
         /// <summary>
         /// Add a new model to the database
         /// </summary>
