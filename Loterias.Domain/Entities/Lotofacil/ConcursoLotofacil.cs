@@ -16,7 +16,7 @@ namespace Loterias.Domain.Entities.Lotofacil
         [DisplayName("Id")]
         [Column("id")]
         public override int Id { get; set; }
-        
+
         [DisplayName("Concurso especial?")]
         [Column("concurso_especial")]
         public bool ConcursoEspecial { get; set; }

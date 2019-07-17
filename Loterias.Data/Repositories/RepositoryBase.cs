@@ -8,6 +8,8 @@ using System.Data.Common;
 using System.Linq.Expressions;
 using System.Linq;
 
+#pragma warning disable RCS1090
+
 namespace Loterias.Data.Repositories
 {
     public abstract class RepositoryBase<TEntity> : IDisposable, IRepositoryBase<TEntity>
@@ -208,8 +210,7 @@ namespace Loterias.Data.Repositories
         /// that the <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/> was occupying.</remarks>
         public void Dispose()
         {
-            if (_context != null)
-                _context.Dispose();
+            _context?.Dispose();
         }
     }
 }

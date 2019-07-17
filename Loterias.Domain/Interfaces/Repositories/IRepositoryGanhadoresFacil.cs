@@ -4,6 +4,5 @@ namespace Loterias.Domain.Interfaces.Repositories
 {
     public interface IRepositoryGanhadoresFacil : IRepositoryBase<GanhadoresFacil>
     {
-        
     }
 }

@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Loterias.Application.Interfaces;
 using Loterias.Common.Enums;
-using Loterias.Common.Extensions;
 using Loterias.Domain.Entities.Sena;
+
+#pragma warning disable RCS1090, RCS1205
 
 namespace Loterias.Tests.Sena
 {
@@ -134,7 +134,7 @@ namespace Loterias.Tests.Sena
 
         public async Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates)
         {
-            if (dates.Any(a => a== default(DateTime)))
+            if (dates.Any(a => a == default(DateTime)))
                 throw new ArgumentNullException("Specified dates cannot be null");
 
             var findList = _senas.Where(w => dates.Any(a => a.Date.Equals(w.Data))).ToList();
@@ -207,5 +207,6 @@ namespace Loterias.Tests.Sena
                 throw;
             }
         }
+
     }
 }

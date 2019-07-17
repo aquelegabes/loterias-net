@@ -1,7 +1,6 @@
 using Loterias.Domain.Entities.Lotofacil;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Loterias.Data.Configurations;
 
 namespace Loterias.Data.Configurations
 {
