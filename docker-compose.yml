@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  loterias.api:
+    image: ${DOCKER_REGISTRY-}loteriasapi
+    build:
+      context: .
+      dockerfile: Loterias.API/Dockerfile

@@ -11,8 +11,7 @@ using Loterias.API.HerokuDevops;
 
 namespace Loterias.API
 {
-#pragma warning disable CS1591
-#pragma warning disable RCS1102
+#pragma warning disable CS1591, RCS1102
     public class Program
     {
         public static void Main(string[] args)
