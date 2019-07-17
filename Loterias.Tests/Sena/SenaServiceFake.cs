@@ -22,8 +22,8 @@ namespace Loterias.Tests.Sena
             {
                 new ConcursoSena
                 {
-                    Id = 994, 
-                    Concurso = 994, 
+                    Id = 994,
+                    Concurso = 994,
                     Data = new DateTime(day: 09, month: 08, year: 2008),
                     Acumulado = true,
                     Valor = 0m,
@@ -103,9 +103,9 @@ namespace Loterias.Tests.Sena
             return await Task.FromResult<ConcursoSena>(null);
         }
 
-        public async Task<ConcursoSena> GetByDate(DateTime date) 
+        public async Task<ConcursoSena> GetByDate(DateTime date)
         {
-            var model = _senas.FirstOrDefault(w => w.Data.Date.Equals(date.Date));
+            var model = _senas.Find(w => w.Data.Date.Equals(date.Date));
             if (model == null)
                 throw new Exception("Predicate found no matching objects");
             return await Task.FromResult(model);
@@ -113,19 +113,19 @@ namespace Loterias.Tests.Sena
 
         public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2)
         {
-            if (date1 == null || date2 == null)
+            if (date1 == default(DateTime) || date2 == default(DateTime))
                 throw new ArgumentNullException($"{nameof(date1)} or {nameof(date2)}", "Dates cannot be null.");
-            
+
             var findList = _senas.Where(w => w.Data.Date >= date1 && w.Data.Date <= date2).ToList();
-            IEnumerable<ConcursoSena> result;
-            if (findList != null && findList.Count > 0)
+            List<ConcursoSena> result;
+            if (findList?.Count > 0)
             {
                 result = new List<ConcursoSena>();
                 foreach (var model in findList)
                 {
                     var add = model;
                     add.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(model.Id)).ToList();
-                    result.Append(add);
+                    result.Add(add);
                 }
                 return await Task.FromResult(result);
             }
@@ -134,12 +134,12 @@ namespace Loterias.Tests.Sena
 
         public async Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates)
         {
-            if (dates.Any(a => a==null))
+            if (dates.Any(a => a== default(DateTime)))
                 throw new ArgumentNullException("Specified dates cannot be null");
-            
+
             var findList = _senas.Where(w => dates.Any(a => a.Date.Equals(w.Data))).ToList();
             List<ConcursoSena> result;
-            if (findList != null && findList.Count > 0)
+            if (findList?.Count > 0)
             {
                 result = new List<ConcursoSena>();
                 foreach (var model in findList)
@@ -157,7 +157,7 @@ namespace Loterias.Tests.Sena
         {
             var findList = _senas.Where(where => numbers.All(value => where.ResultadoOrdenado.Contains(value))).ToList();
             List<ConcursoSena> result;
-            if (findList != null && findList.Count > 0)
+            if (findList?.Count > 0)
             {
                 result = new List<ConcursoSena>();
                 foreach (var model in findList)
@@ -176,7 +176,7 @@ namespace Loterias.Tests.Sena
             if (model == null)
                 throw new ArgumentNullException(nameof(model), "Cannot add a null reference");
 
-            try 
+            try
             {
                 _senas.Add(model);
                 return await Task.FromResult(model);
@@ -196,7 +196,7 @@ namespace Loterias.Tests.Sena
             if (find == null)
                 throw new EntryPointNotFoundException("Could not find an object on specified index.");
 
-            try 
+            try
             {
                 _senas.Remove(find);
                 _senas.Add(model);
@@ -207,7 +207,5 @@ namespace Loterias.Tests.Sena
                 throw;
             }
         }
-
-        
     }
 }
