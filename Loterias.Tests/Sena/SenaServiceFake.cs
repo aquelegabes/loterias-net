@@ -207,6 +207,5 @@ namespace Loterias.Tests.Sena
                 throw;
             }
         }
-
     }
 }

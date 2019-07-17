@@ -129,7 +129,7 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found on date</response>
         /// <response code="400">Bad date format, invalid culture, null parameters</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPost("betweendates")]
+        [HttpGet("betweendates")]
         [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
