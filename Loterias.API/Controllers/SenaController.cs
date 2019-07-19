@@ -28,6 +28,7 @@ namespace Loterias.API.Controllers
         /// controller
         /// </summary>
         /// <param name="senaService"></param>
+        /// <param name="mapper" />
         public SenaController(ISenaService senaService, IMapper mapper)
         {
             _senaService = senaService;
@@ -140,11 +141,9 @@ namespace Loterias.API.Controllers
             {
                 if (string.IsNullOrWhiteSpace(culture))
                     throw new ArgumentNullException();
-
+                    
                 var ci = CultureInfo.GetCultureInfo(culture);
 
-                if (ci.EnglishName.Contains("Invariant Language"))
-                    throw new CultureNotFoundException("Invariant language is unnaceptable.");
                 if (!Utils.IsValidCulture(culture))
                     throw new CultureNotFoundException();
 
@@ -282,6 +281,7 @@ namespace Loterias.API.Controllers
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Add([FromBody] ConcursoSena model)
         {
             try
@@ -314,6 +314,7 @@ namespace Loterias.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Update([FromBody] ConcursoSena model)
         {
             try

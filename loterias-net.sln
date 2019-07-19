@@ -28,7 +28,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loterias.Application", "Lot
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infra", "4 - Infra", "{D23E1E4A-EC3D-44F5-8802-150BCF812700}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loterias.Infra", "Loterias.Infra\Loterias.Infra.csproj", "{555D6B14-0F7E-45E8-8DA2-738A64D65697}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loterias.Infra", "Loterias.Infra\Loterias.Infra.csproj", "{555D6B14-0F7E-45E8-8DA2-738A64D65697}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{0791A612-DABF-4365-8CBC-91B830C01032}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +66,10 @@ Global
 		{555D6B14-0F7E-45E8-8DA2-738A64D65697}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{555D6B14-0F7E-45E8-8DA2-738A64D65697}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{555D6B14-0F7E-45E8-8DA2-738A64D65697}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0791A612-DABF-4365-8CBC-91B830C01032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0791A612-DABF-4365-8CBC-91B830C01032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0791A612-DABF-4365-8CBC-91B830C01032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0791A612-DABF-4365-8CBC-91B830C01032}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
