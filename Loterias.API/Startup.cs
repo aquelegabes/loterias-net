@@ -60,7 +60,26 @@ namespace Loterias.API
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Loterias API", Version = "v1" });
+                c.SwaggerDoc("v1", 
+                    new Info 
+                    { 
+                        Title = "Loterias API",
+                        Version = "v1",
+                        Description = "A simple API to retrieve lottery winners.",
+                        Contact = new Contact
+                        {
+                            Email = string.Empty,
+                            Name = "Gabriel Santos",
+                            Url = "https://github.com/gabesantos1/loterias-net"
+                        },
+
+                        License = new License 
+                        {
+                            Name = "MIT License",
+                            Url = "https://github.com/gabesantos1/loterias-net/blob/master/LICENSE"
+                        },
+                    }
+                );
                 c.IncludeXmlComments(Configuration.GetValue<string>("XmlDocumentation"));
             });
         }
@@ -88,7 +107,7 @@ namespace Loterias.API
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Loterias API V1");
-                // c.RoutePrefix = string.Empty;
+                c.RoutePrefix = string.Empty;
             });
 
             app.UseMvc();
