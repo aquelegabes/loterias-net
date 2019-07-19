@@ -6,7 +6,6 @@ dotnet: 2.2
 script:
     - dotnet restore loterias-net.sln
     - dotnet build loterias-net.sln
-    - dotnet test loterias-net.sln
 global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
     - DOTNET_CLI_TELEMETRY_OPTOUT=1
