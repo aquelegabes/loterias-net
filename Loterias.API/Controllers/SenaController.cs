@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Loterias.Domain.Entities.Sena;
 using System.Globalization;
 using System.Collections.Generic;
+using Loterias.Common.Utils;
 
 #pragma warning disable RCS1090
 namespace Loterias.API.Controllers
@@ -137,10 +138,15 @@ namespace Loterias.API.Controllers
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(culture))
+                    throw new ArgumentNullException();
+
                 var ci = CultureInfo.GetCultureInfo(culture);
 
                 if (ci.EnglishName.Contains("Invariant Language"))
                     throw new CultureNotFoundException("Invariant language is unnaceptable.");
+                if (!Utils.IsValidCulture(culture))
+                    throw new CultureNotFoundException();
 
                 DateTime dateSearch1 = Convert.ToDateTime(date1, ci);
                 DateTime dateSearch2 = Convert.ToDateTime(date2, ci);
