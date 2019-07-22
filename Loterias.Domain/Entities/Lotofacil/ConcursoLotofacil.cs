@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -51,7 +50,7 @@ namespace Loterias.Domain.Entities.Lotofacil
 
         [DisplayName("Valor para doze acertos")]
         [Column("valor_doze")]
-        public decimal ValorDoze { get; set; }
+        public decimal? ValorDoze { get; set; }
 
         [DisplayName("Valor para onze acertos")]
         [Column("valor_onze")]
