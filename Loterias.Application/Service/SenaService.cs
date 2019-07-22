@@ -91,7 +91,7 @@ namespace Loterias.Application.Service
             if (existingModel != null)
                 throw new DuplicateKeyException(existingModel, "Same concurso number already added to the database.");
 
-            return await _sena.Add(model)
+            return await _sena.Add(model);
         }
 
         /// <summary>
