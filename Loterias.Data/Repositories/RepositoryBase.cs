@@ -12,20 +12,32 @@ using System.Linq;
 
 namespace Loterias.Data.Repositories
 {
+    /// <summary>
+    /// Serves as a base repository for all database models
+    /// </summary>
+    /// <typeparam name="TEntity">An existing model/class</typeparam>
     public abstract class RepositoryBase<TEntity> : IDisposable, IRepositoryBase<TEntity>
             where TEntity : class
     {
+        /// <summary>
+        /// Protected access to the context
+        /// </summary>
         protected readonly LoteriasContext _context;
 
+        /// <summary>
+        /// Protected constructor for the base repository using a valid context
+        /// </summary>
+        /// <param name="context"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         protected RepositoryBase(LoteriasContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context), "Cannot initialiaze a repository with a null context");
         }
 
         /// <summary>
         /// Get all entities
         /// </summary>
-        /// <returns><see cref="IEnumerable{TEntity}"/>Returns a IEnumerable<typeparamref name="TEntity"/></returns>
+        /// <returns>Returns a <see cref="IEnumerable{TEntity}"/></returns>
         public virtual async Task<IEnumerable<TEntity>> GetAll() => await _context.Set<TEntity>().ToListAsync();
 
         /// <summary>
@@ -35,11 +47,11 @@ namespace Loterias.Data.Repositories
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        /// <returns><see cref="TEntity"/>Returns a <typeparamref name="TEntity"/></returns>
+        /// <returns>Returns a <see cref="TEntity"/></returns>
         public virtual async Task<TEntity> FirstOrDefault(Expression<Func<TEntity, bool>> where)
         {
             if (where == null)
-                throw new ArgumentNullException(nameof(where));
+                throw new ArgumentNullException(nameof(where), "Predicate cannot be null.");
             try
             {
                 return await _context.Set<TEntity>().FirstOrDefaultAsync(where);
@@ -61,15 +73,15 @@ namespace Loterias.Data.Repositories
         /// <summary>
         /// Filters a sequence of values based on a predicate
         /// </summary>
-        /// <param name="where"><see cref="Expression{Func{TEntity,bool}}" /></param>
+        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predica.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        /// <returns><see cref="IEnumerable{TEntity}"/>Returns a IEnumerable<typeparamref name="TEntity"/></returns>
+        /// <returns>Returns a <see cref="IEnumerable{TEntity}"/></returns>
         public virtual async Task<IEnumerable<TEntity>> Where(Expression<Func<TEntity, bool>> where)
         {
             if (where == null)
-                throw new ArgumentNullException(nameof(where));
+                throw new ArgumentNullException(nameof(where), "Predicate cannot be null.");
 
             try
             {
@@ -90,11 +102,11 @@ namespace Loterias.Data.Repositories
         }
 
         /// <summary>
-        /// Search for a entity based on id
+        /// Search for a entity based on an id.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">(integer)</param>
         /// <exception cref="ArgumentException"></exception>
-        /// <returns><see cref="TEntity"/>Returns a <typeparamref name="TEntity"/></returns>
+        /// <returns>Returns a <see cref="TEntity"/></returns>
         public virtual async Task<TEntity> GetById(int id)
         {
             if (id <= 0)
@@ -133,15 +145,15 @@ namespace Loterias.Data.Repositories
         }
 
         /// <summary>
-        /// Update the entity
+        /// Update the entity.
         /// </summary>
         /// <param name="model"><see cref="TEntity"/></param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="EntryPointNotFoundException" /></exception>
+        /// <exception cref="EntryPointNotFoundException"></exception>
         /// <exception cref="DbUpdateException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        /// <returns><see cref="bool"/>Returns the entity</returns>
+        /// <returns>Returns the updated <see cref="TEntity"/> entity.</returns>
         public virtual async Task<TEntity> Update(TEntity model)
         {
             if (model == null)
@@ -173,11 +185,11 @@ namespace Loterias.Data.Repositories
         /// <summary>
         /// Remove the entity
         /// </summary>
-        /// <param name="model"><see cref="TEntity"/></param>
+        /// <param name="model">A valid <see cref="TEntity"/> model.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
-        /// <returns><see cref="bool"/>Returns true if removed, false if not</returns>
+        /// <returns>Returns a <see cref="bool"/> true if removed, false if not</returns>
         public virtual async Task<bool> Remove(TEntity model)
         {
             if (model == null)
@@ -200,14 +212,14 @@ namespace Loterias.Data.Repositories
         }
 
         /// <summary>
-        /// Releases all resource used by the <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/> object.
+        /// Releases all resource used by the <see cref="RepositoryBase"/> object.
         /// </summary>
         /// <remarks>Call <see cref="Dispose"/> when you are finished using the
-        /// <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/>. The <see cref="Dispose"/> method leaves the
-        /// <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/> in an unusable state. After calling
+        /// <see cref="RepositoryBase"/>. The <see cref="Dispose"/> method leaves the
+        /// <see cref="RepositoryBase"/> in an unusable state. After calling
         /// <see cref="Dispose"/>, you must release all references to the
-        /// <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/> so the garbage collector can reclaim the memory
-        /// that the <see cref="T:Loterias.Data.Repositories.RepositoryBase`1"/> was occupying.</remarks>
+        /// <see cref="RepositoryBase"/> so the garbage collector can reclaim the memory
+        /// that the <see cref="RepositoryBase"/> was occupying.</remarks>
         public void Dispose()
         {
             _context?.Dispose();

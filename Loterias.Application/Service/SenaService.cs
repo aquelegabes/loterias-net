@@ -1,21 +1,30 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Threading.Tasks;
+using System.Linq;
+using Loterias.Common.Exceptions;
 using Loterias.Domain.Entities.Sena;
 using Loterias.Domain.Interfaces.Repositories;
 using Loterias.Application.Interfaces;
-using System.Threading.Tasks;
-using System.Linq;
 
 #pragma warning disable RCS1090
 
 namespace Loterias.Application.Service
 {
+    /// <summary>
+    /// Service that implemente <see cref="ISenaService"/> wich is responsible for all mega-sena related methods.
+    /// </summary>
     public class SenaService : ISenaService
     {
         private readonly IRepositoryConcursoSena _sena;
         private readonly IRepositoryGanhadoresSena _ganhadoresSena;
 
+        /// <summary>
+        /// Initalize a new service using <see cref="IRepositoryConcursoSena"/> and <see cref="IRepositoryGanhadoresSena"/>.
+        /// </summary>
+        /// <param name="sena">Repository to get the <see cref="ConcursoSena"/> entities.</param>
+        /// <param name="ganhadoresSena">Repository to get the <see cref="GanhadoresSena"/> entities.</param>
         public SenaService(IRepositoryConcursoSena sena, IRepositoryGanhadoresSena ganhadoresSena)
         {
             _sena = sena;
@@ -25,177 +34,75 @@ namespace Loterias.Application.Service
         /// <summary>
         /// Search for a entity based on id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Id (integer)</param>
         /// <exception cref="ArgumentException"></exception>
-        /// <returns><see cref="ConcursoSena"/></returns>
-        public async Task<ConcursoSena> GetById(int id)
-        {
-            if (id <= 0)
-                throw new ArgumentException("Id cannot be zero or lower.", nameof(id));
-
-            try {
-                return await _sena.GetById(id);
-            }
-            catch (EntryPointNotFoundException)
-            {
-                throw;
-            }
-            catch (DbException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        } 
+        /// <returns>Returns the <see cref="ConcursoSena"/> entity.</returns>
+        public async Task<ConcursoSena> GetById(int id) => await _sena.GetById(id);
 
         /// <summary>
         /// Gets the entity by date.
         /// </summary>
-        /// <returns>The entity by date.</returns>
+        /// <returns>The entity <see cref="ConcursoSena"/></returns>
         /// <param name="date">Date.</param>
-        /// <exception cref="ArgumentNullException"/>
-        public async Task<ConcursoSena> GetByDate(DateTime date)
-        {
-            if (date == null || date == default(DateTime))
-                throw new ArgumentNullException(nameof(date), "Date cannot be null");
-
-            try 
-            {
-                return await _sena.FirstOrDefault(f => f.Data.Date.Equals(date.Date));
-            }
-            catch (DbException)
-            {
-                throw;
-            }
-        }
-            
+        /// <exception cref="ArgumentNullException"></exception>
+        public async Task<ConcursoSena> GetByDate(DateTime date) =>
+            await _sena.FirstOrDefault(f => f.Data.Date.Equals(date.Date));
 
         /// <summary>
-        /// Get all the entities between the specified dates.
+        /// Gets all the entities between the specified dates.
         /// </summary>
-        /// <param name="date1"></param>
-        /// <param name="date2"></param>
+        /// <param name="date1">Date 1.</param>
+        /// <param name="date2">Date 2.</param>
         /// <returns>Entities</returns>
-        /// <exception cref="ArgumentNullException"/>
-        public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2)
-        {
-            if (date1 == null || date1 == default(DateTime))
-                throw new ArgumentNullException(nameof(date1), "Date1 cannot be null");
-            
-            if (date2 == null || date2 == default(DateTime))
-                throw new ArgumentNullException(nameof(date2), "Date2 cannot be null");
+        /// <exception cref="ArgumentNullException" />
+        public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2) =>
+            await _sena.Where(w => w.Data.Date >= date1 && w.Data.Date <= date2);
 
-            try
-            {
-                return await _sena.Where(w => w.Data.Date >= date1 && w.Data.Date <= date2);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
         /// <summary>
         /// Get the entities in the specified dates
         /// </summary>
         /// <param name="dates"></param>
-        /// <returns></returns>
+        /// <returns><see cref="ConcursoSena"/> Entities that matches the dates</returns>
         /// <exception cref="ArgumentNullException" />
         public async Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates)
-        {
-            if (dates.Any(a => a == default(DateTime)))
-                throw new ArgumentNullException("Specified dates cannot be null");
+            => await _sena.Where(w => dates.Any(a => a.Date.Equals(w.Data)));
 
-            try
-            {
-                return await _sena.Where(w => dates.Any(a => a.Date.Equals(w.Data)));
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
         /// <summary>
         /// Get all the entities within the sorted specified numbers
         /// </summary>
-        /// <param name="numbers">Numbers</param>
-        /// <returns></returns>
+        /// <param name="numbers">Numbers (integer)</param>
+        /// <returns><see cref="ConcursoSena"/> Entities that matches the number</returns>
         /// <exception cref="ArgumentNullException" />
-        public async Task<IEnumerable<ConcursoSena>> GetByNumbers(params int[] numbers)
-        {
-            if (numbers?.Any() == false || numbers == default(int[]))
-                throw new ArgumentNullException(nameof(numbers), "At least one number must be specified.");
-            
-            if (numbers.Any(a => a.Equals(0)))
-                throw new ArgumentException("Winners numbers cannot contain zero as value.", nameof(numbers));
-
-            try 
-            {
-                return await _sena.Where(where => numbers.All(value => where.ResultadoOrdenado.Contains(value)));            
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        } 
+        public async Task<IEnumerable<ConcursoSena>> GetByNumbers(int[] numbers)
+            => await _sena.Where(where => numbers.All(value => where.ResultadoOrdenado.Contains(value)));
 
         /// <summary>
         /// Add a new model to the database
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="model">A valid <see cref="ConcursoSena"/> model</param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="DbException"></exception>
-        /// <returns><see cref="ConcursoSena" />Returns the model</returns>
+        /// <exception cref="DuplicateKeyException"></exception>
+        /// <returns>Returns the <see cref="ConcursoSena" /> model</returns>
         public async Task<ConcursoSena> Add(ConcursoSena model)
-        { 
-            if (model == null || model == default(ConcursoSena))
-                throw new ArgumentNullException(nameof(model), "Cannot add a null reference.");
+        {
+            var existingModel = await _sena.FirstOrDefault(f => f.Concurso.Equals(model.Concurso));
 
-            try
-            {
-                return await _sena.Add(model);
-            }
-            catch (DbException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            if (existingModel != null)
+                throw new DuplicateKeyException(existingModel, "Same concurso number already added to the database.");
+
+            return await _sena.Add(model)
         }
+
         /// <summary>
         /// Updates an existing model
         /// </summary>
-        /// <param name="model"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="EntryPointNotFoundException"></exception>
-        /// <exception cref="DbUpdateException"></exception>
-        /// <exception cref="DbException"></exception>
-        /// <returns> <see cref="ConcursoSena" />Returns the model</returns>
-        public async Task<ConcursoSena> Update(ConcursoSena model)
-        {
-            if (model == null || model == default(ConcursoSena))
-                throw new ArgumentNullException(nameof(model), "Cannot update a null reference.");
-            
-            var findModel = await this.GetById(model.Id);
-
-            if (findModel == null || findModel == default(ConcursoSena))
-                throw new EntryPointNotFoundException("Could not find a model to update with specified Id.");
-
-            try
-            {
-                return await _sena.Update(model);
-            }
-            catch (DbException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+        /// <param name="model">A valid <see cref="ConcursoSena"/> model</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="EntryPointNotFoundException" />
+        /// <exception cref="DbException" />
+        /// <exception cref="DbException" />
+        /// <returns>Returns the updated <see cref="ConcursoSena" /> model</returns>
+        public async Task<ConcursoSena> Update(ConcursoSena model) => await _sena.Update(model);
     }
 }
