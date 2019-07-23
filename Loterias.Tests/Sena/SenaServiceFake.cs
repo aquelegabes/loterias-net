@@ -153,8 +153,14 @@ namespace Loterias.Tests.Sena
             return await Task.FromResult<List<ConcursoSena>>(null);
         }
 
-        public async Task<IEnumerable<ConcursoSena>> GetByNumbers(int[] numbers)
+        public async Task<IEnumerable<ConcursoSena>> GetByNumbers(params int[] numbers)
         {
+            if (numbers?.Any() == false || numbers == default(int[]))
+                throw new ArgumentNullException();
+
+            if (numbers.Any(a => a.Equals(0)))
+                throw new ArgumentException("Winners numbers cannot contain zero as value.", nameof(numbers));
+
             var findList = _senas.Where(where => numbers.All(value => where.ResultadoOrdenado.Contains(value))).ToList();
             List<ConcursoSena> result;
             if (findList?.Count > 0)

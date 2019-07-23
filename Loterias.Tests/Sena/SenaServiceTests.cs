@@ -237,6 +237,54 @@ namespace Loterias.Tests.Sena
             Assert.NotEmpty(model);
         }
 
+        [Fact]
+        public async Task GetByNumbers_WhenCalled_ReturnsBadRequest()
+        {
+            // arrange
+            var request = new int[] { };
+            var request2 = new int[] { 0 };
+
+            // act
+            var response = await _controller.GetByNumbers(request);
+            var response2 = await _controller.GetByNumbers(request2);
+
+            // assert
+            Assert.IsType<BadRequestObjectResult>(response);
+            Assert.IsType<BadRequestObjectResult>(response2);
+        }
+
+        [Fact]
+        public async Task GetByNumbers_WhenCalled_ReturnsNotFound()
+        {
+            // arrange
+            var request = new int[] { 59,42 };
+
+            // act
+            var response = await _controller.GetByNumbers(request);
+
+            // assert
+            Assert.IsType<NoContentResult>(response);
+        }
+
+        [Fact]
+        public async Task GetByStateWinners_WhenCalled_ReturnsOK()
+        {
+
+        }
+
+        [Fact]
+        public async Task GetByStateWinners_WhenCalled_ReturnsNotFound()
+        {
+
+        }
+
+        [Fact]
+        public async Task GetByStateWinners_WhenCalled_ReturnsBadRequest()
+        {
+
+        }
+
+
         #endregion Get
 
         #region Add/Update/Remove

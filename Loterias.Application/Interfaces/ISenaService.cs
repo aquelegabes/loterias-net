@@ -49,7 +49,7 @@ namespace Loterias.Application.Interfaces
         /// <param name="numbers">Numbers</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException" />
-        Task<IEnumerable<ConcursoSena>> GetByNumbers(int[] numbers);
+        Task<IEnumerable<ConcursoSena>> GetByNumbers(params int[] numbers);
 
         /// <summary>
         /// Add a new model to the database

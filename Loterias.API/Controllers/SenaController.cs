@@ -97,17 +97,17 @@ namespace Loterias.API.Controllers
 
                 return Ok(_mapper.Map<ConcursoSenaVm>(result));
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = "Both parameters are required" });
+                return BadRequest(new { errorMessage = "Both parameters are required", exceptionMessage = ex.Message });
             }
             catch (CultureNotFoundException)
             {
                 return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
-                return BadRequest(new { errorMessage = "Wrong date format" });
+                return BadRequest(new { errorMessage = "Wrong date format", exceptionMessage = ex.Message });
             }
             catch (Exception ex)
             {
@@ -139,12 +139,10 @@ namespace Loterias.API.Controllers
             try
             {
                 if (string.IsNullOrWhiteSpace(culture))
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("Culture type is required.");
 
                 var ci = CultureInfo.GetCultureInfo(culture);
 
-                if (ci.EnglishName.Contains("Invariant Language"))
-                    throw new CultureNotFoundException("Invariant language is unnaceptable.");
                 if (!Utils.IsValidCulture(culture))
                     throw new CultureNotFoundException();
 
@@ -157,18 +155,18 @@ namespace Loterias.API.Controllers
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = "All parameters are required" });
+                return BadRequest(new { errorMessage = ex.Message });
             }
             catch (CultureNotFoundException)
             {
                 return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
                 string[] parameters = new string[] {date1,date2};
-                return BadRequest(new { errorMessage = "Wrong date format", @params = parameters });
+                return BadRequest(new { errorMessage = "Wrong date format", @params = parameters, exceptionMessage = ex.Message });
             }
             catch (Exception ex)
             {
@@ -198,10 +196,13 @@ namespace Loterias.API.Controllers
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(culture))
+                    throw new ArgumentNullException("Culture type is required.");
+
                 var ci = CultureInfo.GetCultureInfo(culture);
 
-                if (ci.EnglishName.Contains("Invariant Language"))
-                    throw new CultureNotFoundException("Invariant language is unnaceptable.");
+                if (!Utils.IsValidCulture(culture))
+                    throw new CultureNotFoundException();
 
                 var listDates = dates.Select(s => Convert.ToDateTime(s,ci)).ToArray();
 
@@ -212,17 +213,17 @@ namespace Loterias.API.Controllers
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = "All parameters are required" });
+                return BadRequest(new { errorMessage = ex.Message });
             }
             catch (CultureNotFoundException)
             {
                 return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
-                return BadRequest(new { errorMessage = "Wrong date format", @params = dates });
+                return BadRequest(new { errorMessage = "Wrong date format", @params = dates, exceptionMessage = ex.Message });
             }
             catch (Exception ex)
             {
@@ -258,9 +259,13 @@ namespace Loterias.API.Controllers
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
             }
-            catch  (ArgumentNullException)
+            catch  (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = "Numbers cannot be null." });
+                return BadRequest(new { errorMessage = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { errorMessage = ex.Message });
             }
             catch (Exception ex)
             {
