@@ -130,7 +130,7 @@ namespace Loterias.Tests.Sena
         }
 
         [Fact]
-        public async Task GetBetweenDates_WhenCalled_ReturnsNotFound()
+        public async Task GetBetweenDates_WhenCalled_ReturnsNoContent()
         {
             // act
             var result = await _controller.GetBetweenDates("01/01/1900", "01/01/1901", "pt-BR");
@@ -208,7 +208,7 @@ namespace Loterias.Tests.Sena
         }
 
         [Fact]
-        public async Task GetInDates_WhenCalled_ReturnsNotFound()
+        public async Task GetInDates_WhenCalled_ReturnsNoContent()
         {
             // act
             var result = await _controller.GetInDates("pt-BR", "01/01/1901");
@@ -254,7 +254,7 @@ namespace Loterias.Tests.Sena
         }
 
         [Fact]
-        public async Task GetByNumbers_WhenCalled_ReturnsNotFound()
+        public async Task GetByNumbers_WhenCalled_ReturnsNoContent()
         {
             // arrange
             var request = new int[] { 59,42 };
@@ -269,21 +269,74 @@ namespace Loterias.Tests.Sena
         [Fact]
         public async Task GetByStateWinners_WhenCalled_ReturnsOK()
         {
+            // arrange
+            var request1 = new string[] { "sp" };
+            var request2 = new string[] { "sp", "sc" };
+            // if has one empty string but has one state must return the state and ignore empty strings
+            var request3 = new string[] { "sc", "" };
 
+            // act 
+            var response1 = await _controller.GetByStateWinners(request1);
+            var response2 = await _controller.GetByStateWinners(request2);
+            var response3 = await _controller.GetByStateWinners(request3);
+
+            // assert
+            Assert.IsType<OkObjectResult>(response1);
+            var okObjectResult = response1 as OkObjectResult;
+            Assert.IsType<List<ConcursoSenaVm>>(okObjectResult.Value);
+            var model = okObjectResult.Value as List<ConcursoSenaVm>;
+            Assert.NotNull(model);
+            Assert.NotEmpty(model);
+
+            Assert.IsType<OkObjectResult>(response2);
+            var okObjectResult2 = response2 as OkObjectResult;
+            Assert.IsType<List<ConcursoSenaVm>>(okObjectResult2.Value);
+            var model2 = okObjectResult2.Value as List<ConcursoSenaVm>;
+            Assert.NotNull(model2);
+            Assert.NotEmpty(model2);
+
+            Assert.IsType<OkObjectResult>(response3);
+            var okObjectResult3 = response2 as OkObjectResult;
+            Assert.IsType<List<ConcursoSenaVm>>(okObjectResult3.Value);
+            var model3 = okObjectResult2.Value as List<ConcursoSenaVm>;
+            Assert.NotNull(model2);
+            Assert.NotEmpty(model2);
         }
 
         [Fact]
-        public async Task GetByStateWinners_WhenCalled_ReturnsNotFound()
+        public async Task GetByStateWinners_WhenCalled_ReturnsNoContent()
         {
+            // arrange
+            var request = new string[] { "rj" };
 
+            // act
+            var response = await _controller.GetByStateWinners(request);
+
+            // assert
+            Assert.IsType<NoContentResult>(response);
         }
 
         [Fact]
         public async Task GetByStateWinners_WhenCalled_ReturnsBadRequest()
         {
+            // arrange
+            var request1 = new string[] { "123", "34" };
+            var request2 = new string[] { };
+            var request3 = new string[] { "" };
+            var request4 = new string[] { "ok" };
 
+            // act
+            var response1 = await _controller.GetByStateWinners(request1);
+            var response2 = await _controller.GetByStateWinners(request2);
+            var response3 = await _controller.GetByStateWinners(request3);
+            var response4 = await _controller.GetByStateWinners(request4);
+
+            // assert
+            Assert.IsType<BadRequestObjectResult>(response1);
+            Assert.IsType<BadRequestObjectResult>(response2);
+            Assert.IsType<BadRequestObjectResult>(response3);
+            Assert.IsType<BadRequestObjectResult>(response4);
         }
-
 
         #endregion Get
 

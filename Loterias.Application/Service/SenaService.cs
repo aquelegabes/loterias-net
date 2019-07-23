@@ -77,6 +77,18 @@ namespace Loterias.Application.Service
             => await _sena.Where(where => numbers.All(value => where.ResultadoOrdenado.Contains(value)));
 
         /// <summary>
+        /// Get all the entities where winners must be on the specified states.
+        /// </summary>
+        /// <param name="states">States (two characters)</param>
+        /// <returns>Returns <see cref="IEnumerable{T}" /> entities that matches the states.</returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        public async Task<IEnumerable<ConcursoSena>> GetByStateWinners(params string[] states)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Add a new model to the database
         /// </summary>
         /// <param name="model">A valid <see cref="ConcursoSena"/> model</param>

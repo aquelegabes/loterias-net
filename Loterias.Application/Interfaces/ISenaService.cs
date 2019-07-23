@@ -41,7 +41,7 @@ namespace Loterias.Application.Interfaces
         /// Get the entities in the specified dates
         /// </summary>
         /// <param name="dates"></param>
-        /// <returns><see cref="ConcursoSena"/> Entities that matches the dates</returns>
+        /// <returns>Returns <see cref="IEnumerable{ConcursoSena}"/> entities that matches the dates.</returns>
         /// <exception cref="ArgumentNullException" />
         Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates);
 
@@ -49,9 +49,18 @@ namespace Loterias.Application.Interfaces
         /// Get all the entities within the sorted specified numbers
         /// </summary>
         /// <param name="numbers">Numbers (integer)</param>
-        /// <returns><see cref="ConcursoSena"/> Entities that matches the number</returns>
+        /// <returns>Returns <see cref="IEnumerable{ConcursoSena}"/> entities that matches the number.</returns>
         /// <exception cref="ArgumentNullException" />
         Task<IEnumerable<ConcursoSena>> GetByNumbers(params int[] numbers);
+
+        /// <summary>
+        /// Get all the entities where winners must be on the specified states.
+        /// </summary>
+        /// <param name="states">States (two characters)</param>
+        /// <returns>Returns <see cref="IEnumerable{ConcursoSena}"/> entities that matches the states.</returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        Task<IEnumerable<ConcursoSena>> GetByStateWinners(params string[] states);
 
         /// <summary>
         /// Add a new model to the database
@@ -60,7 +69,7 @@ namespace Loterias.Application.Interfaces
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="DuplicateKeyException"></exception>
-        /// <returns><see cref="ConcursoSena" />Returns the model</returns>
+        /// <returns>Return the <see cref="ConcursoSena" /> added model.</returns>
         Task<ConcursoSena> Add(ConcursoSena model);
 
         /// <summary>
@@ -71,7 +80,7 @@ namespace Loterias.Application.Interfaces
         /// <exception cref="EntryPointNotFoundException" />
         /// <exception cref="DbException" />
         /// <exception cref="DbException" />
-        /// <returns>Returns the updated <see cref="ConcursoSena" /> model</returns>
+        /// <returns>Returns the <see cref="ConcursoSena" /> updated model.</returns>
         Task<ConcursoSena> Update(ConcursoSena model);
     }
 }

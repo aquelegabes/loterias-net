@@ -177,6 +177,56 @@ namespace Loterias.Tests.Sena
             return await Task.FromResult<List<ConcursoSena>>(null);
         }
 
+        public async Task<IEnumerable<ConcursoSena>> GetByStateWinners(params string[] states)
+        {
+            if (states?.Any() == false || states == default(string[]))
+                throw new ArgumentNullException("At least one state must be specified.");
+
+            var statesList = states.ToList();
+            statesList.RemoveAll(r => string.IsNullOrWhiteSpace(r));
+
+            if (statesList.Count == 0)
+                throw new ArgumentException("States cannot have an empty value as parameter request.");
+
+            statesList.ForEach(item =>
+            {
+                bool matches = Enum.GetNames(typeof(Estados))
+                                .Any(value => value.Equals(item, StringComparison.OrdinalIgnoreCase));
+                if (!matches)
+                    throw new ArgumentException("Must be a valid two character state. See https://www.sogeografia.com.br/Conteudos/Estados/ for a list containing all states.");
+            });
+
+            // only for servicefake
+            // getting concurso Id for winners
+            // TODO: might be possible optimize
+            List<int> concursos = _senasWinners
+                .Where(w =>
+                    statesList.Any(state =>
+                        w.EstadoUF.Equals(state,StringComparison.OrdinalIgnoreCase)))
+                .Select(s => s.ConcursoId)
+                .Distinct()
+                .ToList();
+
+            if (concursos.Count == 0)
+                return await Task.FromResult<List<ConcursoSena>>(null);
+
+            List<ConcursoSena> findList = _senas.Where(where => concursos.All(concurso => where.Id.Equals(concurso))).ToList();
+
+            List<ConcursoSena> result;
+            if (findList?.Count > 0)
+            {
+                result = new List<ConcursoSena>();
+                foreach (var model in findList)
+                {
+                    var add = model;
+                    add.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(model.Id)).ToList();
+                    result.Add(add);
+                }
+                return await Task.FromResult(result);
+            }
+            return await Task.FromResult<List<ConcursoSena>>(null);
+        }
+
         public async Task<ConcursoSena> Add(ConcursoSena model)
         {
             if (model == null)

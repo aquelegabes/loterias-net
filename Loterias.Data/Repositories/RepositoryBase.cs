@@ -73,7 +73,7 @@ namespace Loterias.Data.Repositories
         /// <summary>
         /// Filters a sequence of values based on a predicate
         /// </summary>
-        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predica.</param>
+        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predicate.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>

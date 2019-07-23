@@ -275,6 +275,46 @@ namespace Loterias.API.Controllers
         }
 
         /// <summary>
+        /// Gets all entities that contains winners with the specified states.
+        /// </summary>
+        /// <param name="states">States as two character.</param>
+        /// <returns>Entities</returns>
+        /// <response code="200">Returns the entities</response>
+        /// <response code="204">No entity found in specified states</response>
+        /// <response code="400">Invalid states, null parameters.</response>
+        /// <response code="500">Unexpected error</response>
+        [HttpPost("bystatewinners")]
+        [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByStateWinners([FromBody]params string[] states)
+        {
+            try
+            {
+                var result = await _senaService.GetByStateWinners(states);
+
+                if (result?.Any() != true)
+                    return NoContent();
+
+                return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { errorMessage = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { errorMessage = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { error = "internal server error", errorMessage = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Add a new model to the database
         /// </summary>
         /// <param name="model"></param>
