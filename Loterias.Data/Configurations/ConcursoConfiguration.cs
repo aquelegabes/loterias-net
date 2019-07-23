@@ -10,6 +10,8 @@ namespace Loterias.Data.Configurations
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
             #region From abstract
+            builder.HasIndex(index => index.Concurso)
+                .IsUnique();
             builder.Property(p => p.Concurso).IsRequired();
             builder.Property(p => p.Data).IsRequired();
             builder.Property(p => p.Acumulado).HasDefaultValue(false);

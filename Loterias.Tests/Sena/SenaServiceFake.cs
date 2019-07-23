@@ -179,7 +179,7 @@ namespace Loterias.Tests.Sena
 
         public async Task<IEnumerable<ConcursoSena>> GetByStateWinners(params string[] states)
         {
-            if (states?.Any() == false || states == default(string[]))
+            if (states?.Count() == 0 || states == default(string[]))
                 throw new ArgumentNullException("At least one state must be specified.");
 
             var statesList = states.ToList();
@@ -196,9 +196,9 @@ namespace Loterias.Tests.Sena
                     throw new ArgumentException("Must be a valid two character state. See https://www.sogeografia.com.br/Conteudos/Estados/ for a list containing all states.");
             });
 
-            // only for servicefake
+            // only for servicefake, not sure how to do it on actual service
             // getting concurso Id for winners
-            // TODO: might be possible optimize
+            // TODO: might be possible to optimize
             List<int> concursos = _senasWinners
                 .Where(w =>
                     statesList.Any(state =>
