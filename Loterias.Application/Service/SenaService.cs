@@ -7,6 +7,7 @@ using Loterias.Common.Exceptions;
 using Loterias.Domain.Entities.Sena;
 using Loterias.Domain.Interfaces.Repositories;
 using Loterias.Application.Interfaces;
+using Loterias.Common.Enums;
 
 #pragma warning disable RCS1090
 
@@ -85,7 +86,29 @@ namespace Loterias.Application.Service
         /// <exception cref="ArgumentNullException"></exception>
         public async Task<IEnumerable<ConcursoSena>> GetByStateWinners(params string[] states)
         {
-            throw new NotImplementedException();
+            if (states?.Count() == 0 || default(string[]) == states)
+                throw new ArgumentNullException("At least one state must be specified.");
+            
+            var statesList = states.ToList();
+            statesList.RemoveAll(r => string.IsNullOrWhiteSpace(r));
+
+            if (statesList.Count == 0)
+                throw new ArgumentException("States cannot have an empty value as parameter request.");
+
+            statesList.ForEach(item =>
+            {
+                bool matches = Enum.GetNames(typeof(Estados))
+                                .Any(value => value.Equals(item, StringComparison.OrdinalIgnoreCase));
+                if (!matches)
+                    throw new ArgumentException("Must be a valid two character state. See https://www.sogeografia.com.br/Conteudos/Estados/ for a list containing all states.");
+            });
+
+            // is it possible to optimize?
+            return await _sena
+                .Where(w =>
+                    statesList.Any(state =>
+                        w.GanhadoresModel.Any(winn =>
+                            winn.EstadoUF.Equals(state, StringComparison.OrdinalIgnoreCase))));
         }
 
         /// <summary>
