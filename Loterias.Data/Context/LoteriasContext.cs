@@ -40,7 +40,6 @@ namespace Loterias.Data.Context
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder
-                    .UseLazyLoadingProxies()
                     .UseSqlite("Data Source=db.sqlite3");
             }
             optionsBuilder.UseLazyLoadingProxies();
