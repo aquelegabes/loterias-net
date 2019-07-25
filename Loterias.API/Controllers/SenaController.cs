@@ -73,9 +73,9 @@ namespace Loterias.API.Controllers
         /// Gets all entities between the specified dates.
         /// </summary>
         /// <returns>Entities</returns>
+        /// <param name="culture">Culture.</param>
         /// <param name="date1">Date 1.</param>
         /// <param name="date2">Date 2.</param>
-        /// <param name="culture">Culture.</param>
         /// <response code="200">Returns the entities</response>
         /// <response code="204">No entity found on date</response>
         /// <response code="400">Bad date format, invalid culture, null parameters</response>

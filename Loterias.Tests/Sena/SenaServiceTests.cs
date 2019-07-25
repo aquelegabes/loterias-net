@@ -200,7 +200,7 @@ namespace Loterias.Tests.Sena
 
         [Theory]
         // wrong/missing parameters
-        [InlineData("pt-BR", "01/01/1901")]
+        [InlineData("pt-BR", "")]
         [InlineData("", "01/01/1901")]
         // bad date format
         [InlineData("pt-BR", "1901/30/01")]
