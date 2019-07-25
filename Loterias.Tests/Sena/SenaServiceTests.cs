@@ -31,28 +31,56 @@ namespace Loterias.Tests.Sena
 
         #region Get
 
-        [Fact]
-        public async Task Get_WhenCalled_ReturnsOkResult()
+        [Theory]
+        [InlineData(994)]
+        [InlineData(995)]
+        [InlineData(996)]
+        public async Task Get_WhenCalled_ReturnsOkResult(int id)
         {
-            var okResult = await _controller.Get(994);
+            // act
+            var okResult = await _controller.Get(id);
+            var model = await _service.GetById(id);
+
+            // assert
 
             Assert.IsType<OkObjectResult>(okResult);
+            Assert.NotNull(model);
         }
 
-        [Fact]
-        public async Task Get_WhenCalled_ReturnsBadRequest()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public async Task Get_WhenCalled_ReturnsBadRequest(int id)
         {
-            var badResult = await _controller.Get(0);
+            // act
+            var badResult = await _controller.Get(id);
+            var exception = await Record.ExceptionAsync(async() => await _service.GetById(id));
 
+            // assert
             Assert.IsType<BadRequestObjectResult>(badResult);
+            Assert.NotNull(exception);
+            Assert.IsType<ArgumentException>(exception);
+            if (exception is ArgumentException argEx)
+            {
+                Assert.Equal(nameof(id), argEx.ParamName);
+            }
         }
 
         [Fact]
         public async Task Get_WhenCalled_ReturnsNoResponse()
         {
+            // act
             var noResponse = await _controller.Get(3);
+            var exception = await Record.ExceptionAsync(async() => await _service.GetById(3));
 
+            // assert
             Assert.IsType<NoContentResult>(noResponse);
+            Assert.NotNull(exception);
+            Assert.IsType<InvalidOperationException>(exception);
+            if (exception is InvalidOperationException ioEx)
+            {
+                Assert.Contains("no matching", ioEx.Message);
+            }
         }
 
         [Fact]
@@ -60,6 +88,7 @@ namespace Loterias.Tests.Sena
         {
             //act
             var hasWinners = await _controller.Get(996);
+            var modelReturn = await _service.GetById(996);
 
             //Assert
             Assert.IsType<OkObjectResult>(hasWinners);
@@ -70,53 +99,17 @@ namespace Loterias.Tests.Sena
             var model = okObjectResult.Value as ConcursoSenaVm;
             Assert.NotNull(model);
             Assert.NotEmpty(model.GanhadoresModel);
-        }
 
-        [Fact]
-        public async Task GetByDate_WhenCalled_ReturnsOk()
-        {
-            // act
-            var result = await _controller.GetByDate("16/08/2008","pt-BR");
-
-            // assert
-            Assert.IsType<OkObjectResult>(result);
-            var okObjectResult = result as OkObjectResult;
-            Assert.NotNull(okObjectResult);
-
-            var modelVm = okObjectResult.Value as ConcursoSenaVm;
-            Assert.NotNull(modelVm);
-            Assert.IsType<ConcursoSenaVm>(modelVm);
-        }
-
-        [Fact]
-        public async Task GetByDate_WhenCalled_ReturnsBadRequest()
-        {
-            // act and asserts
-            var resultEmpty = await _controller.GetByDate("","");
-            Assert.IsType<BadRequestObjectResult>(resultEmpty);
-
-            var resultOneEmpty = await _controller.GetByDate("16/08/2008","");
-            Assert.IsType<BadRequestObjectResult>(resultOneEmpty);
-
-            resultOneEmpty = await _controller.GetByDate("", "pt-BR");
-            Assert.IsType<BadRequestObjectResult>(resultOneEmpty);
-        }
-
-        [Fact]
-        public async Task GetByDate_WhenCalled_ReturnsNoContent()
-        {
-            // act
-            var result = await _controller.GetByDate("01/01/1900", "pt-BR");
-
-            // assert
-            Assert.IsType<NoContentResult>(result);
+            Assert.NotNull(modelReturn);
+            Assert.NotEmpty(modelReturn.GanhadoresModel);
         }
 
         [Fact]
         public async Task GetBetweenDates_WhenCalled_ReturnsOk()
         {
             // act
-            var result = await _controller.GetBetweenDates("09/08/2008","16/08/2008", "pt-BR");
+            var result = await _controller.GetBetweenDates("pt-BR", "09/08/2008","16/08/2008");
+            var modelResult = await _service.GetBetweenDates("pt-BR", "09/08/2008", "16/08/2008");
 
             // assert
             Assert.IsType<OkObjectResult>(result);
@@ -127,49 +120,63 @@ namespace Loterias.Tests.Sena
             var model = okObjectResult.Value as List<ConcursoSenaVm>;
             Assert.IsType<List<ConcursoSenaVm>>(model);
             Assert.NotNull(model);
+
+            Assert.IsAssignableFrom<IEnumerable<ConcursoSena>>(modelResult);
+            Assert.IsType<List<ConcursoSena>>(modelResult);
+            Assert.NotNull(modelResult);
+            Assert.NotEmpty(modelResult);
         }
 
         [Fact]
         public async Task GetBetweenDates_WhenCalled_ReturnsNoContent()
         {
             // act
-            var result = await _controller.GetBetweenDates("01/01/1900", "01/01/1901", "pt-BR");
+            var result = await _controller.GetBetweenDates("pt-BR", "01/01/1900", "01/01/1901");
+            var modelResult = await _service.GetBetweenDates("pt-BR", "01/01/1900", "01/01/1901");
 
             // assert
             Assert.IsType<NoContentResult>(result);
+            Assert.Null(modelResult);
         }
 
-        [Fact]
-        public async Task GetBetweenDates_WhenCalled_ReturnsBadRequest()
+        [Theory]
+        // wrong parameters
+        [InlineData("pt-BR", "", "01/01/1901")]
+        [InlineData("pt-BR", "01/01/1901", "")]
+        [InlineData("", "01/01/1901", "01/01/1901")]
+        // bad date format
+        [InlineData("pt-BR", "1901/31/01", "01/01/1901")]
+        // wrong culture info
+        [InlineData("ssfg", "01/01/1901", "01/01/1901")]
+        public async Task GetBetweenDates_WhenCalled_ReturnsBadRequest(string culture, string date1, string date2)
         {
-            // act/arrange
-            // wrong parameters
-            var wrong1 = await _controller.GetBetweenDates("", "01/01/1901", "pt-BR");
-            var wrong2 = await _controller.GetBetweenDates("01/01/1901","","pt-BR");
-            var wrong3 = await _controller.GetBetweenDates("01/01/1901","01/01/1901","");
-
-            // bad date format
-            var wrong4 = await _controller.GetBetweenDates("1901/31/01", "01/01/1901", "pt-BR");
-
-            // wrong culture info
-            var wrong5 = await _controller.GetBetweenDates("01/01/1901", "01/01/1901", "ssfg");
+            // act
+            var wrong = await _controller.GetBetweenDates(culture, date1, date2);
+            var exc = await Record.ExceptionAsync(async() => await _service.GetBetweenDates(culture, date1, date2));
 
             // assert
-            Assert.IsType<BadRequestObjectResult>(wrong1);
-            Assert.IsType<BadRequestObjectResult>(wrong2);
-            Assert.IsType<BadRequestObjectResult>(wrong3);
-            Assert.IsType<BadRequestObjectResult>(wrong4);
-            Assert.IsType<BadRequestObjectResult>(wrong5);
+            Assert.IsType<BadRequestObjectResult>(wrong);
+            Assert.NotNull(exc);
+            Assert.IsAssignableFrom<Exception>(exc);
+
+            if (exc is ArgumentNullException argEx)
+                Assert.Contains("required", argEx.Message);
+
+            if (exc is System.Globalization.CultureNotFoundException cultEx)
+                Assert.Contains("Wrong", cultEx.Message);
+
+            // :shrug:
+            if (exc is FormatException fEx)
+                Assert.True(exc is FormatException);
         }
 
-        [Fact]
-        public async Task GetInDates_WhenCalled_ReturnsOk()
+        [Theory]
+        [InlineData("pt-BR", "09/08/2008", "13/08/2008")]
+        public async Task GetInDates_WhenCalled_ReturnsOk(string culture, params string[] dates)
         {
-            // arrange
-            var dates = new string[] { "09/08/2008", "13/08/2008" };
-
             // act
-            var result = await _controller.GetInDates("pt-BR", dates);
+            var result = await _controller.GetInDates(culture, dates);
+            var modelResult = await _service.GetInDates(culture, dates);
 
             // assert
             Assert.IsType<OkObjectResult>(result);
@@ -184,27 +191,41 @@ namespace Loterias.Tests.Sena
             Assert.NotNull(model);
             Assert.NotEmpty(model);
             Assert.True(model.Count == 2);
+
+            Assert.NotNull(modelResult);
+            Assert.IsAssignableFrom<IEnumerable<ConcursoSena>>(modelResult);
+            Assert.IsType<List<ConcursoSena>>(modelResult);
+            Assert.NotEmpty(modelResult);
         }
 
-        [Fact]
-        public async Task GetInDates_WhenCalled_ReturnsBadRequest()
+        [Theory]
+        // wrong/missing parameters
+        [InlineData("pt-BR", "01/01/1901", "")]
+        [InlineData("", "01/01/1901")]
+        // bad date format
+        [InlineData("pt-BR", "1901/30/01", "")]
+        // wrong culture info
+        [InlineData("zulu", "01/01/1901", "")]
+        public async Task GetInDates_WhenCalled_ReturnsBadRequest(string culture, params string[] dates)
         {
-            // act/arrange
-            // wrong/missing parameters
-            var wrong1 = await _controller.GetInDates("pt-BR", "01/01/1901", "");
-            var wrong2 = await _controller.GetInDates("", "01/01/1901");
-
-            // bad date format
-            var wrong3 = await _controller.GetInDates("pt-BR", "1901/30/01", "");
-
-            // wrong culture info
-            var wrong4 = await _controller.GetInDates("zulu", "01/01/1901", "");
+            // act
+            var wrong = await _controller.GetInDates(culture, dates);
+            var exc = await Record.ExceptionAsync(async() => await _service.GetInDates(culture, dates));
 
             // assert
-            Assert.IsType<BadRequestObjectResult>(wrong1);
-            Assert.IsType<BadRequestObjectResult>(wrong2);
-            Assert.IsType<BadRequestObjectResult>(wrong3);
-            Assert.IsType<BadRequestObjectResult>(wrong4);
+            Assert.IsType<BadRequestObjectResult>(wrong);
+            Assert.NotNull(exc);
+            Assert.IsAssignableFrom<Exception>(exc);
+
+            if (exc is ArgumentNullException argEx)
+                Assert.Contains("required", argEx.Message);
+
+            if (exc is System.Globalization.CultureNotFoundException cultEx)
+                Assert.Contains("Wrong", cultEx.Message);
+
+            // :shrug:
+            if (exc is FormatException fEx)
+                Assert.True(exc is FormatException);
         }
 
         [Fact]
@@ -212,9 +233,11 @@ namespace Loterias.Tests.Sena
         {
             // act
             var result = await _controller.GetInDates("pt-BR", "01/01/1901");
+            var resultModel = await _service.GetInDates("pt-BR", "01/01/1901");
 
             // assert
             Assert.IsType<NoContentResult>(result);
+            Assert.Null(resultModel);
         }
 
         [Fact]
@@ -237,20 +260,16 @@ namespace Loterias.Tests.Sena
             Assert.NotEmpty(model);
         }
 
-        [Fact]
-        public async Task GetByNumbers_WhenCalled_ReturnsBadRequest()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(new int[] { })]
+        public async Task GetByNumbers_WhenCalled_ReturnsBadRequest(params int[] numbers)
         {
-            // arrange
-            var request = new int[] { };
-            var request2 = new int[] { 0 };
-
             // act
-            var response = await _controller.GetByNumbers(request);
-            var response2 = await _controller.GetByNumbers(request2);
+            var response = await _controller.GetByNumbers(numbers);
 
             // assert
             Assert.IsType<BadRequestObjectResult>(response);
-            Assert.IsType<BadRequestObjectResult>(response2);
         }
 
         [Fact]
@@ -266,41 +285,23 @@ namespace Loterias.Tests.Sena
             Assert.IsType<NoContentResult>(response);
         }
 
-        [Fact]
-        public async Task GetByStateWinners_WhenCalled_ReturnsOK()
+        [Theory]
+        [InlineData("sp")]
+        [InlineData("sp", "sc")]
+        // if has one empty string but has one state must return the state and ignore empty strings
+        [InlineData("sc", "")]
+        public async Task GetByStateWinners_WhenCalled_ReturnsOK(params string[] states)
         {
-            // arrange
-            var request1 = new string[] { "sp" };
-            var request2 = new string[] { "sp", "sc" };
-            // if has one empty string but has one state must return the state and ignore empty strings
-            var request3 = new string[] { "sc", "" };
-
             // act 
-            var response1 = await _controller.GetByStateWinners(request1);
-            var response2 = await _controller.GetByStateWinners(request2);
-            var response3 = await _controller.GetByStateWinners(request3);
+            var response = await _controller.GetByStateWinners(states);
 
             // assert
-            Assert.IsType<OkObjectResult>(response1);
-            var okObjectResult = response1 as OkObjectResult;
+            Assert.IsType<OkObjectResult>(response);
+            var okObjectResult = response as OkObjectResult;
             Assert.IsType<List<ConcursoSenaVm>>(okObjectResult.Value);
             var model = okObjectResult.Value as List<ConcursoSenaVm>;
             Assert.NotNull(model);
             Assert.NotEmpty(model);
-
-            Assert.IsType<OkObjectResult>(response2);
-            var okObjectResult2 = response2 as OkObjectResult;
-            Assert.IsType<List<ConcursoSenaVm>>(okObjectResult2.Value);
-            var model2 = okObjectResult2.Value as List<ConcursoSenaVm>;
-            Assert.NotNull(model2);
-            Assert.NotEmpty(model2);
-
-            Assert.IsType<OkObjectResult>(response3);
-            var okObjectResult3 = response2 as OkObjectResult;
-            Assert.IsType<List<ConcursoSenaVm>>(okObjectResult3.Value);
-            var model3 = okObjectResult2.Value as List<ConcursoSenaVm>;
-            Assert.NotNull(model2);
-            Assert.NotEmpty(model2);
         }
 
         [Fact]
@@ -316,26 +317,17 @@ namespace Loterias.Tests.Sena
             Assert.IsType<NoContentResult>(response);
         }
 
-        [Fact]
-        public async Task GetByStateWinners_WhenCalled_ReturnsBadRequest()
+        [Theory]
+        [InlineData("123", "34")]
+        [InlineData("")]
+        [InlineData("ok")]
+        public async Task GetByStateWinners_WhenCalled_ReturnsBadRequest(params string[] states)
         {
-            // arrange
-            var request1 = new string[] { "123", "34" };
-            var request2 = new string[] { };
-            var request3 = new string[] { "" };
-            var request4 = new string[] { "ok" };
-
             // act
-            var response1 = await _controller.GetByStateWinners(request1);
-            var response2 = await _controller.GetByStateWinners(request2);
-            var response3 = await _controller.GetByStateWinners(request3);
-            var response4 = await _controller.GetByStateWinners(request4);
+            var response = await _controller.GetByStateWinners(states);
 
             // assert
-            Assert.IsType<BadRequestObjectResult>(response1);
-            Assert.IsType<BadRequestObjectResult>(response2);
-            Assert.IsType<BadRequestObjectResult>(response3);
-            Assert.IsType<BadRequestObjectResult>(response4);
+            Assert.IsType<BadRequestObjectResult>(response);
         }
 
         #endregion Get

@@ -56,16 +56,19 @@ namespace Loterias.Data.Repositories
             {
                 return await _context.Set<TEntity>().FirstOrDefaultAsync(where);
             }
-            catch (DbException)
+            catch (DbException ex)
             {
+                ex.Data["param"] = where;
                 throw;
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
+                ex.Data["param"] = where;
                 throw;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ex.Data["param"] = where;
                 throw;
             }
         }
@@ -87,16 +90,19 @@ namespace Loterias.Data.Repositories
             {
                 return await _context.Set<TEntity>().Where(where).ToListAsync();
             }
-            catch (DbException)
+            catch (DbException ex)
             {
+                ex.Data["param"] = where;
                 throw;
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
+                ex.Data["param"] = where;
                 throw;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ex.Data["param"] = where;
                 throw;
             }
         }
@@ -112,7 +118,15 @@ namespace Loterias.Data.Repositories
             if (id <= 0)
                 throw new ArgumentException("Id cannot be zero or lower.", nameof(id));
 
-            return await _context.Set<TEntity>().FindAsync(id);
+            try
+            {
+                return await _context.Set<TEntity>().FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                ex.Data["param"] = id;
+                throw;
+            }
         }
 
         /// <summary>
@@ -134,12 +148,14 @@ namespace Loterias.Data.Repositories
                 await _context.SaveChangesAsync();
                 return model;
             }
-            catch (DbException)
+            catch (DbException ex)
             {
+                ex.Data["param"] = model;
                 throw;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ex.Data["param"] = model;
                 throw;
             }
         }
@@ -158,26 +174,31 @@ namespace Loterias.Data.Repositories
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model), "Cannot update a null reference");
+
             try
             {
                 _context.Set<TEntity>().Update(model);
                 await _context.SaveChangesAsync();
                 return model;
             }
-            catch (EntryPointNotFoundException)
+            catch (EntryPointNotFoundException ex)
             {
+                ex.Data["param"] = model;
                 throw;
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
+                ex.Data["param"] = model;
                 throw;
             }
-            catch (DbException)
+            catch (DbException ex)
             {
+                ex.Data["param"] = model;
                 throw;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ex.Data["param"] = model;
                 throw;
             }
         }
@@ -201,25 +222,21 @@ namespace Loterias.Data.Repositories
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch (DbException)
+            catch (DbException ex)
             {
+                ex.Data["param"] = model;
                 throw;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ex.Data["param"] = model;
                 throw;
             }
         }
 
         /// <summary>
-        /// Releases all resource used by the <see cref="RepositoryBase"/> object.
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <remarks>Call <see cref="Dispose"/> when you are finished using the
-        /// <see cref="RepositoryBase"/>. The <see cref="Dispose"/> method leaves the
-        /// <see cref="RepositoryBase"/> in an unusable state. After calling
-        /// <see cref="Dispose"/>, you must release all references to the
-        /// <see cref="RepositoryBase"/> so the garbage collector can reclaim the memory
-        /// that the <see cref="RepositoryBase"/> was occupying.</remarks>
         public void Dispose()
         {
             _context?.Dispose();

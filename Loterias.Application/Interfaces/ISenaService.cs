@@ -21,21 +21,15 @@ namespace Loterias.Application.Interfaces
         Task<ConcursoSena> GetById(int id);
 
         /// <summary>
-        /// Gets the entity by date.
-        /// </summary>
-        /// <returns>The entity <see cref="ConcursoSena"/></returns>
-        /// <param name="date">Date.</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        Task<ConcursoSena> GetByDate(DateTime date);
-
-        /// <summary>
         /// Gets all the entities between the specified dates.
         /// </summary>
         /// <param name="date1">Date 1.</param>
         /// <param name="date2">Date 2.</param>
         /// <returns>Returns the <see cref="ConcursoSena"/> entities</returns>
         /// <exception cref="ArgumentNullException" />
-        Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2);
+        /// <exception cref="System.Globalization.CultureNotFoundException" />
+        /// <exception cref="FormatException" />
+        Task<IEnumerable<ConcursoSena>> GetBetweenDates(string culture, string date1, string date2);
 
         /// <summary>
         /// Get the entities in the specified dates
@@ -43,7 +37,9 @@ namespace Loterias.Application.Interfaces
         /// <param name="dates"></param>
         /// <returns>Returns <see cref="IEnumerable{ConcursoSena}"/> entities that matches the dates.</returns>
         /// <exception cref="ArgumentNullException" />
-        Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates);
+        /// <exception cref="System.Globalization.CultureNotFoundException" />
+        /// <exception cref="FormatException" />
+        Task<IEnumerable<ConcursoSena>> GetInDates(string culture, params string[] dates);
 
         /// <summary>
         /// Get all the entities within the sorted specified numbers

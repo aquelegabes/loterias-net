@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Loterias.Application.Interfaces;
 using Loterias.Common.Enums;
+using Loterias.Common.Utils;
 using Loterias.Domain.Entities.Sena;
 
 #pragma warning disable RCS1090, RCS1205
@@ -103,54 +105,89 @@ namespace Loterias.Tests.Sena
             return await Task.FromResult<ConcursoSena>(null);
         }
 
-        public async Task<ConcursoSena> GetByDate(DateTime date)
+        public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(string culture, string date1, string date2)
         {
-            var model = _senas.Find(w => w.Data.Date.Equals(date.Date));
-            if (model == null)
-                throw new Exception("Predicate found no matching objects");
-            return await Task.FromResult(model);
+            if (string.IsNullOrWhiteSpace(culture) || string.IsNullOrWhiteSpace(date1) || string.IsNullOrWhiteSpace(date2))
+                throw new ArgumentNullException("All parameters are required.");
+
+            if (!Utils.IsValidCulture(culture))
+                throw new CultureNotFoundException("Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos");
+
+            var ci = CultureInfo.GetCultureInfo(culture);
+
+            try
+            {
+                DateTime dateSearch1 = Convert.ToDateTime(date1, ci);
+                DateTime dateSearch2 = Convert.ToDateTime(date2, ci);
+
+                var findList = _senas.Where(w => w.Data.Date >= dateSearch1 && w.Data.Date <= dateSearch2).ToList();
+                List<ConcursoSena> result;
+                if (findList?.Count > 0)
+                {
+                    result = new List<ConcursoSena>();
+                    foreach (var model in findList)
+                    {
+                        var add = model;
+                        add.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(model.Id)).ToList();
+                        result.Add(add);
+                    }
+                    return await Task.FromResult(result);
+                }
+                return await Task.FromResult<List<ConcursoSena>>(null);
+            }
+            catch (FormatException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2)
+        public async Task<IEnumerable<ConcursoSena>> GetInDates(string culture, params string[] dates)
         {
-            if (date1 == default(DateTime) || date2 == default(DateTime))
-                throw new ArgumentNullException($"{nameof(date1)} or {nameof(date2)}", "Dates cannot be null.");
+            if (dates.Length == 0 && dates.Any(value => !string.IsNullOrWhiteSpace(value)))
+                throw new ArgumentNullException(nameof(dates), "At least one date must be specified.");
 
-            var findList = _senas.Where(w => w.Data.Date >= date1 && w.Data.Date <= date2).ToList();
-            List<ConcursoSena> result;
-            if (findList?.Count > 0)
+            if (string.IsNullOrWhiteSpace(culture))
+                throw new ArgumentNullException(nameof(culture), "Culture type is required.");
+
+            if (!Utils.IsValidCulture(culture))
+                throw new CultureNotFoundException("Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos");
+
+            var ci = CultureInfo.GetCultureInfo(culture);
+
+            try
             {
-                result = new List<ConcursoSena>();
-                foreach (var model in findList)
+                var listDates = dates.Select(value => Convert.ToDateTime(value, ci)).ToArray();
+                var findList = _senas.Where(w => listDates.Any(a => a.Date.Equals(w.Data))).ToList();
+
+                List<ConcursoSena> result;
+                if (findList?.Count > 0)
                 {
-                    var add = model;
-                    add.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(model.Id)).ToList();
-                    result.Add(add);
+                    result = new List<ConcursoSena>();
+                    foreach (var model in findList)
+                    {
+                        var add = model;
+                        add.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(model.Id)).ToList();
+                        result.Add(add);
+                    }
+                    return await Task.FromResult(result);
                 }
-                return await Task.FromResult(result);
+                return await Task.FromResult<List<ConcursoSena>>(null);
             }
-            return await Task.FromResult<List<ConcursoSena>>(null);
-        }
-
-        public async Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates)
-        {
-            if (dates.Any(a => a == default(DateTime)))
-                throw new ArgumentNullException("Specified dates cannot be null");
-
-            var findList = _senas.Where(w => dates.Any(a => a.Date.Equals(w.Data))).ToList();
-            List<ConcursoSena> result;
-            if (findList?.Count > 0)
+            catch (FormatException ex)
             {
-                result = new List<ConcursoSena>();
-                foreach (var model in findList)
-                {
-                    var add = model;
-                    add.GanhadoresModel = _senasWinners.Where(w => w.ConcursoId.Equals(model.Id)).ToList();
-                    result.Add(add);
-                }
-                return await Task.FromResult(result);
+                ex.Data["dates"] = dates;
+                throw;
             }
-            return await Task.FromResult<List<ConcursoSena>>(null);
+            catch (Exception ex)
+            {
+                ex.Data["param1"] = culture;
+                ex.Data["param2"] = dates;
+                throw;
+            }
         }
 
         public async Task<IEnumerable<ConcursoSena>> GetByNumbers(params int[] numbers)

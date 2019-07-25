@@ -70,55 +70,6 @@ namespace Loterias.API.Controllers
         }
 
         /// <summary>
-        /// Gets entity by date.
-        /// </summary>
-        /// <returns>The by date.</returns>
-        /// <param name="date">Date.</param>
-        /// <param name="culture">Culture.</param>
-        /// <response code="200">Returns the entity</response>
-        /// <response code="204">No entity found on date</response>
-        /// <response code="400">Bad date format, invalid culture, null parameters</response>
-        /// <response code="500">Unexpected error</response>
-        [HttpGet("bydate")]
-        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByDate(string date, string culture)
-        {
-            try
-            {
-                var ci = CultureInfo.GetCultureInfo(culture);
-                DateTime dateSearch = Convert.ToDateTime(date, ci);
-                var result = await _senaService.GetByDate(dateSearch);
-
-                if (result == null)
-                    return NoContent();
-
-                return Ok(_mapper.Map<ConcursoSenaVm>(result));
-            }
-            catch (ArgumentNullException ex)
-            {
-                return BadRequest(new { errorMessage = "Both parameters are required", exceptionMessage = ex.Message });
-            }
-            catch (CultureNotFoundException)
-            {
-                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
-            }
-            catch (FormatException ex)
-            {
-                return BadRequest(new { errorMessage = "Wrong date format", exceptionMessage = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("no matching"))
-                    return NoContent();
-
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        /// <summary>
         /// Gets all entities between the specified dates.
         /// </summary>
         /// <returns>Entities</returns>
@@ -134,21 +85,11 @@ namespace Loterias.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBetweenDates(string date1, string date2, string culture)
+        public async Task<IActionResult> GetBetweenDates(string culture, string date1, string date2)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(culture))
-                    throw new ArgumentNullException("Culture type is required.");
-
-                var ci = CultureInfo.GetCultureInfo(culture);
-
-                if (!Utils.IsValidCulture(culture))
-                    throw new CultureNotFoundException();
-
-                DateTime dateSearch1 = Convert.ToDateTime(date1, ci);
-                DateTime dateSearch2 = Convert.ToDateTime(date2, ci);
-                var result = await _senaService.GetBetweenDates(dateSearch1, dateSearch2);
+                var result = await _senaService.GetBetweenDates(culture, date1, date2);
 
                 if (result?.Any() != true)
                     return NoContent();
@@ -159,9 +100,9 @@ namespace Loterias.API.Controllers
             {
                 return BadRequest(new { errorMessage = ex.Message });
             }
-            catch (CultureNotFoundException)
+            catch (CultureNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
+                return BadRequest(new { errorMessage = ex.Message });
             }
             catch (FormatException ex)
             {
@@ -196,17 +137,7 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(culture))
-                    throw new ArgumentNullException("Culture type is required.");
-
-                var ci = CultureInfo.GetCultureInfo(culture);
-
-                if (!Utils.IsValidCulture(culture))
-                    throw new CultureNotFoundException();
-
-                var listDates = dates.Select(s => Convert.ToDateTime(s,ci)).ToArray();
-
-                var result = await _senaService.GetInDates(listDates);
+                var result = await _senaService.GetInDates(culture, dates);
 
                 if (result?.Any() != true)
                     return NoContent();
@@ -217,13 +148,13 @@ namespace Loterias.API.Controllers
             {
                 return BadRequest(new { errorMessage = ex.Message });
             }
-            catch (CultureNotFoundException)
+            catch (CultureNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
+                return BadRequest(new { errorMessage = ex.Message });
             }
             catch (FormatException ex)
             {
-                return BadRequest(new { errorMessage = "Wrong date format", @params = dates, exceptionMessage = ex.Message });
+                return BadRequest(new { errorMessage = "Wrong date format", @params = ex.Data["dates"], exceptionMessage = ex.Message });
             }
             catch (Exception ex)
             {

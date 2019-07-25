@@ -8,6 +8,8 @@ using Loterias.Domain.Entities.Sena;
 using Loterias.Domain.Interfaces.Repositories;
 using Loterias.Application.Interfaces;
 using Loterias.Common.Enums;
+using Loterias.Common.Utils;
+using System.Globalization;
 
 #pragma warning disable RCS1090
 
@@ -41,23 +43,43 @@ namespace Loterias.Application.Service
         public async Task<ConcursoSena> GetById(int id) => await _sena.GetById(id);
 
         /// <summary>
-        /// Gets the entity by date.
-        /// </summary>
-        /// <returns>The entity <see cref="ConcursoSena"/></returns>
-        /// <param name="date">Date.</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public async Task<ConcursoSena> GetByDate(DateTime date) =>
-            await _sena.FirstOrDefault(f => f.Data.Date.Equals(date.Date));
-
-        /// <summary>
         /// Gets all the entities between the specified dates.
         /// </summary>
         /// <param name="date1">Date 1.</param>
         /// <param name="date2">Date 2.</param>
         /// <returns>Entities</returns>
         /// <exception cref="ArgumentNullException" />
-        public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(DateTime date1, DateTime date2) =>
-            await _sena.Where(w => w.Data.Date >= date1 && w.Data.Date <= date2);
+        /// <exception cref="CultureNotFoundException" />
+        /// <exception cref="FormatException" />
+        public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(string culture, string date1, string date2)
+        {
+            if (string.IsNullOrWhiteSpace(culture) || string.IsNullOrWhiteSpace(date1) || string.IsNullOrWhiteSpace(date2))
+                throw new ArgumentNullException("All parameters are required.");
+
+            if (!Utils.IsValidCulture(culture))
+                throw new CultureNotFoundException("Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos");
+
+            var ci = CultureInfo.GetCultureInfo(culture);
+
+            try
+            {
+                DateTime dateSearch1 = Convert.ToDateTime(date1, ci);
+                DateTime dateSearch2 = Convert.ToDateTime(date2, ci);
+                return await _sena.Where(w => w.Data.Date >= dateSearch1 && w.Data.Date <= dateSearch2);
+            }
+            catch (FormatException ex)
+            {
+                ex.Data["dates"] = new string[] { date1, date2 };
+                throw;
+            }
+            catch (Exception ex)
+            {
+                ex.Data["param1"] = culture;
+                ex.Data["param2"] = date1;
+                ex.Data["param3"] = date2;
+                throw;
+            }
+        }
 
         /// <summary>
         /// Get the entities in the specified dates
@@ -65,8 +87,39 @@ namespace Loterias.Application.Service
         /// <param name="dates"></param>
         /// <returns><see cref="ConcursoSena"/> Entities that matches the dates</returns>
         /// <exception cref="ArgumentNullException" />
-        public async Task<IEnumerable<ConcursoSena>> GetInDates(params DateTime[] dates)
-            => await _sena.Where(w => dates.Any(a => a.Date.Equals(w.Data)));
+        /// <exception cref="CultureNotFoundException" />
+        /// <exception cref="FormatException" />
+        public async Task<IEnumerable<ConcursoSena>> GetInDates(string culture, params string[] dates)
+        {
+            if (dates.Length == 0 && dates.Any(value => !string.IsNullOrWhiteSpace(value)))
+                throw new ArgumentNullException(nameof(dates) ,"At least one date must be specified.");
+
+            if (string.IsNullOrWhiteSpace(culture))
+                throw new ArgumentNullException(nameof(culture), "Culture type is required.");
+
+            if (!Utils.IsValidCulture(culture))
+                throw new CultureNotFoundException("Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos");
+
+            var ci = CultureInfo.GetCultureInfo(culture);
+
+            try
+            {
+                var listDates = dates.Select(value => Convert.ToDateTime(value, ci)).ToArray();
+
+                return await _sena.Where(w => listDates.Any(a => a.Date.Equals(w.Data)));
+            }
+            catch (FormatException ex)
+            {
+                ex.Data["dates"] = dates;
+                throw;
+            }
+            catch (Exception ex)
+            {
+                ex.Data["param1"] = culture;
+                ex.Data["param2"] = dates;
+                throw;
+            }
+        }
 
         /// <summary>
         /// Get all the entities within the sorted specified numbers
@@ -88,7 +141,7 @@ namespace Loterias.Application.Service
         {
             if (states?.Count() == 0 || default(string[]) == states)
                 throw new ArgumentNullException("At least one state must be specified.");
-            
+
             var statesList = states.ToList();
             statesList.RemoveAll(r => string.IsNullOrWhiteSpace(r));
 
