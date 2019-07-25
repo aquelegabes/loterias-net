@@ -200,12 +200,12 @@ namespace Loterias.Tests.Sena
 
         [Theory]
         // wrong/missing parameters
-        [InlineData("pt-BR", "01/01/1901", "")]
+        [InlineData("pt-BR", "01/01/1901")]
         [InlineData("", "01/01/1901")]
         // bad date format
-        [InlineData("pt-BR", "1901/30/01", "")]
+        [InlineData("pt-BR", "1901/30/01")]
         // wrong culture info
-        [InlineData("zulu", "01/01/1901", "")]
+        [InlineData("zulu", "01/01/1901")]
         public async Task GetInDates_WhenCalled_ReturnsBadRequest(string culture, params string[] dates)
         {
             // act
