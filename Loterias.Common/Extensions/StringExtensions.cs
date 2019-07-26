@@ -84,5 +84,32 @@ namespace Loterias.Common.Extensions
                 throw;
             }
         }
+
+        /// <summary>
+        /// Returns a <see cref="bool"/> value indicating whether a specified substring occurs within this string.
+        /// </summary>
+        /// <param name="str">This string.</param>
+        /// <param name="substr">Specified string.</param>
+        /// <param name="comp">Any <see cref="StringComparison"/> type.</param>
+        /// <returns><see cref="true"/> whether contains <see cref="false"/> if not</returns>
+        /// <exception cref="ArgumentException">Comparison is not a member of <see cref="StringComparison"/>.</exception>
+        /// <exception cref="ArgumentNullException">Value is null</exception>
+        public static bool Contains(this string str, string substr, StringComparison comp)
+        {
+            if (substr == null)
+            {
+                throw new ArgumentNullException(
+                    paramName: nameof(substr),
+                    message: "Substring cannot be null.");
+            }
+            else if (!Enum.IsDefined(typeof(StringComparison), comp))
+            {
+                throw new ArgumentException(
+                    message: "Specified comparison is not a member of StringComparison.",
+                    paramName: nameof(comp));
+            }
+
+            return str.IndexOf(substr.Trim(), comp) >= 0;
+        }
     }
 }

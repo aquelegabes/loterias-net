@@ -62,7 +62,6 @@ namespace Loterias.Tests.Sena
             Assert.IsType<ArgumentException>(exception);
             if (exception is ArgumentException argEx)
                 Assert.Equal(nameof(id), argEx.ParamName);
-            
         }
 
         [Fact]
@@ -78,7 +77,7 @@ namespace Loterias.Tests.Sena
             Assert.IsType<InvalidOperationException>(exception);
             if (exception is InvalidOperationException ioEx)
                 Assert.Contains("no matching", ioEx.Message, StringComparison.OrdinalIgnoreCase);
-            
+
             if (exception is Exception)
                 Assert.True(exception is Exception);
         }
@@ -364,10 +363,10 @@ namespace Loterias.Tests.Sena
 
             if (exc is ArgumentNullException argNullExc)
                 Assert.Contains("specified", argNullExc.Message, StringComparison.OrdinalIgnoreCase);
-            
+
             if (exc is ArgumentException argExc)
                 Assert.Contains("states", argExc.Message, StringComparison.OrdinalIgnoreCase);
-            
+
             if (exc is Exception)
                 Assert.True(exc is Exception);
         }

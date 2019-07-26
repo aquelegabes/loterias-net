@@ -54,8 +54,12 @@ namespace Loterias.Application.Service
         public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(string culture, string date1, string date2)
         {
             if (string.IsNullOrWhiteSpace(culture) || string.IsNullOrWhiteSpace(date1) || string.IsNullOrWhiteSpace(date2))
-                throw new ArgumentNullException($"Parameters: {nameof(culture)}, {nameof(date1)}, {nameof(date2)}.", 
-                    "All parameters are required.");
+            {
+                throw new ArgumentNullException(
+                    paramName: $"Parameters: {nameof(culture)}, {nameof(date1)}, {nameof(date2)}.",
+                    message: "All parameters are required."
+                );
+            }
 
             if (!Utils.IsValidCulture(culture))
                 throw new CultureNotFoundException("Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos");
