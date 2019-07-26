@@ -112,6 +112,7 @@ namespace Loterias.Data.Repositories
         /// </summary>
         /// <param name="id">(integer)</param>
         /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception" />
         /// <returns>Returns a <see cref="TEntity"/></returns>
         public virtual async Task<TEntity> GetById(int id)
         {

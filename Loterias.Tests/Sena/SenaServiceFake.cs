@@ -35,7 +35,7 @@ namespace Loterias.Tests.Sena
                     GanhadoresQuina = 47,
                     ValorAcumulado = 21_402_602.8m,
                     ValorQuadra = 389.25m,
-                    ValorQuina = 31_786.28m,
+                    ValorQuina = 31_786.28m
                 },
                 new ConcursoSena
                 {
@@ -50,7 +50,7 @@ namespace Loterias.Tests.Sena
                     GanhadoresQuina = 76,
                     ValorAcumulado = 24_901_410.33m,
                     ValorQuadra = 279.73m,
-                    ValorQuina = 24_991.48m,
+                    ValorQuina = 24_991.48m
                 },
                 new ConcursoSena
                 {
@@ -65,8 +65,8 @@ namespace Loterias.Tests.Sena
                     GanhadoresQuina = 165,
                     ValorAcumulado = 0m,
                     ValorQuadra = 183.15m,
-                    ValorQuina = 13_209.87m,
-                },
+                    ValorQuina = 13_209.87m
+                }
             };
 
             _senasWinners = new List<GanhadoresSena>
@@ -77,7 +77,7 @@ namespace Loterias.Tests.Sena
                     Id = 236,
                     Ganhadores = 1,
                     EstadoUF = nameof(Estados.SP),
-                    Localizacao = null,
+                    Localizacao = null
                 },
                 new GanhadoresSena
                 {
@@ -85,7 +85,7 @@ namespace Loterias.Tests.Sena
                     Id = 237,
                     Ganhadores = 1,
                     EstadoUF = nameof(Estados.SC),
-                    Localizacao = null,
+                    Localizacao = null
                 }
             };
         }
@@ -108,7 +108,8 @@ namespace Loterias.Tests.Sena
         public async Task<IEnumerable<ConcursoSena>> GetBetweenDates(string culture, string date1, string date2)
         {
             if (string.IsNullOrWhiteSpace(culture) || string.IsNullOrWhiteSpace(date1) || string.IsNullOrWhiteSpace(date2))
-                throw new ArgumentNullException("All parameters are required.");
+                throw new ArgumentNullException($"Parameters: {nameof(culture)}, {nameof(date1)}, {nameof(date2)}."
+                    , "All parameters are required.");
 
             if (!Utils.IsValidCulture(culture))
                 throw new CultureNotFoundException("Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos");
@@ -192,11 +193,11 @@ namespace Loterias.Tests.Sena
 
         public async Task<IEnumerable<ConcursoSena>> GetByNumbers(params int[] numbers)
         {
-            if (numbers?.Any() == false || numbers == default(int[]))
-                throw new ArgumentNullException();
+            if (numbers?.Length == 0 || numbers == default(int[]))
+                throw new ArgumentNullException(nameof(numbers) ,"At least one number must be specified.");
 
-            if (numbers.Any(a => a.Equals(0)))
-                throw new ArgumentException("Winners numbers cannot contain zero as value.", nameof(numbers));
+            if (numbers.Any(num => num <= 0))
+                throw new ArgumentException("Numbers must be higher than zero.", nameof(numbers));
 
             var findList = _senas.Where(where => numbers.All(value => where.ResultadoOrdenado.Contains(value))).ToList();
             List<ConcursoSena> result;
@@ -217,13 +218,13 @@ namespace Loterias.Tests.Sena
         public async Task<IEnumerable<ConcursoSena>> GetByStateWinners(params string[] states)
         {
             if (states?.Count() == 0 || states == default(string[]))
-                throw new ArgumentNullException("At least one state must be specified.");
+                throw new ArgumentNullException(nameof(states), "At least one state must be specified.");
 
             var statesList = states.ToList();
             statesList.RemoveAll(r => string.IsNullOrWhiteSpace(r));
 
             if (statesList.Count == 0)
-                throw new ArgumentException("States cannot have an empty value as parameter request.");
+                throw new ArgumentException("States cannot have only empty value(s) as request.");
 
             statesList.ForEach(item =>
             {
@@ -247,7 +248,7 @@ namespace Loterias.Tests.Sena
             if (concursos.Count == 0)
                 return await Task.FromResult<List<ConcursoSena>>(null);
 
-            List<ConcursoSena> findList = _senas.Where(where => concursos.All(concurso => where.Id.Equals(concurso))).ToList();
+            List<ConcursoSena> findList = _senas.Where(where => concursos.All(where.Id.Equals)).ToList();
 
             List<ConcursoSena> result;
             if (findList?.Count > 0)

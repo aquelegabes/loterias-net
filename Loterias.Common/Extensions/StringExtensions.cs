@@ -49,20 +49,18 @@ namespace Loterias.Common.Extensions
                 enu = (T)result;
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         /// <summary>
-        /// Returns a <see cref="byte[]"/> string encoded with a chosen charset.
+        /// Returns a <see cref="byte"/> array string encoded with a chosen charset.
         /// </summary>
         /// <param name="str"></param>
         /// <param name="encoding">Check <see cref="Encoding"/> properties members.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="EncoderFallbackException"></exception>
-        /// <returns>The string as <see cref="byte[]" /> </returns>
+        /// <returns>The string as <see cref="byte" /> array.</returns>
         public static byte[] ToByteArray(this string str, Encoding encoding)
         {
             if (string.IsNullOrWhiteSpace(str))

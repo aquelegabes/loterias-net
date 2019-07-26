@@ -106,7 +106,7 @@ namespace Loterias.API.Controllers
             }
             catch (FormatException ex)
             {
-                string[] parameters = new string[] {date1,date2};
+                string[] parameters = { date1,date2 };
                 return BadRequest(new { errorMessage = "Wrong date format", @params = parameters, exceptionMessage = ex.Message });
             }
             catch (Exception ex)

@@ -63,7 +63,6 @@ namespace Loterias.Domain.Interfaces.Repositories
         /// <param name="model"><see cref="TEntity"/></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="EntryPointNotFoundException"></exception>
-        /// <exception cref="DbUpdateException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the updated <see cref="TEntity"/> entity.</returns>
@@ -80,14 +79,14 @@ namespace Loterias.Domain.Interfaces.Repositories
         Task<bool> Remove(TEntity model);
 
         /// <summary>
-        /// Releases all resource used by the <see cref="RepositoryBase"/> object.
+        /// Releases all resource used by the RepositoryBase object.
         /// </summary>
         /// <remarks>Call <see cref="Dispose"/> when you are finished using the
-        /// <see cref="RepositoryBase"/>. The <see cref="Dispose"/> method leaves the
-        /// <see cref="RepositoryBase"/> in an unusable state. After calling
+        /// RepositoryBase. The <see cref="Dispose"/> method leaves the
+        /// RepositoryBase in an unusable state. After calling
         /// <see cref="Dispose"/>, you must release all references to the
-        /// <see cref="RepositoryBase"/> so the garbage collector can reclaim the memory
-        /// that the <see cref="RepositoryBase"/> was occupying.</remarks>
+        /// RepositoryBase so the garbage collector can reclaim the memory
+        /// that the RepositoryBase was occupying.</remarks>
         void Dispose();
     }
 }

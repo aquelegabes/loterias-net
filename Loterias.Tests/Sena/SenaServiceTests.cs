@@ -61,9 +61,8 @@ namespace Loterias.Tests.Sena
             Assert.NotNull(exception);
             Assert.IsType<ArgumentException>(exception);
             if (exception is ArgumentException argEx)
-            {
                 Assert.Equal(nameof(id), argEx.ParamName);
-            }
+            
         }
 
         [Fact]
@@ -78,9 +77,10 @@ namespace Loterias.Tests.Sena
             Assert.NotNull(exception);
             Assert.IsType<InvalidOperationException>(exception);
             if (exception is InvalidOperationException ioEx)
-            {
-                Assert.Contains("no matching", ioEx.Message);
-            }
+                Assert.Contains("no matching", ioEx.Message, StringComparison.OrdinalIgnoreCase);
+            
+            if (exception is Exception)
+                Assert.True(exception is Exception);
         }
 
         [Fact]
@@ -160,14 +160,17 @@ namespace Loterias.Tests.Sena
             Assert.IsAssignableFrom<Exception>(exc);
 
             if (exc is ArgumentNullException argEx)
-                Assert.Contains("required", argEx.Message);
+                Assert.Contains("required", argEx.Message, StringComparison.OrdinalIgnoreCase);
 
             if (exc is System.Globalization.CultureNotFoundException cultEx)
-                Assert.Contains("Wrong", cultEx.Message);
+                Assert.Contains("Wrong", cultEx.Message, StringComparison.OrdinalIgnoreCase);
 
             // :shrug:
-            if (exc is FormatException fEx)
+            if (exc is FormatException)
                 Assert.True(exc is FormatException);
+
+            if (exc is Exception)
+                Assert.True(exc is Exception);
         }
 
         [Theory]
@@ -218,10 +221,10 @@ namespace Loterias.Tests.Sena
             Assert.IsAssignableFrom<Exception>(exc);
 
             if (exc is ArgumentNullException argEx)
-                Assert.Contains("required", argEx.Message);
+                Assert.Contains("required", argEx.Message, StringComparison.OrdinalIgnoreCase);
 
             if (exc is System.Globalization.CultureNotFoundException cultEx)
-                Assert.Contains("Wrong", cultEx.Message);
+                Assert.Contains("Wrong", cultEx.Message, StringComparison.OrdinalIgnoreCase);
 
             // :shrug:
             if (exc is FormatException fEx)
@@ -245,6 +248,7 @@ namespace Loterias.Tests.Sena
         {
             // act
             var result = await _controller.GetByNumbers(new int[] { 4, 54, 16 });
+            var resultModel = await _service.GetByNumbers(new int[] { 4, 54, 16 });
 
             // assert
             Assert.IsType<OkObjectResult>(result);
@@ -258,6 +262,9 @@ namespace Loterias.Tests.Sena
 
             Assert.NotNull(model);
             Assert.NotEmpty(model);
+
+            Assert.NotNull(resultModel);
+            Assert.NotEmpty(resultModel);
         }
 
         [Theory]
@@ -267,22 +274,36 @@ namespace Loterias.Tests.Sena
         {
             // act
             var response = await _controller.GetByNumbers(numbers);
+            var exc = await Record.ExceptionAsync(async() => await _service.GetByNumbers(numbers));
 
             // assert
             Assert.IsType<BadRequestObjectResult>(response);
+
+            Assert.NotNull(exc);
+            Assert.IsAssignableFrom<Exception>(exc);
+
+            if (exc is ArgumentNullException argNulEx)
+                Assert.Contains("specified", argNulEx.Message, StringComparison.OrdinalIgnoreCase);
+
+            if (exc is ArgumentException argEx)
+                Assert.Contains("must be", argEx.Message, StringComparison.OrdinalIgnoreCase);
+
+            if (exc is Exception ex)
+                Assert.True(exc is Exception);
         }
 
-        [Fact]
-        public async Task GetByNumbers_WhenCalled_ReturnsNoContent()
+        [Theory]
+        [InlineData(59,42)]
+        [InlineData(39,14)]
+        public async Task GetByNumbers_WhenCalled_ReturnsNoContent(params int[] request)
         {
-            // arrange
-            var request = new int[] { 59,42 };
-
             // act
             var response = await _controller.GetByNumbers(request);
+            var responseModel = await _service.GetByNumbers(request);
 
             // assert
             Assert.IsType<NoContentResult>(response);
+            Assert.Null(responseModel);
         }
 
         [Theory]
@@ -294,6 +315,7 @@ namespace Loterias.Tests.Sena
         {
             // act 
             var response = await _controller.GetByStateWinners(states);
+            var resultModel = await _service.GetByStateWinners(states);
 
             // assert
             Assert.IsType<OkObjectResult>(response);
@@ -302,6 +324,11 @@ namespace Loterias.Tests.Sena
             var model = okObjectResult.Value as List<ConcursoSenaVm>;
             Assert.NotNull(model);
             Assert.NotEmpty(model);
+
+            Assert.NotNull(resultModel);
+            Assert.IsAssignableFrom<IEnumerable<ConcursoSena>>(resultModel);
+            Assert.IsType<List<ConcursoSena>>(resultModel);
+            Assert.NotEmpty(resultModel);
         }
 
         [Fact]
@@ -312,9 +339,11 @@ namespace Loterias.Tests.Sena
 
             // act
             var response = await _controller.GetByStateWinners(request);
+            var resultModel = await _service.GetByStateWinners(request);
 
             // assert
             Assert.IsType<NoContentResult>(response);
+            Assert.Null(resultModel);
         }
 
         [Theory]
@@ -325,9 +354,22 @@ namespace Loterias.Tests.Sena
         {
             // act
             var response = await _controller.GetByStateWinners(states);
+            var exc = await Record.ExceptionAsync(async() => await _service.GetByStateWinners(states));
 
             // assert
             Assert.IsType<BadRequestObjectResult>(response);
+
+            Assert.NotNull(exc);
+            Assert.IsAssignableFrom<Exception>(exc);
+
+            if (exc is ArgumentNullException argNullExc)
+                Assert.Contains("specified", argNullExc.Message, StringComparison.OrdinalIgnoreCase);
+            
+            if (exc is ArgumentException argExc)
+                Assert.Contains("states", argExc.Message, StringComparison.OrdinalIgnoreCase);
+            
+            if (exc is Exception)
+                Assert.True(exc is Exception);
         }
 
         #endregion Get
@@ -347,7 +389,7 @@ namespace Loterias.Tests.Sena
                 GanhadoresQuina = 17,
                 ValorAcumulado = 1_714_650.23m,
                 ValorQuadra = 330.21m,
-                ValorQuina = 39_158.92m,
+                ValorQuina = 39_158.92m
             };
 
            // act
