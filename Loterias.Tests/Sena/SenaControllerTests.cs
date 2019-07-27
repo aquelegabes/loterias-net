@@ -2,7 +2,9 @@ using Moq;
 using Xunit;
 using System;
 using AutoMapper;
+using System.Linq;
 using Autofac.Extras.Moq;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Loterias.API.Controllers;
@@ -248,40 +250,59 @@ namespace Loterias.Tests.Sena
             }
         }
 
-        //[Fact]
-        //public async Task GetBetweenDates_WhenCalled_ReturnsOk()
-        //{
-        //    // act
-        //    var result = await _controller.GetBetweenDates("pt-BR", "09/08/2008", "16/08/2008");
-        //    var modelResult = await _service.GetBetweenDates("pt-BR", "09/08/2008", "16/08/2008");
+        [Theory]
+        [InlineData("pt-BR", "09/08/2008", "16/08/2008")]
+        public async Task GetBetweenDates_WhenCalled_ReturnsOk(string culture, string date1, string date2)
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                var dateSearch1 = Convert.ToDateTime(date1, new CultureInfo(culture));
+                var dateSearch2 = Convert.ToDateTime(date2, new CultureInfo(culture));
 
-        //    // assert
-        //    Assert.IsType<OkObjectResult>(result);
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.GetBetweenDates(culture, date1, date2))
+                    .Returns(Task.FromResult(_senas.Where(w => w.Data.Date >= dateSearch1 && w.Data.Date <= dateSearch2)));
 
-        //    var okObjectResult = result as OkObjectResult;
-        //    Assert.NotNull(okObjectResult);
+                    //_sena.Where(w => w.Data.Date >= dateSearch1 && w.Data.Date <= dateSearch2)
+                var service = mock.Create<ISenaService>();
 
-        //    var model = okObjectResult.Value as List<ConcursoSenaVm>;
-        //    Assert.IsType<List<ConcursoSenaVm>>(model);
-        //    Assert.NotNull(model);
+                _controller = new SenaController(service, Mapper);
 
-        //    Assert.IsAssignableFrom<IEnumerable<ConcursoSena>>(modelResult);
-        //    Assert.IsType<List<ConcursoSena>>(modelResult);
-        //    Assert.NotNull(modelResult);
-        //    Assert.NotEmpty(modelResult);
-        //}
+                // act
+                var result = await _controller.GetBetweenDates("pt-BR", "09/08/2008", "16/08/2008");
+                var okObjectResult = result as OkObjectResult;
+                var model = okObjectResult.Value as List<ConcursoSenaVm>;
 
-        //[Fact]
-        //public async Task GetBetweenDates_WhenCalled_ReturnsNoContent()
-        //{
-        //    // act
-        //    var result = await _controller.GetBetweenDates("pt-BR", "01/01/1900", "01/01/1901");
-        //    var modelResult = await _service.GetBetweenDates("pt-BR", "01/01/1900", "01/01/1901");
+                // assert
+                Assert.NotNull(result);
+                Assert.IsType<OkObjectResult>(result);
+                Assert.NotNull(okObjectResult);
+                Assert.IsType<List<ConcursoSenaVm>>(model);
+                Assert.NotNull(model);
+            }
+        }
 
-        //    // assert
-        //    Assert.IsType<NoContentResult>(result);
-        //    Assert.Null(modelResult);
-        //}
+        // [Theory]
+        // [InlineData("pt-BR", "01/01/1900", "01/01/1901")]
+        // public async Task GetBetweenDates_WhenCalled_ReturnsNoContent()
+        // {
+        //     using (var mock = AutoMock.GetStrict())
+        //     {
+        //         // arrange
+        //         mock.Mock<ISenaService>()
+        //             .Setup(act => act.GetById(id))
+        //             .Returns(Task.FromException<ConcursoSena>(
+        //                     new ArgumentException("Id cannot be zero or lower.", nameof(id))));
+
+        //         // act
+        //         var result = await _controller.GetBetweenDates();
+
+        //         // assert
+        //         Assert.IsType<NoContentResult>(result);
+        //         Assert.Null(modelResult);
+        //     }
+        // }
 
         //[Theory]
         //// wrong parameters
