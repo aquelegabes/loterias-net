@@ -128,12 +128,12 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found on dates</response>
         /// <response code="400">Bad date format, invalid culture, null parameters</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPost("indates")]
+        [HttpGet("indates")]
         [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetInDates(string culture, [FromBody]params string[] dates)
+        public async Task<IActionResult> GetInDates(string culture, [FromHeader]params string[] dates)
         {
             try
             {
@@ -174,12 +174,12 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found in specified numbers</response>
         /// <response code="400">Bad date format, invalid culture, null parameters</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPost("bynumbers")]
+        [HttpGet("bynumbers")]
         [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByNumbers([FromBody]int [] numbers)
+        public async Task<IActionResult> GetByNumbers([FromHeader]int [] numbers)
         {
             try
             {
@@ -214,12 +214,12 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found in specified states</response>
         /// <response code="400">Invalid states, null parameters.</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPost("bystatewinners")]
+        [HttpGet("bystatewinners")]
         [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByStateWinners([FromBody]params string[] states)
+        public async Task<IActionResult> GetByStateWinners([FromHeader]params string[] states)
         {
             try
             {
