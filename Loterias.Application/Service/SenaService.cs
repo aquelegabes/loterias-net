@@ -173,8 +173,8 @@ namespace Loterias.Application.Service
             // is it possible to optimize?
             return await _sena
                 .Where(w =>
-                    statesList.Any(state =>
-                        w.GanhadoresModel.Any(winn =>
+                    w.GanhadoresModel.All(winn =>
+                        statesList.Any(state => 
                             winn.EstadoUF.Equals(state, StringComparison.OrdinalIgnoreCase))));
         }
 

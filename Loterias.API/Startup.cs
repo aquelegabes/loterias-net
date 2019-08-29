@@ -42,6 +42,11 @@ namespace Loterias.API
 
             #region Services
             services.AddScoped(typeof(ISenaService), typeof(SenaService));
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowHeader", opts => opts.AllowAnyHeader());
+                c.AddPolicy("AllowOrigin", opts => opts.AllowAnyOrigin());
+            });
             #endregion
 
             #region AutoMapper
@@ -70,6 +75,8 @@ namespace Loterias.API
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseCors(opts => opts.AllowAnyOrigin());
+            app.UseCors(opts => opts.AllowAnyHeader());
         }
     }
 }
