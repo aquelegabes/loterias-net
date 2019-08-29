@@ -20,7 +20,7 @@ namespace Loterias.Tests.Sena
 {
     public class SenaControllerTests
     {
-        private readonly List<ConcursoSena> _senas;
+        private readonly IEnumerable<ConcursoSena> _senas;
         private SenaController _controller;
 
         private IMapper Mapper
@@ -100,6 +100,32 @@ namespace Loterias.Tests.Sena
                             Localizacao = null
                         }
                     }
+                },
+                new ConcursoSena
+                {
+                    Id = 997,
+                    Concurso = 997,
+                    Data = new DateTime(day: 19, month: 08, year: 2008),
+                    Acumulado = false,
+                    Valor = 11_018_725.67m,
+                    Resultado = "04-07-41-04-29-31",
+                    Ganhadores = 1,
+                    GanhadoresQuadra = 6_721,
+                    GanhadoresQuina = 462,
+                    ValorAcumulado = 0m,
+                    ValorQuadra = 1004.39m,
+                    ValorQuina = 21_179.92m,
+                    GanhadoresModel = new List<GanhadoresSena>
+                    {
+                        new GanhadoresSena
+                        {
+                            ConcursoId = 997,
+                            Id = 238,
+                            Ganhadores = 1,
+                            EstadoUF = nameof(Common.Enums.Estados.SP),
+                            Localizacao = null
+                        }
+                    }
                 }
             };
         }
@@ -117,7 +143,7 @@ namespace Loterias.Tests.Sena
                 // arrange
                 mock.Mock<ISenaService>()
                     .Setup(act => act.GetById(id))
-                    .ReturnsAsync(_senas.Find(f => f.Id.Equals(id)));
+                    .ReturnsAsync(_senas.First(f => f.Id.Equals(id)));
 
                 var service = mock.Create<ISenaService>();
 
@@ -225,7 +251,7 @@ namespace Loterias.Tests.Sena
                 // arrange
                 mock.Mock<ISenaService>()
                     .Setup(act => act.GetById(996))
-                    .ReturnsAsync(_senas.Find(f => f.Id.Equals(996)));
+                    .ReturnsAsync(_senas.First(f => f.Id.Equals(996)));
 
                 var service = mock.Create<ISenaService>();
 
@@ -718,69 +744,71 @@ namespace Loterias.Tests.Sena
 
         #region GetByStateWinners
 
-        // [Theory]
-        // [InlineData("sp", "sc")]
-        // public async Task GetByStateWinners_WhenCalled_ReturnsOkResult(params string[] states)
-        // {
-        //     using (var mock = AutoMock.GetStrict())
-        //     {
-        //         var statesList = states.ToList();
+        [Theory]
+        [InlineData("sp", "sc")]
+        public async Task GetByStateWinners_WhenCalled_ReturnsOkResult(params string[] states)
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                var statesList = states.ToList();
 
-        //         // arrange
-        //         mock.Mock<ISenaService>()
-        //             .Setup(act => act.GetByStateWinners(states))
-        //             .ReturnsAsync(
-        //                 _senas.Where(w =>
-        //                     w.GanhadoresModel.All(winn =>
-        //                         statesList.Any(state => winn.EstadoUF.Equals(state, StringComparison.OrdinalIgnoreCase)))));
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.GetByStateWinners(states))
+                    .ReturnsAsync(_senas.Where(conc => 
+                        conc.GanhadoresModel != null
+                        && conc.GanhadoresModel.All(winn =>
+                            statesList.Any(state =>
+                            winn.EstadoUF.Equals(state, StringComparison.OrdinalIgnoreCase)))));
                 
-        //         var service = mock.Create<ISenaService>();
-        //         _controller = new SenaController(service, Mapper);
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
 
-        //         // act
-        //         var result = await _controller.GetByStateWinners(states);
-        //         var okObjectResult = result as OkObjectResult;
-        //         var model = okObjectResult.Value as List<ConcursoSenaVm>;
+                // act
+                var result = await _controller.GetByStateWinners(states);
+                var okObjectResult = result as OkObjectResult;
+                var model = okObjectResult.Value as List<ConcursoSenaVm>;
 
-        //         // assert
-        //         mock.Mock<ISenaService>()
-        //             .Verify(func => func.GetByStateWinners(states), Times.Exactly(1));
-        //         Assert.IsType<OkObjectResult>(result);
-        //         Assert.NotNull(okObjectResult);
-        //         Assert.IsType<List<ConcursoSenaVm>>(okObjectResult.Value);
-        //         Assert.NotNull(model);
-        //         Assert.NotEmpty(model);
-        //     }
-        // }
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.GetByStateWinners(states), Times.Exactly(1));
+                Assert.IsType<OkObjectResult>(result);
+                Assert.NotNull(okObjectResult);
+                Assert.IsType<List<ConcursoSenaVm>>(okObjectResult.Value);
+                Assert.NotNull(model);
+                Assert.NotEmpty(model);
+            }
+        }
 
-        // [Theory]
-        // [InlineData("pa")]
-        // public async Task GetByStateWinners_WhenCalled_ReturnsNoContent(params string[] states)
-        // {
-        //     using (var mock = AutoMock.GetStrict())
-        //     {
-        //         var statesList = states.ToList();
+        [Theory]
+        [InlineData("pa")]
+        public async Task GetByStateWinners_WhenCalled_ReturnsNoContent(params string[] states)
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                var statesList = states.ToList();
 
-        //         // arrange
-        //         mock.Mock<ISenaService>()
-        //             .Setup(act => act.GetByStateWinners(states))
-        //             .ReturnsAsync(_senas.Where(w =>
-        //                     statesList.Any(state =>
-        //                         w.GanhadoresModel.Any(winn =>
-        //                             winn.EstadoUF.Equals(state, StringComparison.OrdinalIgnoreCase)))));
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.GetByStateWinners(states))
+                    .ReturnsAsync(_senas.Where(conc => 
+                        conc.GanhadoresModel != null
+                        && conc.GanhadoresModel.All(winn =>
+                            statesList.Any(state =>
+                            winn.EstadoUF.Equals(state, StringComparison.OrdinalIgnoreCase)))));
                 
-        //         var service = mock.Create<ISenaService>();
-        //         _controller = new SenaController(service, Mapper);
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
 
-        //         // act
-        //         var result = await _controller.GetByStateWinners(states);
+                // act
+                var result = await _controller.GetByStateWinners(states);
 
-        //         // assert
-        //         mock.Mock<ISenaService>()
-        //             .Verify(func => func.GetByStateWinners(states), Times.Exactly(1));
-        //         Assert.IsType<NoContentResult>(result);
-        //     }
-        // }
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.GetByStateWinners(states), Times.Exactly(1));
+                Assert.IsType<NoContentResult>(result);
+            }
+        }
 
         #endregion GetByStateWinners
     }

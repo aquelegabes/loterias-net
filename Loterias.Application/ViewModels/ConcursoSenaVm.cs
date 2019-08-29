@@ -9,6 +9,6 @@ namespace Loterias.Application.ViewModels
         public decimal? ValorAcumulado { get; set; }
         public decimal? ValorQuina { get; set; }
         public decimal? ValorQuadra { get; set; }
-        public ICollection<GanhadoresSenaVm> GanhadoresModel { get;set; }
+        public IEnumerable<GanhadoresSenaVm> GanhadoresModel { get;set; }
     }
 }

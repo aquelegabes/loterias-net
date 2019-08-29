@@ -165,17 +165,17 @@ namespace Loterias.Application.Service
             statesList.ForEach(item =>
             {
                 bool matches = Enum.GetNames(typeof(Estados))
-                                .Any(value => value.Equals(item, StringComparison.OrdinalIgnoreCase));
+                    .Any(value => value.Equals(item, StringComparison.OrdinalIgnoreCase));
                 if (!matches)
                     throw new ArgumentException("Must be a valid two character state. See https://www.sogeografia.com.br/Conteudos/Estados/ for a list containing all states.");
             });
 
             // is it possible to optimize?
-            return await _sena
-                .Where(w =>
-                    w.GanhadoresModel.All(winn =>
-                        statesList.Any(state => 
-                            winn.EstadoUF.Equals(state, StringComparison.OrdinalIgnoreCase))));
+            return await _sena.Where(conc => 
+                conc.GanhadoresModel != null
+                && conc.GanhadoresModel.All(winn =>
+                    statesList.Any(state =>
+                    winn.EstadoUF.Equals(state, StringComparison.OrdinalIgnoreCase))));
         }
 
         /// <summary>

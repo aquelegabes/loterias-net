@@ -46,14 +46,14 @@ namespace Loterias.Domain.Abstract
         /// <value>Uma coleção com os resultados ordenados</value>
         [DisplayName("Resultado ordenado")]
         [NotMapped]
-        public virtual ICollection<int> ResultadoOrdenado
+        public virtual IEnumerable<int> ResultadoOrdenado
         {
             get
             {
                 var result = this.Resultado
-                                .Split('-')
-                                .Select(s => int.Parse(s))
-                                .ToList();
+                    .Split('-')
+                    .Select(s => int.Parse(s))
+                    .ToList();
                 result.Sort();
                 return result;
             }

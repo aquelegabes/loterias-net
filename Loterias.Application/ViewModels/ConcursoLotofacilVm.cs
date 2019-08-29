@@ -13,6 +13,6 @@ namespace Loterias.Application.ViewModels
         public decimal? ValorTreze { get; set; }
         public decimal? ValorDoze { get; set; }
         public decimal? ValorOnze { get; set; }
-        public ICollection<GanhadoresLotofacilVm> GanhadoresModel { get; set; }
+        public IEnumerable<GanhadoresLotofacilVm> GanhadoresModel { get; set; }
     }
 }

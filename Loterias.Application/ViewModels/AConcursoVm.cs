@@ -9,7 +9,7 @@ namespace Loterias.Application.ViewModels
         public DateTime Data { get; set; }
         public bool Acumulado { get; set; }
         public string ResultadoOrdenadoString { get; set; }
-        public ICollection<int> ResultadoOrdenado { get; set; }
+        public IEnumerable<int> ResultadoOrdenado { get; set; }
         public int Ganhadores { get; set; }
         public decimal Valor { get; set; }
     }
