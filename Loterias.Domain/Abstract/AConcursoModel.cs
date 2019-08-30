@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Loterias.Common.Extensions;
 
 namespace Loterias.Domain.Abstract
 {
@@ -51,7 +52,7 @@ namespace Loterias.Domain.Abstract
             get
             {
                 var result = this.Resultado
-                    .Split('-')
+                    .Split(s => !Char.IsDigit(s))
                     .Select(s => int.Parse(s))
                     .ToList();
                 result.Sort();

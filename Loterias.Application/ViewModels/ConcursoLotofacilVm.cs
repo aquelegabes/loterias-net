@@ -10,6 +10,7 @@ namespace Loterias.Application.ViewModels
         public int? DozeAcertos { get; set; }
         public int? OnzeAcertos { get; set; }
         public decimal? ValorAcumuladoEspecial { get; set; }
+        public decimal? ValorCatorze { get; set; }
         public decimal? ValorTreze { get; set; }
         public decimal? ValorDoze { get; set; }
         public decimal? ValorOnze { get; set; }

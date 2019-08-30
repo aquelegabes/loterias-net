@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Loterias.Domain.Entities.Sena;
 using System.Globalization;
 using System.Collections.Generic;
-using Loterias.Common.Utils;
 
 #pragma warning disable RCS1090
 namespace Loterias.API.Controllers
@@ -21,16 +20,23 @@ namespace Loterias.API.Controllers
     [ApiController]
     public class SenaController : ControllerBase
     {
-        private readonly ISenaService _senaService;
+        /// <summary>
+        /// Serviço responsável pelos métodos relacionados a pesquisa dos concursos.
+        /// </summary>
+        private readonly ISenaService _service;
+
+        /// <summary>
+        /// Mapeador responsável para converter entidades de modelo em view-models.
+        /// </summary>
         private readonly IMapper _mapper;
 
         /// <summary>
         /// controller
         /// </summary>
-        /// <param name="senaService"></param>
-        public SenaController(ISenaService senaService, IMapper mapper)
+        /// <param name="service"></param>
+        public SenaController(ISenaService service, IMapper mapper)
         {
-            _senaService = senaService;
+            _service = service;
             _mapper = mapper;
         }
 
@@ -52,7 +58,7 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                var concurso = await _senaService.GetById(id);
+                var concurso = await _service.GetById(id);
 
                 return Ok(_mapper.Map<ConcursoSenaVm>(concurso));
             }
@@ -89,7 +95,7 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                var result = await _senaService.GetBetweenDates(culture, date1, date2);
+                var result = await _service.GetBetweenDates(culture, date1, date2);
 
                 if (result?.Any() != true)
                     return NoContent();
@@ -137,7 +143,7 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                var result = await _senaService.GetInDates(culture, dates);
+                var result = await _service.GetInDates(culture, dates);
 
                 if (result?.Any() != true)
                     return NoContent();
@@ -183,7 +189,7 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                var result = await _senaService.GetByNumbers(numbers);
+                var result = await _service.GetByNumbers(numbers);
 
                 if (result?.Any() != true)
                     return NoContent();
@@ -223,7 +229,7 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                var result = await _senaService.GetByStateWinners(states);
+                var result = await _service.GetByStateWinners(states);
 
                 if (result?.Any() != true)
                     return NoContent();
@@ -262,7 +268,7 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                var result = await _senaService.Add(model);
+                var result = await _service.Add(model);
                 return Ok(_mapper.Map<ConcursoSenaVm>(model));
             }
             catch (ArgumentNullException ex)
@@ -294,7 +300,7 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                var result = await _senaService.Update(model);
+                var result = await _service.Update(model);
                 return Ok(_mapper.Map<ConcursoSenaVm>(model));
             }
             catch (EntryPointNotFoundException ex)

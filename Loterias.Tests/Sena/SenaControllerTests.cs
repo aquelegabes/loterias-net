@@ -689,13 +689,13 @@ namespace Loterias.Tests.Sena
             }
         }
 
-        [Theory]
-        [InlineData(new int[] { })]
-        public async Task GetByNumbers_WhenCalled_ThrowsArgNullExc(params int[] numbers)
+        [Fact]
+        public async Task GetByNumbers_WhenCalled_ThrowsArgNullExc()
         {
             using (var mock = AutoMock.GetStrict())
             {
                 // arrange
+                int[] numbers = default(int[]);
                 mock.Mock<ISenaService>()
                     .Setup(act => act.GetByNumbers(numbers))
                     .ThrowsAsync(new ArgumentNullException());
