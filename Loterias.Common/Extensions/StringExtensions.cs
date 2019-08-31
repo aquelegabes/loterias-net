@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Linq;
+using System.Collections.Generic;
 
 #pragma warning disable RCS1220
 
@@ -15,18 +16,21 @@ namespace Loterias.Common.Extensions
         /// <param name="expression">Expression to when split string</param>
         /// <param name="count">The maximum number of substrings to return. Default value is <see cref="Int32.MaxValue"/></param>
         /// <param name="options"><see cref="StringSplitOptions.RemoveEmptyEntries"/> to omit empty array elements from the array returned; or None to include empty array elements in the array returned. Default value is <see cref="StringSplitOptions.None"/></param>
-        /// <returns></returns>
+        /// <returns cref="String[]">An array whose elements contain the substrings in this string that are delimited by one or more characters in separator.</returns>
         /// <exception cref="ArgumentNullException">Any of the parameters are <see cref="null"/>.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Count is negative.</exception>
         /// <exception cref="ArgumentException">options is not one of the <see cref="StringSplitOptions"/> values.</exception>
-        /// <returns cref="String[]">An array whose elements contain the substrings in this string that are delimited by one or more characters in separator.</returns>
         public static string[] Split(this string value, Func<char, bool> expression, Int32 count = Int32.MaxValue, StringSplitOptions options = StringSplitOptions.None)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentNullException("Base string value cannot be null or white spaced.");
+                throw new ArgumentNullException(
+                    message: "Base string value cannot be null or white spaced.",
+                    paramName: nameof(value));
             
             if (expression is null)
-                throw new ArgumentNullException("Expression cannot be null");
+                throw new ArgumentNullException(
+                    message: "Expression cannot be null",
+                    paramName: nameof(expression));
 
             var split = value.Where(expression).ToArray();
 
@@ -35,12 +39,24 @@ namespace Loterias.Common.Extensions
                 var result = value.Split(split, count, options);
                 return result;
             }
-            catch (ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException ex)
             {
+                ex.Data["params"] = new List<object> 
+                {
+                    value,
+                    count,
+                    options
+                };
                 throw;
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
+                ex.Data["params"] = new List<object> 
+                {
+                    value,
+                    count,
+                    options
+                };
                 throw;
             }
         }
@@ -64,8 +80,7 @@ namespace Loterias.Common.Extensions
             }
             catch (ArgumentException ex)
             {
-                ex.Data["param1"] = value;
-                ex.Data["typeparam"] = typeof(T);
+                ex.Data["params"] = new List<object> { value };
                 throw;
             }
         }
@@ -111,14 +126,12 @@ namespace Loterias.Common.Extensions
             }
             catch (EncoderFallbackException ex)
             {
-                ex.Data["param1"] = str;
-                ex.Data["param2"] = encoding;
+                ex.Data["params"] = new List<object> { str, encoding };
                 throw;
             }
             catch (Exception ex)
             {
-                ex.Data["param1"] = str;
-                ex.Data["param2"] = encoding;
+                ex.Data["params"] = new List<object> { str, encoding };
                 throw;
             }
         }

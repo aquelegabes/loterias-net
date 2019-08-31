@@ -64,14 +64,20 @@ namespace Loterias.API.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message});
+                return BadRequest(new { 
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("no matching"))
                     return NoContent();
 
-                return StatusCode(500, new {error = "internal server error", errorMessage = ex.Message});
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -104,23 +110,34 @@ namespace Loterias.API.Controllers
             }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (CultureNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (FormatException ex)
             {
-                string[] parameters = { date1,date2 };
-                return BadRequest(new { errorMessage = "Wrong date format", @params = parameters, exceptionMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("no matching"))
                     return NoContent();
 
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -152,22 +169,34 @@ namespace Loterias.API.Controllers
             }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (CultureNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (FormatException ex)
             {
-                return BadRequest(new { errorMessage = "Wrong date format", @params = ex.Data["dates"], exceptionMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("no matching"))
                     return NoContent();
 
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -198,16 +227,24 @@ namespace Loterias.API.Controllers
             }
             catch  (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { error = "internal server error", errorMessage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -238,16 +275,24 @@ namespace Loterias.API.Controllers
             }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { error = "internal server error", errorMessage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -273,12 +318,17 @@ namespace Loterias.API.Controllers
             }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError
-                    , new { errorMessage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -305,16 +355,24 @@ namespace Loterias.API.Controllers
             }
             catch (EntryPointNotFoundException ex)
             {
-                return NotFound(new { errorMessage = ex.Message });
+                return NotFound(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { errorMessage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
     }

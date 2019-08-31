@@ -40,12 +40,21 @@ namespace Loterias.Domain.Interfaces.Repositories
         /// <summary>
         /// Filters a sequence of values based on a predicate
         /// </summary>
-        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predica.</param>
+        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predicate.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns>Returns a <see cref="IEnumerable{TEntity}"/></returns>
         Task<IEnumerable<TEntity>> Where(Expression<Func<TEntity, bool>> @where);
+
+        /// <summary>
+        /// Returns the number of elements in a sequence that satisfy a condition.
+        /// </summary>
+        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predicate.</param>
+        /// <exception cref="ArgumentNullException">Source is null.</exception>
+        /// <exception cref="OverflowException">The number of elements in source is larger than <see cref="Int32.MaxValue" />.</exception>
+        /// <returns><see cref="Int32" /> The number of elements in the input sequence.</returns>
+        Task<int> Count(Expression<Func<TEntity, bool>> @where);
 
         /// <summary>
         /// Add the entity

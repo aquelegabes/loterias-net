@@ -58,17 +58,17 @@ namespace Loterias.Data.Repositories
             }
             catch (DbException ex)
             {
-                ex.Data["param"] = where;
+                ex.Data["params"] = new List<object> { where };
                 throw;
             }
             catch (ArgumentException ex)
             {
-                ex.Data["param"] = where;
+                ex.Data["params"] = new List<object> { where };
                 throw;
             }
             catch (Exception ex)
             {
-                ex.Data["param"] = where;
+                ex.Data["params"] = new List<object> { where };
                 throw;
             }
         }
@@ -92,17 +92,47 @@ namespace Loterias.Data.Repositories
             }
             catch (DbException ex)
             {
-                ex.Data["param"] = where;
+                ex.Data["params"] = new List<object> { where };
                 throw;
             }
             catch (ArgumentException ex)
             {
-                ex.Data["param"] = where;
+                ex.Data["params"] = new List<object> { where };
                 throw;
             }
             catch (Exception ex)
             {
-                ex.Data["param"] = where;
+                ex.Data["params"] = new List<object> { where };
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Returns the number of elements in a sequence that satisfy a condition.
+        /// </summary>
+        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predicate.</param>
+        /// <exception cref="ArgumentNullException">Source is null.</exception>
+        /// <exception cref="OverflowException">The number of elements in source is larger than <see cref="Int32.MaxValue" />.</exception>
+        /// <returns><see cref="Int32" /> The number of elements in the input sequence.</returns>
+        public async Task<int> Count(Expression<Func<TEntity, bool>> where)
+        {
+            if (where == null)
+                throw new ArgumentNullException(
+                    message: "Predicate cannot be null.",
+                    paramName: nameof(where));
+            
+            try 
+            {
+                return await _context.Set<TEntity>().CountAsync(where);
+            }
+            catch (ArgumentNullException ex)
+            {
+                ex.Data["params"] = new List<object> {where};
+                throw;
+            }
+            catch (OverflowException ex)
+            {
+                ex.Data["params"] = new List<object> {where};
                 throw;
             }
         }
@@ -125,7 +155,7 @@ namespace Loterias.Data.Repositories
             }
             catch (Exception ex)
             {
-                ex.Data["param"] = id;
+                ex.Data["params"] = new List<object> {id};
                 throw;
             }
         }
@@ -151,12 +181,12 @@ namespace Loterias.Data.Repositories
             }
             catch (DbException ex)
             {
-                ex.Data["param"] = model;
+                ex.Data["params"] = new List<object> { model };
                 throw;
             }
             catch (Exception ex)
             {
-                ex.Data["param"] = model;
+                ex.Data["params"] = new List<object> { model };
                 throw;
             }
         }
@@ -174,7 +204,9 @@ namespace Loterias.Data.Repositories
         public virtual async Task<TEntity> Update(TEntity model)
         {
             if (model == null)
-                throw new ArgumentNullException(nameof(model), "Cannot update a null reference");
+                throw new ArgumentNullException(
+                    message: "Cannot update a null reference",
+                    paramName: nameof(model));
 
             try
             {
@@ -184,22 +216,22 @@ namespace Loterias.Data.Repositories
             }
             catch (EntryPointNotFoundException ex)
             {
-                ex.Data["param"] = model;
+                ex.Data["params"] = new List<object> {model};
                 throw;
             }
             catch (DbUpdateException ex)
             {
-                ex.Data["param"] = model;
+                ex.Data["params"] = new List<object> {model};
                 throw;
             }
             catch (DbException ex)
             {
-                ex.Data["param"] = model;
+                ex.Data["params"] = new List<object> {model};
                 throw;
             }
             catch (Exception ex)
             {
-                ex.Data["param"] = model;
+                ex.Data["params"] = new List<object> {model};
                 throw;
             }
         }
@@ -215,7 +247,9 @@ namespace Loterias.Data.Repositories
         public virtual async Task<bool> Remove(TEntity model)
         {
             if (model == null)
-                throw new ArgumentNullException(nameof(model), "Cannot remove a null object");
+                throw new ArgumentNullException(
+                    message: "Cannot remove a null object",
+                    paramName: nameof(model));
 
             try
             {
@@ -225,12 +259,12 @@ namespace Loterias.Data.Repositories
             }
             catch (DbException ex)
             {
-                ex.Data["param"] = model;
+                ex.Data["params"] = new List<object> {model};
                 throw;
             }
             catch (Exception ex)
             {
-                ex.Data["param"] = model;
+                ex.Data["params"] = new List<object> {model};
                 throw;
             }
         }

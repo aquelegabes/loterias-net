@@ -82,14 +82,12 @@ namespace Loterias.Application.Service
             }
             catch (FormatException ex)
             {
-                ex.Data["dates"] = new string[] { date1, date2 };
+                ex.Data["params"] = new List<object> { date1, date2 };
                 throw;
             }
             catch (Exception ex)
             {
-                ex.Data["param1"] = culture;
-                ex.Data["param2"] = date1;
-                ex.Data["param3"] = date2;
+                ex.Data["params"] = new List<object> { culture, date1, date2 };
                 throw;
             }
         }
@@ -124,13 +122,12 @@ namespace Loterias.Application.Service
             }
             catch (FormatException ex)
             {
-                ex.Data["dates"] = dates;
+                ex.Data["params"] = new List<object> { dates };
                 throw;
             }
             catch (Exception ex)
             {
-                ex.Data["param1"] = culture;
-                ex.Data["param2"] = dates;
+                ex.Data["params"] = new List<object> { dates, culture };
                 throw;
             }
         }
@@ -211,7 +208,6 @@ namespace Loterias.Application.Service
         /// <param name="model">A valid <see cref="ConcursoSena"/> model</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="EntryPointNotFoundException" />
-        /// <exception cref="DbException" />
         /// <exception cref="DbException" />
         /// <returns>Returns the updated <see cref="ConcursoSena" /> model</returns>
         public async Task<ConcursoSena> Update(ConcursoSena model) => await _concursos.Update(model);

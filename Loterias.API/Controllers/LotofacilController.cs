@@ -69,16 +69,24 @@ namespace Loterias.API.Controllers
             }
             catch  (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { error = "internal server error", errorMessage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
     }
