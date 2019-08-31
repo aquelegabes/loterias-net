@@ -90,6 +90,7 @@ namespace Loterias.Tests.Lotofacil
         }
 
         #region Get
+
         [Theory]
         [InlineData(1,3)]
         public async Task GetByNumbers_WhenCalled_ReturnsOkResult(params int[] numbers)
@@ -120,6 +121,104 @@ namespace Loterias.Tests.Lotofacil
                 Assert.NotEmpty(models);
             }
         }
+
+        [Fact]
+        public async Task GetByNumbers_WhenCalled_ArgNullExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ILotofacilService>()
+                    .Setup(act => act.GetByNumbers(null))
+                    .ThrowsAsync(new ArgumentNullException());
+                
+                var service = mock.Create<ILotofacilService>();
+                _controller = new LotofacilController(service, Mapper);
+
+                // act
+                var result = await _controller.GetByNumbers(null);
+
+                // assert
+                mock.Mock<ILotofacilService>()
+                    .Verify(func => func.GetByNumbers(null), Times.Exactly(1));
+                Assert.IsType<BadRequestObjectResult>(result);
+            }
+        }
+
+        [Fact]
+        public async Task GetByNumbers_WhenCalled_ArgExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ILotofacilService>()
+                    .Setup(act => act.GetByNumbers(0))
+                    .ThrowsAsync(new ArgumentException());
+                
+                var service = mock.Create<ILotofacilService>();
+                _controller = new LotofacilController(service, Mapper);
+
+                // act
+                var result = await _controller.GetByNumbers(0);
+
+                // assert
+                mock.Mock<ILotofacilService>()
+                    .Verify(func => func.GetByNumbers(0), Times.Exactly(1));
+                Assert.IsType<BadRequestObjectResult>(result);
+            }
+        }
+
+        [Theory]
+        [InlineData(1,3)]
+        public async Task GetByNumbers_WhenCalled_TimeoutExc(params int[] numbers)
+        {
+            using (var mock =  AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ILotofacilService>()
+                    .Setup(act => act.GetByNumbers(numbers))
+                    .ThrowsAsync(new TimeoutException());
+                
+                var service = mock.Create<ILotofacilService>();
+                _controller = new LotofacilController(service, Mapper);
+
+                // act
+                var result = await _controller.GetByNumbers(numbers);
+                var objectResult = result as ObjectResult;
+
+                // assert
+                mock.Mock<ILotofacilService>()
+                    .Verify(func => func.GetByNumbers(numbers), Times.Exactly(1));
+                Assert.NotNull(result);
+                Assert.IsType<ObjectResult>(result);
+                Assert.NotNull(objectResult);
+                Assert.True(objectResult.StatusCode == 500);
+            }
+        }
+
+        [Theory]
+        [InlineData(17,16)]
+        public async Task GetByNumbers_WhenCalled_ReturnsNoContent(params int[] numbers)
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                mock.Mock<ILotofacilService>()
+                    .Setup(act => act.GetByNumbers(numbers))
+                    .ReturnsAsync(_concursos.Where(conc => numbers.All(value => conc.ResultadoOrdenado.Contains(value))));
+
+                var service = mock.Create<ILotofacilService>();
+                _controller = new LotofacilController(service, Mapper);
+
+                // act
+                var result = await _controller.GetByNumbers(numbers);
+                
+                // assert
+                mock.Mock<ILotofacilService>()
+                    .Verify(func => func.GetByNumbers(numbers));
+                Assert.IsType<NoContentResult>(result);
+            }
+        }
+
         #endregion Get
     }
 }

@@ -1,3 +1,4 @@
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -31,14 +32,22 @@ namespace Loterias.Application.Service
         private readonly IRepositoryGanhadoresSena _ganhadores;
 
         /// <summary>
+        /// Responsible for mapping models and viewmodels
+        /// </summary>
+        private readonly IMapper _mapper;
+
+        /// <summary>
         /// Initalize a new service using <see cref="IRepositoryConcursoSena"/> and <see cref="IRepositoryGanhadoresSena"/>.
         /// </summary>
         /// <param name="concursos">Repository to get the <see cref="ConcursoSena"/> entities.</param>
         /// <param name="ganhadores">Repository to get the <see cref="GanhadoresSena"/> entities.</param>
-        public SenaService(IRepositoryConcursoSena concursos, IRepositoryGanhadoresSena ganhadores)
+        public SenaService(IRepositoryConcursoSena concursos,
+            IRepositoryGanhadoresSena ganhadores,
+            IMapper mapper)
         {
             _concursos = concursos;
             _ganhadores = ganhadores;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -205,11 +214,22 @@ namespace Loterias.Application.Service
         /// <summary>
         /// Updates an existing model
         /// </summary>
+        /// <param name="id">A valid <see cref="int"> id.</param>
         /// <param name="model">A valid <see cref="ConcursoSena"/> model</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="EntryPointNotFoundException" />
         /// <exception cref="DbException" />
         /// <returns>Returns the updated <see cref="ConcursoSena" /> model</returns>
-        public async Task<ConcursoSena> Update(ConcursoSena model) => await _concursos.Update(model);
+        public async Task<ConcursoSena> Update(int id, ConcursoSena model)
+        {
+            var existingModel = await _concursos.FirstOrDefault(f => f.Id.Equals(id));
+            if (existingModel == null)
+                throw new EntryPointNotFoundException(
+                    message: "Could not update model on specified id."
+                );
+                
+            existingModel = _mapper.Map(model, existingModel);
+            return await _concursos.Update(existingModel);
+        }
     }
 }

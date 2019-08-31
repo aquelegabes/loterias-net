@@ -49,7 +49,7 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found on id</response>
         /// <response code="400">Id cannot be zero or lower</response>
         /// <response code="500">Unexpected error</response>
-        [HttpGet("id/{id}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,7 +59,6 @@ namespace Loterias.API.Controllers
             try
             {
                 var concurso = await _service.GetById(id);
-
                 return Ok(_mapper.Map<ConcursoSenaVm>(concurso));
             }
             catch (ArgumentException ex)
@@ -304,17 +303,20 @@ namespace Loterias.API.Controllers
         /// <response code="201">Returns the entities</response>
         /// <response code="400">Invalid model</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPut]
-        [Route("add")]
+        [HttpPost]
+        [Route("")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Add([FromBody] ConcursoSena model)
+        public async Task<IActionResult> Add([FromBody] ConcursoSenaVm model)
         {
             try
             {
-                var result = await _service.Add(model);
-                return Ok(_mapper.Map<ConcursoSenaVm>(model));
+                var inputModel = _mapper.Map<ConcursoSena>(model);
+                var result = await _service.Add(inputModel);
+                // "localhost" only apply on test cases
+                var uri = (Request?.Host.Value ?? "localhost") + $"/api/sena/{result.Id}";
+                return Created(uri, _mapper.Map<ConcursoSenaVm>(result));
             }
             catch (ArgumentNullException ex)
             {
@@ -337,25 +339,26 @@ namespace Loterias.API.Controllers
         /// </summary>
         /// <returns>The updated model</returns>
         /// <param name="model">Model.</param>
-        /// <response code="201">Returns the entities</response>
+        /// <response code="202">Returns the entity</response>
         /// <response code="400">Invalid model</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPost]
-        [Route("update")]
+        [HttpPut]
+        [Route("{concurso}")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update([FromBody] ConcursoSena model)
+        public async Task<IActionResult> Update(int concurso, [FromBody] ConcursoSenaVm model)
         {
             try
             {
-                var result = await _service.Update(model);
-                return Ok(_mapper.Map<ConcursoSenaVm>(model));
+                var inputModel = _mapper.Map<ConcursoSena>(model);
+                var result = await _service.Update(concurso, inputModel);
+                return Accepted(_mapper.Map<ConcursoSenaVm>(result));
             }
             catch (EntryPointNotFoundException ex)
             {
-                return NotFound(new {
+                return BadRequest(new {
                     errorMessage = ex.Message,
                     parameters = ex.Data["params"]
                 });

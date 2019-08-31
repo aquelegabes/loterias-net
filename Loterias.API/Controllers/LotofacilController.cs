@@ -56,7 +56,7 @@ namespace Loterias.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByNumbers([FromHeader]int [] numbers)
+        public async Task<IActionResult> GetByNumbers([FromHeader]params int [] numbers)
         {
             try
             {

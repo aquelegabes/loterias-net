@@ -82,7 +82,7 @@ namespace Loterias.Application.Service
             throw new NotImplementedException();
         }
 
-        public Task<ConcursoLotofacil> Update(ConcursoLotofacil model)
+        public Task<ConcursoLotofacil> Update(int id, ConcursoLotofacil model)
         {
             throw new NotImplementedException();
         }

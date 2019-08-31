@@ -810,6 +810,283 @@ namespace Loterias.Tests.Sena
             }
         }
 
+        [Fact]
+        public async Task GetByStateWinners_WhenCalled_ArgNullExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                var states = new string[] {};
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.GetByStateWinners(states))
+                    .ThrowsAsync(new ArgumentNullException());
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+
+                // act
+                var result = await _controller.GetByStateWinners(states);
+
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.GetByStateWinners(states), Times.Exactly(1));
+                Assert.IsType<BadRequestObjectResult>(result);
+            }
+        }
+
+        [Fact]
+        public async Task GetByStateWinners_WhenCalled_ArgExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                var states = new string[] { "" };
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(func => func.GetByStateWinners(states))
+                    .ThrowsAsync(new ArgumentException());
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+
+                // act
+                var result = await _controller.GetByStateWinners(states);
+
+                // assert 
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.GetByStateWinners(states), Times.Exactly(1));
+                Assert.IsType<BadRequestObjectResult>(result);
+            }
+        }
+
+        [Fact]
+        public async Task GetByStateWinners_WhenCalled_TimeoutExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                var states = new string[] { "pa" };
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.GetByStateWinners(states))
+                    .ThrowsAsync(new TimeoutException());
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+
+                // act
+                var result = await _controller.GetByStateWinners(states);
+                var objResult = result as ObjectResult;
+
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.GetByStateWinners(states), Times.Exactly(1));
+                Assert.NotNull(result);
+                Assert.IsType<ObjectResult>(result);
+                Assert.True(objResult.StatusCode == 500);
+            }
+        }
+
         #endregion GetByStateWinners
+
+        #region Add
+
+        [Fact]
+        public async Task Add_WhenPosted_ReturnsOk()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ConcursoSena>()
+                    .SetupAllProperties();
+                var model = mock.Create<ConcursoSena>();
+
+                mock.Mock<ConcursoSenaVm>()
+                    .SetupAllProperties();
+                var modelInput = mock.Create<ConcursoSenaVm>();
+
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.Add(model))
+                    .ReturnsAsync(model);
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+                
+                // act
+                var result = await _controller.Add(modelInput);
+                var createdResult = result as CreatedResult;
+                var modelResult = createdResult.Value as ConcursoSenaVm;
+
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.Add(model));
+                Assert.IsType<CreatedResult>(result);
+                Assert.NotNull(createdResult);
+                Assert.IsAssignableFrom<ConcursoSenaVm>(createdResult.Value);
+                Assert.NotNull(modelResult);
+            }
+        }
+
+        [Fact]
+        public async Task Add_WhenPosted_ArgNullExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.Add(null))
+                    .ThrowsAsync(new ArgumentNullException());
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+
+                // act
+                var result = await _controller.Add(null);
+
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.Add(null), Times.Exactly(1));
+                Assert.IsType<BadRequestObjectResult>(result);
+            }
+        }
+
+        [Fact]
+        public async Task Add_WhenPosted_TimeoutExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.Add(null))
+                    .ThrowsAsync(new TimeoutException());
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+
+                // act
+                var result = await _controller.Add(null);
+                var objectResult = result as ObjectResult;
+
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.Add(null), Times.Exactly(1));
+                Assert.NotNull(result);
+                Assert.IsType<ObjectResult>(result);
+                Assert.True(objectResult.StatusCode == 500);
+            }
+        }
+
+        #endregion Add
+
+        #region Update
+
+        [Fact]
+        public async Task Update_WhenPut_ReturnsOk()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ConcursoSena>()
+                    .SetupAllProperties();
+                var model = mock.Create<ConcursoSena>();
+
+                mock.Mock<ConcursoSenaVm>()
+                    .SetupAllProperties();
+                var modelInput = mock.Create<ConcursoSenaVm>();
+
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.Update(996, model))
+                    .ReturnsAsync(model);
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+
+                // act
+                var result = await _controller.Update(996, modelInput);
+                var acceptedResult = result as AcceptedResult;
+                var modelResult = acceptedResult.Value as ConcursoSenaVm;
+
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.Update(996, model));
+                Assert.IsType<AcceptedResult>(result);
+                Assert.NotNull(acceptedResult);
+                Assert.IsAssignableFrom<ConcursoSenaVm>(acceptedResult.Value);
+                Assert.NotNull(modelResult);
+            }
+        }
+
+        [Fact]
+        public async Task Update_WhenPut_ReturnsArgNullExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.Update(0, null))
+                    .ThrowsAsync(new ArgumentNullException());
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+
+                // act
+                var result = await _controller.Update(0, null);
+
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.Update(0, null), Times.Exactly(1));
+                Assert.IsType<BadRequestObjectResult>(result);
+            }
+        }
+
+        [Fact]
+        public async Task Update_WhenPut_EntryPointNotFoundExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.Update(0, null))
+                    .ThrowsAsync(new EntryPointNotFoundException());
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+
+                // act
+                var result = await _controller.Update(0, null);
+
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.Update(0, null), Times.Exactly(1));
+                Assert.IsType<BadRequestObjectResult>(result);
+            }
+        }
+
+        [Fact]
+        public async Task Update_WhenPut_TimeoutExc()
+        {
+            using (var mock = AutoMock.GetStrict())
+            {
+                // arrange
+                mock.Mock<ISenaService>()
+                    .Setup(act => act.Update(0, null))
+                    .ThrowsAsync(new TimeoutException());
+                
+                var service = mock.Create<ISenaService>();
+                _controller = new SenaController(service, Mapper);
+
+                // act
+                var result = await _controller.Update(0, null);
+                var objectResult = result as ObjectResult;
+
+                // assert
+                mock.Mock<ISenaService>()
+                    .Verify(func => func.Update(0, null), Times.Exactly(1));
+                Assert.NotNull(result);
+                Assert.IsType<ObjectResult>(result);
+                Assert.NotNull(objectResult);
+                Assert.True(objectResult.StatusCode == 500);
+            }
+        }
+
+        #endregion Update
     }
 }

@@ -74,12 +74,13 @@ namespace Loterias.Application.Interfaces
         /// <summary>
         /// Updates an existing model
         /// </summary>
+        /// <param name="id">A valid <see cref="int"> id.</param>
         /// <param name="model">A valid <see cref="T"/> model.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="EntryPointNotFoundException" />
         /// <exception cref="DbException" />
         /// <exception cref="DbException" />
         /// <returns>Returns the <see cref="T" /> updated model.</returns>
-        Task<T> Update(T model);
+        Task<T> Update(int id, T model);
     }
 }
