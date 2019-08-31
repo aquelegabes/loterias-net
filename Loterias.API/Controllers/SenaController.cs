@@ -306,6 +306,7 @@ namespace Loterias.API.Controllers
         /// <response code="500">Unexpected error</response>
         [HttpPost]
         [Route("")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -346,6 +347,7 @@ namespace Loterias.API.Controllers
         /// <response code="500">Unexpected error</response>
         [HttpPut]
         [Route("{concurso}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
