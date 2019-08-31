@@ -1,82 +1,13 @@
-using System;
-using System.Data.Common;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Loterias.Domain.Entities.Sena;
-using Loterias.Common.Exceptions;
+using Loterias.Domain.Interfaces.Repositories;
 
 namespace Loterias.Application.Interfaces
 {
     /// <summary>
-    /// Service interface responsible for all mega-sena related methods.
+    /// Service interface responsible for mega-sena service methods.
     /// </summary>
-    public interface ISenaService
+    public interface ISenaService : ILoteriasService<ConcursoSena>
     {
-        /// <summary>
-        /// Search for a entity based on id
-        /// </summary>
-        /// <param name="id">Id (integer)</param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <returns>The <see cref="ConcursoSena"/> entity.</returns>
-        Task<ConcursoSena> GetById(int id);
-
-        /// <summary>
-        /// Gets all the entities between the specified dates.
-        /// </summary>
-        /// <param name="date1">Date 1.</param>
-        /// <param name="date2">Date 2.</param>
-        /// <returns>Returns the <see cref="ConcursoSena"/> entities</returns>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="System.Globalization.CultureNotFoundException" />
-        /// <exception cref="FormatException" />
-        Task<IEnumerable<ConcursoSena>> GetBetweenDates(string culture, string date1, string date2);
-
-        /// <summary>
-        /// Get the entities in the specified dates
-        /// </summary>
-        /// <param name="dates"></param>
-        /// <returns>Returns <see cref="IEnumerable{ConcursoSena}"/> entities that matches the dates.</returns>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="System.Globalization.CultureNotFoundException" />
-        /// <exception cref="FormatException" />
-        Task<IEnumerable<ConcursoSena>> GetInDates(string culture, params string[] dates);
-
-        /// <summary>
-        /// Get all the entities within the sorted specified numbers
-        /// </summary>
-        /// <param name="numbers">Numbers (integer)</param>
-        /// <returns>Returns <see cref="IEnumerable{ConcursoSena}"/> entities that matches the number.</returns>
-        /// <exception cref="ArgumentNullException" />
-        Task<IEnumerable<ConcursoSena>> GetByNumbers(params int[] numbers);
-
-        /// <summary>
-        /// Get all the entities where winners must be on the specified states.
-        /// </summary>
-        /// <param name="states">States (two characters)</param>
-        /// <returns>Returns <see cref="IEnumerable{ConcursoSena}"/> entities that matches the states.</returns>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
-        Task<IEnumerable<ConcursoSena>> GetByStateWinners(params string[] states);
-
-        /// <summary>
-        /// Add a new model to the database
-        /// </summary>
-        /// <param name="model">A valid <see cref="ConcursoSena"/> model</param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="DbException"></exception>
-        /// <exception cref="DuplicateKeyException"></exception>
-        /// <returns>Return the <see cref="ConcursoSena" /> added model.</returns>
-        Task<ConcursoSena> Add(ConcursoSena model);
-
-        /// <summary>
-        /// Updates an existing model
-        /// </summary>
-        /// <param name="model">A valid <see cref="ConcursoSena"/> model</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="EntryPointNotFoundException" />
-        /// <exception cref="DbException" />
-        /// <exception cref="DbException" />
-        /// <returns>Returns the <see cref="ConcursoSena" /> updated model.</returns>
-        Task<ConcursoSena> Update(ConcursoSena model);
+        
     }
 }

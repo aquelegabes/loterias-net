@@ -35,13 +35,19 @@ namespace Loterias.API
             services.AddScoped(typeof(IRepositoryConcursoSena), typeof(RepositoryConcursoSena));
             services.AddScoped(typeof(IRepositoryConcursoLotofacil), typeof(RepositoryConcursoLotofacil));
             services.AddScoped(typeof(IRepositoryConcursoQuina), typeof(RepositoryConcursoQuina));
-            services.AddScoped(typeof(IRepositoryGanhadoresFacil), typeof(RepositoryGanhadoresFacil));
+            services.AddScoped(typeof(IRepositoryGanhadoresLotofacil), typeof(RepositoryGanhadoresLotofacil));
             services.AddScoped(typeof(IRepositoryGanhadoresQuina), typeof(RepositoryGanhadoresQuina));
             services.AddScoped(typeof(IRepositoryGanhadoresSena), typeof(RepositoryGanhadoresSena));
             #endregion
 
             #region Services
             services.AddScoped(typeof(ISenaService), typeof(SenaService));
+            services.AddScoped(typeof(ILotofacilService), typeof(LotofacilService));
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowHeader", opts => opts.AllowAnyHeader());
+                c.AddPolicy("AllowOrigin", opts => opts.AllowAnyOrigin());
+            });
             #endregion
 
             #region AutoMapper
@@ -70,6 +76,8 @@ namespace Loterias.API
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseCors(opts => opts.AllowAnyOrigin());
+            app.UseCors(opts => opts.AllowAnyHeader());
         }
     }
 }

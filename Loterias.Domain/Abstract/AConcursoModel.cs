@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Loterias.Common.Extensions;
 
 namespace Loterias.Domain.Abstract
 {
@@ -46,14 +47,14 @@ namespace Loterias.Domain.Abstract
         /// <value>Uma coleção com os resultados ordenados</value>
         [DisplayName("Resultado ordenado")]
         [NotMapped]
-        public virtual ICollection<int> ResultadoOrdenado
+        public virtual IEnumerable<int> ResultadoOrdenado
         {
             get
             {
                 var result = this.Resultado
-                                .Split('-')
-                                .Select(s => int.Parse(s))
-                                .ToList();
+                    .Split(s => !Char.IsDigit(s))
+                    .Select(s => int.Parse(s))
+                    .ToList();
                 result.Sort();
                 return result;
             }

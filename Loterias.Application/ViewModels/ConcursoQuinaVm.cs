@@ -12,6 +12,6 @@ namespace Loterias.Application.ViewModels
         public decimal? ValorQuadra { get; set; }
         public decimal? ValorTerno { get; set; }
         public decimal? ValorRateioDuque { get; set; }
-        public ICollection<GanhadoresQuinaVm> GanhadoresModel { get; set; }
+        public IEnumerable<GanhadoresQuinaVm> GanhadoresModel { get; set; }
     }
 }

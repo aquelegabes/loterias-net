@@ -6,7 +6,7 @@ namespace Loterias.Domain.Entities.Lotofacil
 {
     [DisplayName("Ganhadores Lotofácil")]
     [Table("lotofacil_ganhadoresfacil")]
-    public class GanhadoresFacil : AGanhadoresModel
+    public class GanhadoresLotofacil : AGanhadoresModel
     {
         [DisplayName("Id")]
         [Column("id")]

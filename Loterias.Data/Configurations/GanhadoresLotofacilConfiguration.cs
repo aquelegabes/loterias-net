@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Loterias.Data.Configurations
 {
-    public class GanhadoresFacilConfiguration : GanhadoresConfiguration<GanhadoresFacil>
+    public class GanhadoresLotofacilConfiguration : GanhadoresConfiguration<GanhadoresLotofacil>
     {
-        public override void Configure(EntityTypeBuilder<GanhadoresFacil> builder)
+        public override void Configure(EntityTypeBuilder<GanhadoresLotofacil> builder)
         {
             base.Configure(builder);
             builder.ToTable("lotofacil_ganhadoresfacil").HasKey(k => k.Id);
