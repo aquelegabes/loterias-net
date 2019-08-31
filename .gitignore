@@ -6,6 +6,11 @@
 # vscode
 .vscode
 
+# coverage
+lcov.info
+**/coverage.json
+lcov.opencover.xml
+
 # User-specific files
 *.rsuser
 *.suo

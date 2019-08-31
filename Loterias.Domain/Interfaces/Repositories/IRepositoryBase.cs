@@ -40,12 +40,21 @@ namespace Loterias.Domain.Interfaces.Repositories
         /// <summary>
         /// Filters a sequence of values based on a predicate
         /// </summary>
-        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predica.</param>
+        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predicate.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="DbException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns>Returns a <see cref="IEnumerable{TEntity}"/></returns>
         Task<IEnumerable<TEntity>> Where(Expression<Func<TEntity, bool>> @where);
+
+        /// <summary>
+        /// Returns the number of elements in a sequence that satisfy a condition.
+        /// </summary>
+        /// <param name="where">A valid <see cref="Expression{Func{TEntity,bool}}" /> predicate.</param>
+        /// <exception cref="ArgumentNullException">Source is null.</exception>
+        /// <exception cref="OverflowException">The number of elements in source is larger than <see cref="Int32.MaxValue" />.</exception>
+        /// <returns><see cref="Int32" /> The number of elements in the input sequence.</returns>
+        Task<int> Count(Expression<Func<TEntity, bool>> @where);
 
         /// <summary>
         /// Add the entity
@@ -80,14 +89,14 @@ namespace Loterias.Domain.Interfaces.Repositories
         Task<bool> Remove(TEntity model);
 
         /// <summary>
-        /// Releases all resource used by the <see cref="RepositoryBase"/> object.
+        /// Releases all resource used by the RepositoryBase object.
         /// </summary>
         /// <remarks>Call <see cref="Dispose"/> when you are finished using the
-        /// <see cref="RepositoryBase"/>. The <see cref="Dispose"/> method leaves the
-        /// <see cref="RepositoryBase"/> in an unusable state. After calling
+        /// RepositoryBase. The <see cref="Dispose"/> method leaves the
+        /// RepositoryBase in an unusable state. After calling
         /// <see cref="Dispose"/>, you must release all references to the
-        /// <see cref="RepositoryBase"/> so the garbage collector can reclaim the memory
-        /// that the <see cref="RepositoryBase"/> was occupying.</remarks>
+        /// RepositoryBase so the garbage collector can reclaim the memory
+        /// that the RepositoryBase was occupying.</remarks>
         void Dispose();
     }
 }

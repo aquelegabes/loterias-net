@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Loterias.Domain.Entities.Sena;
 using System.Globalization;
 using System.Collections.Generic;
-using Loterias.Common.Utils;
 
 #pragma warning disable RCS1090
 namespace Loterias.API.Controllers
@@ -21,17 +20,24 @@ namespace Loterias.API.Controllers
     [ApiController]
     public class SenaController : ControllerBase
     {
-        private readonly ISenaService _senaService;
+        /// <summary>
+        /// Serviço responsável pelos métodos relacionados a pesquisa dos concursos.
+        /// </summary>
+        private readonly ISenaService _service;
+
+        /// <summary>
+        /// Mapeador responsável para converter entidades de modelo em view-models.
+        /// </summary>
         private readonly IMapper _mapper;
 
         /// <summary>
         /// controller
         /// </summary>
-        /// <param name="senaService"></param>
         /// <param name="mapper" />
-        public SenaController(ISenaService senaService, IMapper mapper)
+        /// <param name="service"></param>
+        public SenaController(ISenaService service, IMapper mapper)
         {
-            _senaService = senaService;
+            _service = service;
             _mapper = mapper;
         }
 
@@ -44,7 +50,7 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found on id</response>
         /// <response code="400">Id cannot be zero or lower</response>
         /// <response code="500">Unexpected error</response>
-        [HttpGet("id/{id}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -53,69 +59,25 @@ namespace Loterias.API.Controllers
         {
             try
             {
-                var concurso = await _senaService.GetById(id);
-
+                var concurso = await _service.GetById(id);
                 return Ok(_mapper.Map<ConcursoSenaVm>(concurso));
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message});
+                return BadRequest(new { 
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("no matching"))
                     return NoContent();
 
-                return StatusCode(500, new {error = "internal server error", errorMessage = ex.Message});
-            }
-        }
-
-        /// <summary>
-        /// Gets entity by date.
-        /// </summary>
-        /// <returns>The by date.</returns>
-        /// <param name="date">Date.</param>
-        /// <param name="culture">Culture.</param>
-        /// <response code="200">Returns the entity</response>
-        /// <response code="204">No entity found on date</response>
-        /// <response code="400">Bad date format, invalid culture, null parameters</response>
-        /// <response code="500">Unexpected error</response>
-        [HttpGet("bydate")]
-        [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByDate(string date, string culture)
-        {
-            try
-            {
-                var ci = CultureInfo.GetCultureInfo(culture);
-                DateTime dateSearch = Convert.ToDateTime(date, ci);
-                var result = await _senaService.GetByDate(dateSearch);
-
-                if (result == null)
-                    return NoContent();
-
-                return Ok(_mapper.Map<ConcursoSenaVm>(result));
-            }
-            catch (ArgumentNullException)
-            {
-                return BadRequest(new { errorMessage = "Both parameters are required" });
-            }
-            catch (CultureNotFoundException)
-            {
-                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
-            }
-            catch (FormatException)
-            {
-                return BadRequest(new { errorMessage = "Wrong date format" });
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message.Contains("no matching"))
-                    return NoContent();
-
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -123,9 +85,9 @@ namespace Loterias.API.Controllers
         /// Gets all entities between the specified dates.
         /// </summary>
         /// <returns>Entities</returns>
+        /// <param name="culture">Culture.</param>
         /// <param name="date1">Date 1.</param>
         /// <param name="date2">Date 2.</param>
-        /// <param name="culture">Culture.</param>
         /// <response code="200">Returns the entities</response>
         /// <response code="204">No entity found on date</response>
         /// <response code="400">Bad date format, invalid culture, null parameters</response>
@@ -135,46 +97,47 @@ namespace Loterias.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBetweenDates(string date1, string date2, string culture)
+        public async Task<IActionResult> GetBetweenDates(string culture, string date1, string date2)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(culture))
-                    throw new ArgumentNullException();
-                    
-                var ci = CultureInfo.GetCultureInfo(culture);
-
-                if (!Utils.IsValidCulture(culture))
-                    throw new CultureNotFoundException();
-
-                DateTime dateSearch1 = Convert.ToDateTime(date1, ci);
-                DateTime dateSearch2 = Convert.ToDateTime(date2, ci);
-                var result = await _senaService.GetBetweenDates(dateSearch1, dateSearch2);
+                var result = await _service.GetBetweenDates(culture, date1, date2);
 
                 if (result?.Any() != true)
                     return NoContent();
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = "All parameters are required" });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
-            catch (CultureNotFoundException)
+            catch (CultureNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
-                string[] parameters = new string[] {date1,date2};
-                return BadRequest(new { errorMessage = "Wrong date format", @params = parameters });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("no matching"))
                     return NoContent();
 
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -188,47 +151,52 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found on dates</response>
         /// <response code="400">Bad date format, invalid culture, null parameters</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPost("indates")]
+        [HttpGet("indates")]
         [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetInDates(string culture, [FromBody]params string[] dates)
+        public async Task<IActionResult> GetInDates(string culture, [FromHeader]params string[] dates)
         {
             try
             {
-                var ci = CultureInfo.GetCultureInfo(culture);
-
-                if (ci.EnglishName.Contains("Invariant Language"))
-                    throw new CultureNotFoundException("Invariant language is unnaceptable.");
-
-                var listDates = dates.Select(s => Convert.ToDateTime(s,ci)).ToArray();
-
-                var result = await _senaService.GetInDates(listDates);
+                var result = await _service.GetInDates(culture, dates);
 
                 if (result?.Any() != true)
                     return NoContent();
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = "All parameters are required" });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
-            catch (CultureNotFoundException)
+            catch (CultureNotFoundException ex)
             {
-                return BadRequest(new { errorMessage = "Wrong culture info specified, check https://lonewolfonline.net/list-net-culture-country-codes/ for a list containing all culture infos" });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
-                return BadRequest(new { errorMessage = "Wrong date format", @params = dates });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
                 if (ex.Message.Contains("no matching"))
                     return NoContent();
 
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -241,30 +209,90 @@ namespace Loterias.API.Controllers
         /// <response code="204">No entity found in specified numbers</response>
         /// <response code="400">Bad date format, invalid culture, null parameters</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPost("bynumbers")]
+        [HttpGet("bynumbers")]
         [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByNumbers([FromBody]int [] numbers)
+        public async Task<IActionResult> GetByNumbers([FromHeader]int [] numbers)
         {
             try
             {
-                var result = await _senaService.GetByNumbers(numbers);
+                var result = await _service.GetByNumbers(numbers);
 
                 if (result?.Any() != true)
                     return NoContent();
 
                 return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
             }
-            catch  (ArgumentNullException)
+            catch  (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = "Numbers cannot be null." });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { error = "internal server error", errorMessage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
+            }
+        }
+
+        /// <summary>
+        /// Gets all entities that contains winners with the specified states.
+        /// </summary>
+        /// <param name="states">States as two character.</param>
+        /// <returns>Entities</returns>
+        /// <response code="200">Returns the entities</response>
+        /// <response code="204">No entity found in specified states</response>
+        /// <response code="400">Invalid states, null parameters.</response>
+        /// <response code="500">Unexpected error</response>
+        [HttpGet("bystatewinners")]
+        [ProducesResponseType(typeof(IEnumerable<ConcursoSenaVm>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetByStateWinners([FromHeader]params string[] states)
+        {
+            try
+            {
+                var result = await _service.GetByStateWinners(states);
+
+                if (result?.Any() != true)
+                    return NoContent();
+
+                return Ok(_mapper.Map<List<ConcursoSenaVm>>(result));
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -276,27 +304,34 @@ namespace Loterias.API.Controllers
         /// <response code="201">Returns the entities</response>
         /// <response code="400">Invalid model</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPut]
-        [Route("add")]
+        [HttpPost]
+        [Route("")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> Add([FromBody] ConcursoSena model)
+        public async Task<IActionResult> Add([FromBody] ConcursoSenaVm model)
         {
             try
             {
-                var result = await _senaService.Add(model);
-                return Ok(_mapper.Map<ConcursoSenaVm>(model));
+                var inputModel = _mapper.Map<ConcursoSena>(model);
+                var result = await _service.Add(inputModel);
+                // "localhost" only apply on test cases
+                var uri = (Request?.Host.Value ?? "localhost") + $"/api/sena/{result.Id}";
+                return Created(uri, _mapper.Map<ConcursoSenaVm>(result));
             }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError
-                    , new { errorMessage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
 
@@ -304,36 +339,45 @@ namespace Loterias.API.Controllers
         /// Update the specified model.
         /// </summary>
         /// <returns>The updated model</returns>
+        /// <param name="concurso"><see cref="Int32" />A valid Id.</param>
         /// <param name="model">Model.</param>
-        /// <response code="201">Returns the entities</response>
+        /// <response code="202">Returns the entity</response>
         /// <response code="400">Invalid model</response>
         /// <response code="500">Unexpected error</response>
-        [HttpPost]
-        [Route("update")]
+        [HttpPut]
+        [Route("{concurso}")]
         [ProducesResponseType(typeof(ConcursoSenaVm), StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> Update([FromBody] ConcursoSena model)
+        public async Task<IActionResult> Update(int concurso, [FromBody] ConcursoSenaVm model)
         {
             try
             {
-                var result = await _senaService.Update(model);
-                return Ok(_mapper.Map<ConcursoSenaVm>(model));
+                var inputModel = _mapper.Map<ConcursoSena>(model);
+                var result = await _service.Update(concurso, inputModel);
+                return Accepted(_mapper.Map<ConcursoSenaVm>(result));
             }
             catch (EntryPointNotFoundException ex)
             {
-                return NotFound(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(new { errorMessage = ex.Message });
+                return BadRequest(new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { errorMessage = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new {
+                    errorMessage = ex.Message,
+                    parameters = ex.Data["params"]
+                });
             }
         }
     }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 
 #pragma warning disable RCS1220
 
@@ -8,72 +10,157 @@ namespace Loterias.Common.Extensions
     public static class StringExtensions
     {
         /// <summary>
-        /// Cast the string as enum
+        /// Splits a string into a maximum number of substrings based on the characters in the bool expression. 
+        /// </summary>
+        /// <param name="value">String value</param>
+        /// <param name="expression">Expression to when split string</param>
+        /// <param name="count">The maximum number of substrings to return. Default value is <see cref="Int32.MaxValue"/></param>
+        /// <param name="options"><see cref="StringSplitOptions.RemoveEmptyEntries"/> to omit empty array elements from the array returned; or None to include empty array elements in the array returned. Default value is <see cref="StringSplitOptions.None"/></param>
+        /// <returns cref="String[]">An array whose elements contain the substrings in this string that are delimited by one or more characters in separator.</returns>
+        /// <exception cref="ArgumentNullException">Any of the parameters are <see cref="null"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Count is negative.</exception>
+        /// <exception cref="ArgumentException">options is not one of the <see cref="StringSplitOptions"/> values.</exception>
+        public static string[] Split(this string value, Func<char, bool> expression, Int32 count = Int32.MaxValue, StringSplitOptions options = StringSplitOptions.None)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentNullException(
+                    message: "Base string value cannot be null or white spaced.",
+                    paramName: nameof(value));
+            
+            if (expression is null)
+                throw new ArgumentNullException(
+                    message: "Expression cannot be null",
+                    paramName: nameof(expression));
+
+            var split = value.Where(expression).ToArray();
+
+            try 
+            {
+                var result = value.Split(split, count, options);
+                return result;
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                ex.Data["params"] = new List<object> 
+                {
+                    value,
+                    count,
+                    options
+                };
+                throw;
+            }
+            catch (ArgumentException ex)
+            {
+                ex.Data["params"] = new List<object> 
+                {
+                    value,
+                    count,
+                    options
+                };
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Cast the string as enum.
         /// </summary>
         /// <returns>The enum.</returns>
         /// <param name="value">Value.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        /// <typeparam name="T">A valid type of <see cref="Enum"/></typeparam>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public static T ToEnum<T>(this string value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException(nameof(value), $"String cannot be null to cast as {typeof(T)}");
-            return (T)Enum.Parse(typeof(T), value, true);
+
+            try
+            {
+                return (T)Enum.Parse(typeof(T), value, true);
+            }
+            catch (ArgumentException ex)
+            {
+                ex.Data["params"] = new List<object> { value };
+                throw;
+            }
         }
 
         /// <summary>
-        /// Try to cast as enum
+        /// Try to cast as enum.
         /// </summary>
         /// <returns><c>true</c>, if to enum was casted, <c>false</c> otherwise.</returns>
         /// <param name="val">Value.</param>
-        /// <param name="enu">Enu.</param>
+        /// <param name="enu">A valid <see cref="Enum"/> type.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static bool TryToEnum<T>(this string val, out T enu)
         {
             enu = default(T);
-            if (string.IsNullOrWhiteSpace(val))
-                throw new ArgumentNullException(nameof(val), $"String cannot be null to cast as {typeof(T)}");
 
-            var tr = Enum.TryParse(typeof(T), val, true, out object result);
+            Enum.TryParse(typeof(T), val, true, out object result);
             if (result is T)
             {
                 enu = (T)result;
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         /// <summary>
-        /// Returns a byte[] string encoded with a chosen charset
+        /// Returns a <see cref="byte"/> array string encoded with a chosen charset.
         /// </summary>
         /// <param name="str"></param>
-        /// <param name="encoding" cref="Encoding">Check System.Text.Encoding properties members</param>
-        /// <example>
-        /// <c>foo.ToByteArray(Encoding.UTF8);</c>
-        /// </example>
+        /// <param name="encoding">Check <see cref="Encoding"/> properties members.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="EncoderFallbackException"></exception>
-        /// <returns>The string as byte[]</returns>
+        /// <returns>The string as <see cref="byte" /> array.</returns>
         public static byte[] ToByteArray(this string str, Encoding encoding)
         {
             if (string.IsNullOrWhiteSpace(str))
-                throw new ArgumentNullException(nameof(str), "In order to encode value can not be null");
+                throw new ArgumentNullException(nameof(str), "In order to encode value cannot be null.");
             if (encoding == null)
-                throw new ArgumentNullException(nameof(encoding), "Encoding can not be null");
+                throw new ArgumentNullException(nameof(encoding), "Encoding can not be null.");
             try
             {
                 return encoding.GetBytes(str);
             }
             catch (EncoderFallbackException ex)
             {
-                throw new Exception("Wasn't possible to encode specified value, see inner exception for details", ex);
-            }
-            catch (Exception)
-            {
+                ex.Data["params"] = new List<object> { str, encoding };
                 throw;
             }
+            catch (Exception ex)
+            {
+                ex.Data["params"] = new List<object> { str, encoding };
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Returns a <see cref="bool"/> value indicating whether a specified substring occurs within this string.
+        /// </summary>
+        /// <param name="str">This string.</param>
+        /// <param name="substr">Specified string.</param>
+        /// <param name="comp">Any <see cref="StringComparison"/> type.</param>
+        /// <returns><see cref="true"/> whether contains <see cref="false"/> if not</returns>
+        /// <exception cref="ArgumentException">Comparison is not a member of <see cref="StringComparison"/>.</exception>
+        /// <exception cref="ArgumentNullException">Value is null</exception>
+        public static bool Contains(this string str, string substr, StringComparison comp)
+        {
+            if (substr == null)
+            {
+                throw new ArgumentNullException(
+                    paramName: nameof(substr),
+                    message: "Substring cannot be null.");
+            }
+            else if (!Enum.IsDefined(typeof(StringComparison), comp))
+            {
+                throw new ArgumentException(
+                    message: "Specified comparison is not a member of StringComparison.",
+                    paramName: nameof(comp));
+            }
+
+            return str.IndexOf(substr.Trim(), comp) >= 0;
         }
     }
 }

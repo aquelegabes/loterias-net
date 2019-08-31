@@ -23,7 +23,7 @@ namespace Loterias.Data.Context
         public DbSet<ConcursoSena> ConcursosSena { get;set; }
         public DbSet<ConcursoQuina> ConcursosQuina { get; set; }
         public DbSet<ConcursoLotofacil> ConcursosLotofacil { get; set; }
-        public DbSet<GanhadoresFacil> GanhadoresFacil { get; set; }
+        public DbSet<GanhadoresLotofacil> GanhadoresLotofacil { get; set; }
         public DbSet<GanhadoresQuina> GanhadoresQuina { get; set; }
         public DbSet<GanhadoresSena> GanhadoresSena { get;set; }
 
@@ -40,7 +40,6 @@ namespace Loterias.Data.Context
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder
-                    .UseLazyLoadingProxies()
                     .UseSqlite("Data Source=db.sqlite3");
             }
             optionsBuilder.UseLazyLoadingProxies();
@@ -59,7 +58,7 @@ namespace Loterias.Data.Context
             modelBuilder.ApplyConfiguration(new GanhadoresSenaConfiguration());
             modelBuilder.ApplyConfiguration(new ConcursoQuinaConfiguration());
             modelBuilder.ApplyConfiguration(new GanhadoresQuinaConfiguration());
-            modelBuilder.ApplyConfiguration(new GanhadoresFacilConfiguration());
+            modelBuilder.ApplyConfiguration(new GanhadoresLotofacilConfiguration());
             modelBuilder.ApplyConfiguration(new ConcursoLotofacilConfiguration());
         }
     }
